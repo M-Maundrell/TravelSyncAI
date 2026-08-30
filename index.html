@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Planificador de Vuelos - Mario & Yesica</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <!-- MQTT.js CDN para Colaboración en Vivo -->
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
   <style>
     /* Estilos de transición suave */
     .ticket-card {
@@ -12,6 +15,9 @@
   </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-800 antialiased p-6">
+
+  <!-- CONTENEDOR DE TOASTS -->
+  <div id="toast-container" class="fixed bottom-5 right-5 space-y-2.5 z-50"></div>
 
   <!-- ENCABEZADO Y TABS -->
   <div class="max-w-6xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-6">
@@ -25,6 +31,12 @@
 
       <!-- Acciones Globales -->
       <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+        <!-- Botón de Colaboración en Vivo -->
+        <button id="collab-btn" onclick="startCollab()" class="border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-extrabold text-xs px-3.5 py-3 rounded-xl flex items-center gap-2 transition shadow-sm">
+          <span class="w-2.5 h-2.5 bg-slate-400 rounded-full inline-block animate-pulse"></span>
+          <span>🔗 Compartir e Invitar (Colaboración)</span>
+        </button>
+
         <!-- Botón Añadir Vuelo -->
         <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-sm transition flex items-center gap-2">
           <span>+</span> Añadir Vuelo / Tren Personalizado
@@ -90,7 +102,7 @@
       <!-- Segmento 1: MEX-MAD o MEX-BOG -->
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 1: Ruta Principal o de Enlace CDMX (Ida y Vuelta)</label>
+          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 1: CDMX ➔ Europa o Enlace (Ida y Vuelta)</label>
           <select id="select-marioTrans" onchange="changeFlight('marioTrans', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm">
             <!-- Cargado por JS -->
           </select>
@@ -303,7 +315,7 @@
   </div>
 
   <script>
-    // Base de Datos de Vuelos Predefinidos (Advisory Curated: Se removieron United y Air Canada por restricción de Visas)
+    // Base de Datos de Vuelos Predefinidos
     const defaultFlights = {
       marioTrans: [
         {
@@ -837,6 +849,130 @@
 
     let state = JSON.parse(localStorage.getItem('travel_planner_state')) || defaultState;
 
+    // Variables de Colaboración en Vivo (MQTT)
+    let mqttClient = null;
+    let collabRoomId = null;
+    const myClientId = 'travel_' + Math.random().toString(16).substr(2, 8);
+
+    // Sistema de Toasts para feedback
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const bgClass = type === 'success' ? 'bg-emerald-600 text-white' : 
+                      type === 'error' ? 'bg-rose-600 text-white' : 
+                      'bg-slate-800 text-white';
+                      
+      toast.className = `${bgClass} px-4 py-2.5 rounded-xl shadow-lg text-xs font-bold transition-all duration-300 transform translate-y-10 opacity-0 flex items-center gap-2`;
+      
+      const icon = type === 'success' ? '✓' : type === 'error' ? '⚠️' : 'ℹ️';
+      toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.remove('translate-y-10', 'opacity-0');
+      }, 10);
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-10', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Iniciar Compartido o Copiar Enlace
+    function startCollab() {
+      if (collabRoomId) {
+        const shareUrl = window.location.origin + window.location.pathname + '?room=' + collabRoomId;
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          showToast('¡Enlace de colaboración copiado al portapapeles!', 'success');
+        });
+        return;
+      }
+
+      const newRoom = 'room_' + Math.floor(100000 + Math.random() * 900000);
+      window.history.pushState({}, '', '?room=' + newRoom);
+      setupCollab(newRoom);
+      
+      const shareUrl = window.location.origin + window.location.pathname + '?room=' + newRoom;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        showToast('¡Colaboración activa! Enlace copiado al portapapeles.', 'success');
+      });
+    }
+
+    // Configurar canal de sincronización MQTT
+    function setupCollab(roomId) {
+      collabRoomId = roomId;
+      const collabBtn = document.getElementById('collab-btn');
+      
+      collabBtn.className = "border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold text-xs px-3.5 py-3 rounded-xl flex items-center gap-2 transition shadow-sm animate-pulse";
+      collabBtn.innerHTML = `
+        <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block"></span>
+        <span>🟢 Compartiendo (Room: ${roomId}) | Copiar Link</span>
+      `;
+
+      showToast('Conectando con el servidor de colaboración en vivo...', 'info');
+
+      // Conectar al broker EMQX público vía WSS
+      mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+        clientId: myClientId,
+        clean: true
+      });
+
+      mqttClient.on('connect', () => {
+        showToast('¡Conectado al canal! Los cambios se sincronizarán en tiempo real.', 'success');
+        
+        mqttClient.subscribe(`viaje_octubre_2026/room/${roomId}/state`);
+        mqttClient.subscribe(`viaje_octubre_2026/room/${roomId}/request`);
+
+        // Solicitar el estado a compañeros ya conectados
+        mqttClient.publish(`viaje_octubre_2026/room/${roomId}/request`, JSON.stringify({ sender: myClientId }));
+      });
+
+      mqttClient.on('message', (topic, payload) => {
+        try {
+          const data = JSON.parse(payload.toString());
+          if (data.sender === myClientId) return;
+
+          if (topic === `viaje_octubre_2026/room/${roomId}/request`) {
+            // Un nuevo compañero se unió y pide el estado actual
+            broadcastState();
+          } else if (topic === `viaje_octubre_2026/room/${roomId}/state`) {
+            // Recibimos estado actualizado
+            if (data.state) {
+              state = data.state;
+              localStorage.setItem('travel_planner_state', JSON.stringify(state));
+            }
+            if (data.customFlights) {
+              customFlights = data.customFlights;
+              localStorage.setItem('travel_planner_custom_flights', JSON.stringify(customFlights));
+            }
+            // Actualizar selectores e interfaz
+            initDropdowns();
+            render();
+            showToast('Sincronizando elecciones de tu compañero...', 'success');
+          }
+        } catch (err) {
+          console.error("Error al procesar MQTT message:", err);
+        }
+      });
+
+      mqttClient.on('error', (err) => {
+        console.error("Error MQTT:", err);
+        showToast('Error de red en colaboración en vivo. Reintentando...', 'error');
+      });
+    }
+
+    function broadcastState() {
+      if (mqttClient && collabRoomId) {
+        mqttClient.publish(`viaje_octubre_2026/room/${collabRoomId}/state`, JSON.stringify({
+          state: state,
+          customFlights: customFlights,
+          sender: myClientId
+        }));
+      }
+    }
+
     // Inicializar los Dropdowns
     function initDropdowns() {
       ['marioTrans', 'marioBcn', 'yesicaSpc', 'yesicaTrans'].forEach(key => {
@@ -850,7 +986,6 @@
           select.appendChild(option);
         });
         
-        // Comprobar si el estado actual sigue siendo válido, si no, seleccionar el primero
         const exists = getFlights(key).some(f => f.id === state[key]);
         if (!exists && getFlights(key).length > 0) {
           state[key] = getFlights(key)[0].id;
@@ -866,17 +1001,13 @@
       // COMPORTAMIENTO INTELIGENTE AL CAMBIAR VUELO 1 DE MARIO
       if (key === 'marioTrans') {
         if (val.startsWith('alt_') && !state.marioBcn.startsWith('alt_')) {
-          // Cambiar Vuelo 2 de Mario a la versión alternativa
           state.marioBcn = 'alt_bog_esp';
           document.getElementById('select-marioBcn').value = 'alt_bog_esp';
-          // Sincronizar Vuelo 2 de Yesica a Avianca Directo (para que viajen en el mismo avión)
           state.yesicaTrans = 'directo';
           document.getElementById('select-yesicaTrans').value = 'directo';
         } else if (!val.startsWith('alt_') && state.marioBcn.startsWith('alt_')) {
-          // Regresar a versión estándar
           state.marioBcn = 'directo';
           document.getElementById('select-marioBcn').value = 'directo';
-          // Sincronizar Vuelo 2 de Yesica a Avianca Directo
           state.yesicaTrans = 'directo';
           document.getElementById('select-yesicaTrans').value = 'directo';
         }
@@ -925,6 +1056,7 @@
 
       localStorage.setItem('travel_planner_state', JSON.stringify(state));
       render();
+      broadcastState(); // Propagar cambios en tiempo real
     }
 
     // LÓGICA DE MODAL
@@ -946,7 +1078,7 @@
       segmentSelect.innerHTML = "";
       if (traveler === 'mario') {
         segmentSelect.innerHTML = `
-          <option value="marioTrans">Vuelo 1: Ruta Principal o de Enlace CDMX</option>
+          <option value="marioTrans">Vuelo 1: CDMX ➔ Europa o Enlace</option>
           <option value="marioBcn">Vuelo 2: Enlace España ➔ Colombia</option>
         `;
       } else {
@@ -1009,32 +1141,28 @@
       changeFlight(segment, newFlight.id);
       
       closeModal();
+      broadcastState(); // Propagar cambios
     }
 
     // Render y cálculo en vivo
     function render() {
-      // Obtener objetos de vuelo seleccionados (buscando en combinados)
       const marioTransObj = getFlights('marioTrans').find(f => f.id === state.marioTrans) || getFlights('marioTrans')[0];
       const marioBcnObj = getFlights('marioBcn').find(f => f.id === state.marioBcn) || getFlights('marioBcn')[0];
       const yesicaSpcObj = getFlights('yesicaSpc').find(f => f.id === state.yesicaSpc) || getFlights('yesicaSpc')[0];
       const yesicaTransObj = getFlights('yesicaTrans').find(f => f.id === state.yesicaTrans) || getFlights('yesicaTrans')[0];
 
-      // Totales
       const marioTotal = marioTransObj.price + marioBcnObj.price;
       const yesicaTotal = yesicaSpcObj.price + yesicaTransObj.price;
       const grandTotal = marioTotal + yesicaTotal;
       const budgetLimit = 58000;
       const progressPercent = Math.min((grandTotal / budgetLimit) * 100, 100);
 
-      // Formatear
       const formatMXN = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
 
-      // Inyectar Totales en el DOM
       document.getElementById('cost-display').innerText = formatMXN(grandTotal);
       document.getElementById('mario-total-cost').innerText = formatMXN(marioTotal);
       document.getElementById('yesica-total-cost').innerText = formatMXN(yesicaTotal);
 
-      // Actualizar Barra
       const progressBar = document.getElementById('budget-progress-bar');
       const budgetStatus = document.getElementById('budget-status');
       const budgetPercentText = document.getElementById('budget-percent');
@@ -1054,14 +1182,12 @@
         document.getElementById('cost-display').className = "text-xl font-black text-rose-600";
       }
 
-      // Renderizar los Lego Bricks Activos (Boletos de abordar)
       const renderBrick = (targetId, flight, isActiveMario) => {
         const container = document.getElementById(targetId);
         const activeClass = isActiveMario ? 'border-blue-500 bg-blue-50/20' : 'border-pink-500 bg-pink-50/20';
         
         container.innerHTML = `
           <div class="ticket-card border ${activeClass} rounded-xl p-4 flex flex-col justify-between shadow-sm bg-white">
-            <!-- Cabecera del Boleto -->
             <div class="flex flex-wrap items-center gap-2 mb-3 pb-3 border-b border-slate-100">
               ${airlineLogos[flight.airline] || ''}
               <span class="text-[10px] font-extrabold uppercase tracking-wide bg-slate-50 px-2 py-0.5 rounded border border-slate-100 text-slate-600">${flight.class}</span>
@@ -1071,9 +1197,7 @@
               </div>
             </div>
 
-            <!-- Cuerpo del Boleto: Trayectos -->
             <div class="space-y-3.5">
-              <!-- Trayecto Ida -->
               <div class="flex justify-between items-start gap-4">
                 <div class="flex-grow">
                   <div class="flex items-center gap-2">
@@ -1091,7 +1215,6 @@
                 </div>
               </div>
 
-              <!-- Trayecto Regreso (si existe) -->
               ${flight.return ? `
               <div class="flex justify-between items-start gap-4 pt-3 border-t border-dashed border-slate-100">
                 <div class="flex-grow">
@@ -1112,10 +1235,8 @@
               ` : ''}
             </div>
 
-            <!-- Descripción (si existe) -->
             ${flight.description ? `<p class="text-xs text-slate-500 mt-3 pt-2 border-t border-slate-50 leading-relaxed">${flight.description}</p>` : ''}
 
-            <!-- Beneficios / Equipaje -->
             <div class="flex flex-wrap items-center gap-4 mt-4 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
               <span class="flex items-center gap-1 ${flight.bag ? 'text-emerald-600 font-bold' : 'text-rose-500'}">
                 ${flight.bag ? '✓ 🧳 Maleta' : '✗ Sin Maleta'}
@@ -1145,7 +1266,6 @@
       const warnings = [];
       const infos = [];
 
-      // A. Conflicto: Presupuesto Excedido
       if (grandTotal > budgetLimit) {
         warnings.push({
           title: "Presupuesto Excedido",
@@ -1153,7 +1273,6 @@
         });
       }
 
-      // B. Conflicto: Inconsistencia de Ruta Alternativa de Mario
       const isMarioTransAlt = state.marioTrans.startsWith('alt_');
       const isMarioBcnAlt = state.marioBcn.startsWith('alt_');
       
@@ -1169,7 +1288,6 @@
         });
       }
 
-      // C. Conflicto: Viajan por separado España -> Colombia
       const isMarioSeparated = state.marioBcn === 'separado';
       const isYesicaSeparated = state.yesicaTrans === 'eco';
       const isDifferentFlightType = (state.marioBcn !== state.yesicaTrans) && 
@@ -1184,21 +1302,18 @@
         });
       }
 
-      // D. Alerta: Escala Muy Corta (Binter)
       if (state.yesicaSpc.startsWith('17')) {
         warnings.push({
           title: "Escala Corta en Tenerife (Binter)",
           text: "El vuelo de Yesica el sábado 17 tiene una escala de solo 1 hora y 5 minutos en Tenerife Norte (TFN). Hay riesgo de pérdida de conexión ante cualquier retraso."
         });
-        
-        // Llegada asíncrona a Madrid
         infos.push({
           title: "Llegadas Asíncronas a Madrid",
           text: "Mario llega a Madrid el viernes 16 y Yesica el sábado 17. Mario pasará la primera noche solo en Madrid."
         });
       }
 
-      // E. Alerta Crítica: Visa de transito para Mario
+      // Alerta de Visa de Tránsito
       if (marioTransObj.visaRequired || (marioTransObj.details && (marioTransObj.details.includes('YUL') || marioTransObj.details.includes('EWR') || marioTransObj.details.includes('USA') || marioTransObj.details.includes('Canadá')))) {
         warnings.push({
           title: "⚠️ Tránsito no viable (Visa Requerida)",
@@ -1206,7 +1321,6 @@
         });
       }
 
-      // F. Alerta Crítica: Requiere coordinación de trenes Barcelona <-> Madrid
       if (marioBcnObj.train || yesicaTransObj.train) {
         warnings.push({
           title: "🚄 Conexión Terrestre BCN ➔ MAD Requerida",
@@ -1214,7 +1328,6 @@
         });
       }
 
-      // G. Info: Ruta Alternativa de Mario Activa
       if (isMarioTransAlt && isMarioBcnAlt) {
         infos.push({
           title: "Ruta de Saltos Activa para Mario (CDMX-COL-ESP-COL-CDMX)",
@@ -1222,7 +1335,6 @@
         });
       }
 
-      // Renderizar Alertas
       const alertsPanel = document.getElementById('alerts-panel');
       if (warnings.length === 0 && infos.length === 0) {
         alertsPanel.className = "rounded-2xl p-5 border border-emerald-200 bg-emerald-50/50 text-emerald-800 text-xs font-medium flex items-center gap-3";
@@ -1267,9 +1379,19 @@
       }
     }
 
-    // Inicializar
+    // Inicializar sala de colaboración al cargar si está en URL
+    function checkUrlRoom() {
+      const params = new URLSearchParams(window.location.search);
+      const room = params.get('room');
+      if (room) {
+        setupCollab(room);
+      }
+    }
+
+    // Inicialización del DOM
     initDropdowns();
     render();
+    checkUrlRoom();
   </script>
 </body>
 </html>
