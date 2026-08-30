@@ -5,7 +5,7 @@
   <title>Planificador de Vuelos - Mario & Yesica</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
-    /* Estilos de transición suave y clases activas */
+    /* Estilos de transición suave */
     .ticket-card {
       transition: all 0.2s ease-in-out;
     }
@@ -23,16 +23,19 @@
         <p class="text-slate-500 text-sm mt-1">Compara tarifas, equipajes y horarios en paralelo para armar la mejor combinación.</p>
       </div>
 
-      <!-- Indicador Presupuesto -->
-      <div class="flex items-center gap-6 bg-slate-50 px-5 py-4 border border-slate-200 rounded-xl w-full lg:w-auto justify-between lg:justify-start">
-        <div>
-          <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Presupuesto de Vuelos</div>
-          <div class="text-xs text-slate-500">Objetivo: $58,000.00 MXN</div>
-        </div>
-        <div class="h-10 w-[1px] bg-slate-200"></div>
-        <div class="text-right">
-          <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Seleccionado</div>
-          <div id="cost-display" class="text-xl font-black text-emerald-600">$0.00 MXN</div>
+      <!-- Acciones Globales -->
+      <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+        <!-- Botón Añadir Vuelo -->
+        <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-sm transition flex items-center gap-2">
+          <span>+</span> Añadir Vuelo Personalizado
+        </button>
+
+        <!-- Indicador Presupuesto -->
+        <div class="flex items-center gap-4 bg-slate-50 px-4 py-2.5 border border-slate-200 rounded-xl">
+          <div class="text-right">
+            <div class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Total Seleccionado</div>
+            <div id="cost-display" class="text-lg font-black text-emerald-600">$0.00 MXN</div>
+          </div>
         </div>
       </div>
     </div>
@@ -46,7 +49,7 @@
       <div id="budget-status" class="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 font-extrabold uppercase">
         ¡Dentro del Presupuesto!
       </div>
-      <div id="budget-percent" class="font-mono">0% del presupuesto</div>
+      <div id="budget-percent" class="font-mono">0% del presupuesto (Límite: $58,000 MXN)</div>
     </div>
 
     <!-- Pestañas del Planificador -->
@@ -159,9 +162,109 @@
 
   </div>
 
+  <!-- MODAL PARA AÑADIR VUELOS -->
+  <div id="modal-add-flight" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50 transition-all duration-300">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-lg w-full p-6 space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="text-base font-extrabold text-slate-900">✈️ Añadir Vuelo Personalizado</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">×</button>
+      </div>
+
+      <form id="form-flight" onsubmit="saveCustomFlight(event)" class="space-y-3.5">
+        <!-- Persona y Tramo -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Viajero</label>
+            <select id="form-traveler" onchange="updateFormSegments(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+              <option value="mario">Mario (CDMX)</option>
+              <option value="yesica">Yesica (La Palma)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tramo de Vuelo</label>
+            <select id="form-segment" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+              <!-- Dinamico -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Aerolínea y Tarifa -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Aerolínea / Compañía</label>
+            <select id="form-airline" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+              <option value="iberia">Iberia</option>
+              <option value="iberia-express">Iberia Express</option>
+              <option value="avianca">Avianca</option>
+              <option value="binter">Binter Canarias</option>
+              <option value="aeromexico-iberia">Aeroméxico / Iberia</option>
+              <option value="air-canada">Air Canada</option>
+              <option value="united">United Airlines</option>
+              <option value="vueling">Vueling</option>
+              <option value="air-europa">Air Europa</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tipo de Tarifa</label>
+            <input type="text" id="form-class" placeholder="Ej. Tarifa Classic (Turista)" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <!-- Detalles y Horarios -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Detalles de Ruta</label>
+            <input type="text" id="form-details" placeholder="Ej. MEX ➔ MAD (Directo)" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horarios y Fechas</label>
+            <input type="text" id="form-schedule" placeholder="Ej. Ida: 12:00 | Vuelta: 23:00" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <!-- Precio y Descripción -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="col-span-1">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Precio (MXN)</label>
+            <input type="number" id="form-price" placeholder="Ej. 18500" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Breve Descripción</label>
+            <input type="text" id="form-desc" placeholder="Ej. Escalas cómodas de 2 horas en Miami." required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+        <!-- Inclusiones (Checkboxes) -->
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">¿Qué extras incluye el boleto?</label>
+          <div class="flex gap-4 bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs font-semibold text-slate-600">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="form-bag" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+              🧳 Maleta en bodega (23kg)
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="form-carry" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+              🎒 Carry-on (Mano)
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="form-seat" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+              💺 Asiento incluido
+            </label>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-600 transition">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-sm transition">Guardar Vuelo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
-    // Base de Datos de Vuelos con todas las opciones
-    const flightsData = {
+    // Base de Datos de Vuelos Predefinidos
+    const defaultFlights = {
       marioTrans: [
         {
           id: "directo",
@@ -435,6 +538,19 @@
       `
     };
 
+    // Cargar Vuelos Customizados de LocalStorage
+    let customFlights = JSON.parse(localStorage.getItem('travel_planner_custom_flights')) || {
+      marioTrans: [],
+      marioBcn: [],
+      yesicaSpc: [],
+      yesicaTrans: []
+    };
+
+    // Obtener lista unificada de vuelos (Default + Custom)
+    function getFlights(key) {
+      return [...defaultFlights[key], ...(customFlights[key] || [])];
+    }
+
     // Variables de Estado Inicial
     const defaultState = {
       marioTrans: 'directo',
@@ -450,13 +566,19 @@
       ['marioTrans', 'marioBcn', 'yesicaSpc', 'yesicaTrans'].forEach(key => {
         const select = document.getElementById(`select-${key}`);
         select.innerHTML = "";
-        flightsData[key].forEach(opt => {
+        
+        getFlights(key).forEach(opt => {
           const option = document.createElement('option');
           option.value = opt.id;
           option.innerText = `${opt.title} - $${new Intl.NumberFormat('es-MX').format(opt.price)} MXN`;
           select.appendChild(option);
         });
-        // Seleccionar el valor guardado
+        
+        // Comprobar si el estado actual sigue siendo válido, si no, seleccionar el primero
+        const exists = getFlights(key).some(f => f.id === state[key]);
+        if (!exists && getFlights(key).length > 0) {
+          state[key] = getFlights(key)[0].id;
+        }
         select.value = state[key];
       });
     }
@@ -488,13 +610,73 @@
       render();
     }
 
+    // LÓGICA DE MODAL
+    function openModal() {
+      document.getElementById('modal-add-flight').classList.remove('hidden');
+      document.getElementById('modal-add-flight').classList.add('flex');
+      updateFormSegments('mario');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-add-flight').classList.add('hidden');
+      document.getElementById('modal-add-flight').classList.remove('flex');
+      document.getElementById('form-flight').reset();
+    }
+
+    function updateFormSegments(traveler) {
+      const segmentSelect = document.getElementById('form-segment');
+      segmentSelect.innerHTML = "";
+      if (traveler === 'mario') {
+        segmentSelect.innerHTML = `
+          <option value="marioTrans">Vuelo 1: Ruta Transatlántica (MEX-MAD-BOG-MEX)</option>
+          <option value="marioBcn">Vuelo 2: Conexión BCN ➔ BOG</option>
+        `;
+      } else {
+        segmentSelect.innerHTML = `
+          <option value="yesicaSpc">Vuelo 1: Conexión SPC ➔ MAD</option>
+          <option value="yesicaTrans">Vuelo 2: Conexión España ➔ Colombia</option>
+        `;
+      }
+    }
+
+    // Guardar Vuelo Custom
+    function saveCustomFlight(e) {
+      e.preventDefault();
+      const segment = document.getElementById('form-segment').value;
+      const airline = document.getElementById('form-airline').value;
+      const airlineText = document.getElementById('form-airline').options[document.getElementById('form-airline').selectedIndex].text;
+      
+      const newFlight = {
+        id: "custom_" + Date.now(),
+        title: `${airlineText} (Personalizado)`,
+        airline: airline,
+        price: parseFloat(document.getElementById('form-price').value),
+        description: document.getElementById('form-desc').value,
+        details: document.getElementById('form-details').value,
+        schedule: document.getElementById('form-schedule').value,
+        class: document.getElementById('form-class').value,
+        bag: document.getElementById('form-bag').checked,
+        carry: document.getElementById('form-carry').checked,
+        seat: document.getElementById('form-seat').checked
+      };
+
+      customFlights[segment].push(newFlight);
+      localStorage.setItem('travel_planner_custom_flights', JSON.stringify(customFlights));
+
+      // Recargar dropdowns y seleccionar el nuevo
+      initDropdowns();
+      changeFlight(segment, newFlight.id);
+      
+      closeModal();
+    }
+
     // Render y cálculo en vivo
     function render() {
-      // Obtener objetos de vuelo seleccionados
-      const marioTransObj = flightsData.marioTrans.find(f => f.id === state.marioTrans) || flightsData.marioTrans[0];
-      const marioBcnObj = flightsData.marioBcn.find(f => f.id === state.marioBcn) || flightsData.marioBcn[0];
-      const yesicaSpcObj = flightsData.yesicaSpc.find(f => f.id === state.yesicaSpc) || flightsData.yesicaSpc[0];
-      const yesicaTransObj = flightsData.yesicaTrans.find(f => f.id === state.yesicaTrans) || flightsData.yesicaTrans[0];
+      // Obtener objetos de vuelo seleccionados (buscando en combinados)
+      const marioTransObj = getFlights('marioTrans').find(f => f.id === state.marioTrans) || getFlights('marioTrans')[0];
+      const marioBcnObj = getFlights('marioBcn').find(f => f.id === state.marioBcn) || getFlights('marioBcn')[0];
+      const yesicaSpcObj = getFlights('yesicaSpc').find(f => f.id === state.yesicaSpc) || getFlights('yesicaSpc')[0];
+      const yesicaTransObj = getFlights('yesicaTrans').find(f => f.id === state.yesicaTrans) || getFlights('yesicaTrans')[0];
 
       // Totales
       const marioTotal = marioTransObj.price + marioBcnObj.price;
