@@ -8,27 +8,27 @@
     /* Estilos 3D de plástico Lego */
     .lego-brick {
       position: relative;
-      border-radius: 8px;
+      border-radius: 12px;
       box-shadow: 
-        inset 2px 2px 3px rgba(255,255,255,0.4),
-        inset -2px -2px 3px rgba(0,0,0,0.3),
-        0 4px 6px rgba(0,0,0,0.1);
-      transition: all 0.25s ease;
+        inset 2px 2px 4px rgba(255,255,255,0.4),
+        inset -2px -2px 4px rgba(0,0,0,0.35),
+        0 6px 10px rgba(0,0,0,0.12);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
     }
     .lego-brick:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       box-shadow: 
-        inset 2px 2px 3px rgba(255,255,255,0.5),
-        inset -2px -2px 3px rgba(0,0,0,0.4),
-        0 8px 12px rgba(0,0,0,0.15);
+        inset 2px 2px 4px rgba(255,255,255,0.5),
+        inset -2px -2px 4px rgba(0,0,0,0.45),
+        0 12px 18px rgba(0,0,0,0.18);
     }
     .lego-brick:active {
       transform: translateY(1px);
       box-shadow: 
         inset 1px 1px 2px rgba(255,255,255,0.3),
-        inset -1px -1px 2px rgba(0,0,0,0.2),
-        0 2px 4px rgba(0,0,0,0.1);
+        inset -1px -1px 2px rgba(0,0,0,0.25),
+        0 3px 6px rgba(0,0,0,0.1);
     }
     
     /* Pernos (Studs) de Lego en la parte superior */
@@ -36,12 +36,12 @@
       content: '';
       position: absolute;
       top: -6px;
-      left: 8%;
-      right: 8%;
+      left: 10%;
+      right: 10%;
       height: 6px;
       background-image: radial-gradient(circle, rgba(255,255,255,0.3) 40%, transparent 45%),
                         linear-gradient(to right, rgba(0,0,0,0.15), rgba(255,255,255,0.15));
-      background-size: 20px 6px;
+      background-size: 24px 6px;
       background-repeat: repeat-x;
       border-radius: 3px 3px 0 0;
     }
@@ -107,29 +107,58 @@
       <!-- Bloque 1: Ruta CDMX - Madrid / Bogotá - CDMX (Multi-destino) -->
       <div>
         <label class="block text-[10px] font-black uppercase tracking-wider text-[var(--muted-foreground)] mb-3">Bloque 1: Ruta Transatlántica (MEX-MAD y BOG-MEX)</label>
-        <div class="flex flex-col gap-3">
-          <!-- Opción A: Directo -->
-          <div id="card-mario-trans-directo" onclick="setOption('marioTrans', 'directo')" class="lego-brick lego-studs bg-blue-500 border-blue-600 text-white p-4 flex flex-col justify-between min-h-[90px]">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Vuelo Directo (Aeroméxico/Iberia)</h3>
-                <p class="text-[9px] text-blue-100/90 mt-0.5">MEX-MAD directo de ida y BOG-MEX directo de regreso. Máxima comodidad.</p>
+        <div class="flex flex-col gap-4">
+          
+          <!-- Opción A: Directo (Aeroméxico/Iberia) -->
+          <div id="card-mario-trans-directo" onclick="setOption('marioTrans', 'directo')" class="lego-brick lego-studs bg-blue-500 border-blue-600 text-white p-4 flex flex-col justify-between min-h-[140px]">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <!-- SVG Aeroméxico / Iberia -->
+                <div class="bg-white/95 rounded px-2 py-0.5 flex items-center gap-2 shadow-sm">
+                  <svg class="h-3 w-8" viewBox="0 0 100 25" fill="none"><path d="M5 2h10v20H5V2z" fill="#D71920"/><path d="M18 2h6v20h-6V2z" fill="#FAC800"/><text x="30" y="18" fill="#D71920" font-family="sans-serif" font-weight="bold" font-size="11">IB</text></svg>
+                  <span class="text-slate-400 text-[10px]">|</span>
+                  <svg class="h-3 w-10" viewBox="0 0 120 25" fill="none"><circle cx="12" cy="12" r="10" fill="#0F2C59"/><path d="M7 12l4-4 4 4-4 4-4-4z" fill="white"/><text x="28" y="17" fill="#0F2C59" font-family="sans-serif" font-weight="bold" font-size="10">AM</text></svg>
+                </div>
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide">Tarifa Clásica</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">Recomendado</span>
+              <h3 class="font-bold text-xs">Vuelo Directo Transatlántico</h3>
+              <p class="text-[9px] text-blue-100/90 mt-1">MEX-MAD e BOG-MEX sin escalas. Ahorro masivo de tiempo.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-mario-trans-directo">$20,000 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <!-- Grid de Beneficios -->
+              <div class="flex gap-3 text-[9px] font-bold text-blue-100">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1">🧳 Maleta (23kg)</span>
+                <span class="flex items-center gap-1">💺 Asiento</span>
+              </div>
+              <div class="font-black text-sm">$20,000 MXN</div>
+            </div>
           </div>
 
-          <!-- Opción B: Con Escala -->
-          <div id="card-mario-trans-escala" onclick="setOption('marioTrans', 'escala')" class="lego-brick lego-studs bg-blue-400 border-blue-500 text-white p-4 flex flex-col justify-between min-h-[90px] opacity-55">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Con Escala (Airlines de EE.UU./Canadá)</h3>
-                <p class="text-[9px] text-blue-100/90 mt-0.5">Escalas de 3-6 horas en hubs principales. Mayor duración.</p>
+          <!-- Opción B: Con Escala (EE.UU./Canadá) -->
+          <div id="card-mario-trans-escala" onclick="setOption('marioTrans', 'escala')" class="lego-brick lego-studs bg-blue-400 border-blue-500 text-white p-4 flex flex-col justify-between min-h-[140px] opacity-55">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <!-- SVG Escalas (Múltiples marcas) -->
+                <div class="bg-white/95 rounded px-2 py-0.5 flex items-center gap-1 shadow-sm text-slate-700 font-bold text-[9px] uppercase tracking-wider">
+                  🇺🇸/🇨🇦 Aerolíneas Escala
+                </div>
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide">Tarifa Básica</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">Económico</span>
+              <h3 class="font-bold text-xs">Vuelo con Escala</h3>
+              <p class="text-[9px] text-blue-100/90 mt-1">Escalas de 3-6 horas en EE.UU. o Canadá (requiere visa/permiso).</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-mario-trans-escala">$16,500 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <!-- Grid de Beneficios -->
+              <div class="flex gap-3 text-[9px] font-bold text-blue-200">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1 text-white/50 line-through">🧳 Sin Maleta</span>
+                <span class="flex items-center gap-1 text-white/50 line-through">💺 Sin Asiento</span>
+              </div>
+              <div class="font-black text-sm">$16,500 MXN</div>
+            </div>
           </div>
         </div>
       </div>
@@ -137,42 +166,76 @@
       <!-- Bloque 2: Ruta Barcelona -> Bogotá (Puente de conexión) -->
       <div>
         <label class="block text-[10px] font-black uppercase tracking-wider text-[var(--muted-foreground)] mb-3">Bloque 2: Enlace España ➡️ Colombia (BCN-BOG)</label>
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-4">
+          
           <!-- Opción A: Directo Avianca (Juntos) -->
-          <div id="card-mario-bcn-directo" onclick="setOption('marioBcn', 'directo')" class="lego-brick lego-studs bg-blue-500 border-blue-600 text-white p-4 flex flex-col justify-between min-h-[90px]">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Directo con Avianca (Viajan al lado)</h3>
-                <p class="text-[9px] text-blue-100/90 mt-0.5">Vuelo de 10.5h sin escalas de Barcelona a Bogotá. Viajan juntos.</p>
+          <div id="card-mario-bcn-directo" onclick="setOption('marioBcn', 'directo')" class="lego-brick lego-studs bg-blue-500 border-blue-600 text-white p-4 flex flex-col justify-between min-h-[140px]">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <!-- SVG Avianca -->
+                <div class="bg-white/95 rounded px-2 py-0.5 flex items-center shadow-sm">
+                  <svg class="h-3 w-16" viewBox="0 0 100 25" fill="none"><path d="M5 5c15 0 20 15 30 15s10-15 5-15" fill="#E2231A"/><text x="35" y="18" fill="#E2231A" font-family="sans-serif" font-weight="bold" font-size="11">avianca</text></svg>
+                </div>
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide">Tarifa Classic</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">¡Juntos! Directo</span>
+              <h3 class="font-bold text-xs">BCN-BOG Directo (Juntos)</h3>
+              <p class="text-[9px] text-blue-100/90 mt-1">10.5 horas directas de Barcelona a Bogotá. Viajan al lado del otro.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-mario-bcn-directo">$14,000 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <div class="flex gap-3 text-[9px] font-bold text-blue-100">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1">🧳 Maleta (23kg)</span>
+                <span class="flex items-center gap-1">💺 Asiento</span>
+              </div>
+              <div class="font-black text-sm">$14,000 MXN</div>
+            </div>
           </div>
 
           <!-- Opción B: Escala Iberia (Juntos) -->
-          <div id="card-mario-bcn-escala" onclick="setOption('marioBcn', 'escala')" class="lego-brick lego-studs bg-blue-400 border-blue-500 text-white p-4 flex flex-col justify-between min-h-[90px] opacity-55">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Escala Corta Iberia (Vía Madrid)</h3>
-                <p class="text-[9px] text-blue-100/90 mt-0.5">Salida de Barcelona, escala de conexión en Madrid y vuelo a Bogotá juntos.</p>
+          <div id="card-mario-bcn-escala" onclick="setOption('marioBcn', 'escala')" class="lego-brick lego-studs bg-blue-400 border-blue-500 text-white p-4 flex flex-col justify-between min-h-[140px] opacity-55">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <!-- SVG Iberia -->
+                <div class="bg-white/95 rounded px-2 py-0.5 flex items-center shadow-sm">
+                  <svg class="h-3 w-14" viewBox="0 0 100 25" fill="none"><path d="M5 2h10v20H5V2z" fill="#D71920"/><path d="M18 2h6v20h-6V2z" fill="#FAC800"/><text x="30" y="18" fill="#D71920" font-family="sans-serif" font-weight="bold" font-size="11">IBERIA</text></svg>
+                </div>
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide">Tarifa Óptima</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">¡Juntos! Escala</span>
+              <h3 class="font-bold text-xs">BCN-MAD-BOG (Juntos con Escala)</h3>
+              <p class="text-[9px] text-blue-100/90 mt-1">Escala en Madrid (MAD). Mismos vuelos que Yesica.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-mario-bcn-escala">$13,000 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <div class="flex gap-3 text-[9px] font-bold text-blue-200">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1">🧳 Maleta (23kg)</span>
+                <span class="flex items-center gap-1">💺 Asiento</span>
+              </div>
+              <div class="font-black text-sm">$13,000 MXN</div>
+            </div>
           </div>
 
           <!-- Opción C: Separados -->
-          <div id="card-mario-bcn-separado" onclick="setOption('marioBcn', 'separado')" class="lego-brick lego-studs bg-blue-300 border-blue-400 text-white p-4 flex flex-col justify-between min-h-[90px] opacity-55">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Vuelo por Separado (Diferente aerolínea)</h3>
-                <p class="text-[9px] text-blue-100/90 mt-0.5">Vuelan en aerolíneas u horarios distintos según conveniencia individual.</p>
+          <div id="card-mario-bcn-separado" onclick="setOption('marioBcn', 'separado')" class="lego-brick lego-studs bg-blue-300 border-blue-400 text-white p-4 flex flex-col justify-between min-h-[140px] opacity-55">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide text-blue-200">Bajo Costo</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">Separados</span>
+              <h3 class="font-bold text-xs">BCN-BOG Separados (Vías Distintas)</h3>
+              <p class="text-[9px] text-blue-100/90 mt-1">Vuelan en aerolíneas diferentes. Sin coordinar vuelos.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-mario-bcn-separado">$11,000 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <div class="flex gap-3 text-[9px] font-bold text-blue-200">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1 text-white/50 line-through">🧳 Sin Maleta</span>
+                <span class="flex items-center gap-1 text-white/50 line-through">💺 Sin Asiento</span>
+              </div>
+              <div class="font-black text-sm">$11,000 MXN</div>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -189,72 +252,130 @@
       <!-- Bloque 1: Vuelo de Conexión La Palma - Madrid -->
       <div>
         <label class="block text-[10px] font-black uppercase tracking-wider text-[var(--muted-foreground)] mb-3">Bloque 1: Conexión Nacional (SPC-MAD-SPC)</label>
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-4">
+          
           <!-- Opción A: Viernes 16 Oct (Iberia Express Directo) -->
-          <div id="card-yesica-spc-16" onclick="setOption('yesicaSpc', '16')" class="lego-brick lego-studs bg-rose-500 border-rose-600 text-white p-4 flex flex-col justify-between min-h-[90px]">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Viernes 16 Octubre (Iberia Express Directo)</h3>
-                <p class="text-[9px] text-rose-100/90 mt-0.5">Vuelo directo de 2h 45m. Sale 19:30, llega 23:15 a Madrid. Más rápido.</p>
+          <div id="card-yesica-spc-16" onclick="setOption('yesicaSpc', '16')" class="lego-brick lego-studs bg-rose-500 border-rose-600 text-white p-4 flex flex-col justify-between min-h-[140px]">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <!-- SVG Iberia Express -->
+                <div class="bg-white/95 rounded px-2 py-0.5 flex items-center shadow-sm">
+                  <svg class="h-3 w-16" viewBox="0 0 100 25" fill="none"><path d="M5 2h10v20H5V2z" fill="#D71920"/><path d="M18 2h6v20h-6V2z" fill="#FAC800"/><text x="30" y="18" fill="#D71920" font-family="sans-serif" font-weight="bold" font-size="9">EXPRESS</text></svg>
+                </div>
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide">Tarifa Óptima</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">Directo</span>
+              <h3 class="font-bold text-xs">Viernes 16 Octubre - Directo</h3>
+              <p class="text-[9px] text-rose-100/90 mt-1">Salida 19:30 ➡️ Llegada 23:15. Vuelo de 2h 45m sin paradas.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-yesica-spc-16">$3,646 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <div class="flex gap-3 text-[9px] font-bold text-rose-100">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1">🧳 Maleta (23kg)</span>
+                <span class="flex items-center gap-1">💺 Asiento</span>
+              </div>
+              <div class="font-black text-sm">$3,646 MXN</div>
+            </div>
           </div>
 
           <!-- Opción B: Sábado 17 Oct (Binter con Escala) -->
-          <div id="card-yesica-spc-17" onclick="setOption('yesicaSpc', '17')" class="lego-brick lego-studs bg-rose-400 border-rose-500 text-white p-4 flex flex-col justify-between min-h-[90px] opacity-55">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Sábado 17 Octubre (Binter Canarias)</h3>
-                <p class="text-[9px] text-rose-100/90 mt-0.5">Vuelo con escala en Tenerife Norte (~5.5 horas de viaje total).</p>
+          <div id="card-yesica-spc-17" onclick="setOption('yesicaSpc', '17')" class="lego-brick lego-studs bg-rose-400 border-rose-500 text-white p-4 flex flex-col justify-between min-h-[140px] opacity-55">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <!-- SVG Binter -->
+                <div class="bg-white/95 rounded px-2 py-0.5 flex items-center shadow-sm">
+                  <svg class="h-3 w-14" viewBox="0 0 100 25" fill="none"><path d="M5 10c5-5 10-5 15 0s10 5 15 0" stroke="#00A859" stroke-width="3" stroke-linecap="round"/><text x="40" y="18" fill="#00A859" font-family="sans-serif" font-weight="bold" font-size="11">Binter</text></svg>
+                </div>
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide text-rose-200">Tarifa Basic</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">1 Escala</span>
+              <h3 class="font-bold text-xs">Sábado 17 Octubre - Con Escala</h3>
+              <p class="text-[9px] text-rose-100/90 mt-1">Escala en Tenerife Norte (TFN). Viaje total dura más de 5 horas.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-yesica-spc-17">$5,000 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <div class="flex gap-3 text-[9px] font-bold text-rose-200">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1 text-white/50 line-through">🧳 Sin Maleta</span>
+                <span class="flex items-center gap-1 text-white/50 line-through">💺 Sin Asiento</span>
+              </div>
+              <div class="font-black text-sm">$5,000 MXN</div>
+            </div>
           </div>
+
         </div>
       </div>
 
       <!-- Bloque 2: Ruta España - Colombia - España (Multi-destino) -->
       <div>
         <label class="block text-[10px] font-black uppercase tracking-wider text-[var(--muted-foreground)] mb-3">Bloque 2: Enlace España ➡️ Colombia y Retorno (BCN-BOG y BOG-MAD)</label>
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-4">
+          
           <!-- Opción A: Escala Iberia (Juntos) -->
-          <div id="card-yesica-trans-escala" onclick="setOption('yesicaTrans', 'escala')" class="lego-brick lego-studs bg-rose-500 border-rose-600 text-white p-4 flex flex-col justify-between min-h-[90px]">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Puente BCN-MAD-BOG y BOG-MAD Directo (Iberia)</h3>
-                <p class="text-[9px] text-rose-100/90 mt-0.5">Viaja contigo en la ida en Iberia y ella vuelve directo de Bogotá a Madrid.</p>
+          <div id="card-yesica-trans-escala" onclick="setOption('yesicaTrans', 'escala')" class="lego-brick lego-studs bg-rose-500 border-rose-600 text-white p-4 flex flex-col justify-between min-h-[140px]">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <div class="bg-white/95 rounded px-2 py-0.5 flex items-center shadow-sm">
+                  <svg class="h-3 w-14" viewBox="0 0 100 25" fill="none"><path d="M5 2h10v20H5V2z" fill="#D71920"/><path d="M18 2h6v20h-6V2z" fill="#FAC800"/><text x="30" y="18" fill="#D71920" font-family="sans-serif" font-weight="bold" font-size="11">IBERIA</text></svg>
+                </div>
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide">Tarifa Óptima</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">Iberia Escala</span>
+              <h3 class="font-bold text-xs">BCN-MAD-BOG y BOG-MAD Directo</h3>
+              <p class="text-[9px] text-rose-100/90 mt-1">Vuelo a Colombia con escala en MAD contigo. Retorno directo BOG-MAD.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-yesica-trans-escala">$22,881 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <div class="flex gap-3 text-[9px] font-bold text-rose-100">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1">🧳 Maleta (23kg)</span>
+                <span class="flex items-center gap-1">💺 Asiento</span>
+              </div>
+              <div class="font-black text-sm">$22,881 MXN</div>
+            </div>
           </div>
 
           <!-- Opción B: Directo Avianca (Juntos) -->
-          <div id="card-yesica-trans-directo" onclick="setOption('yesicaTrans', 'directo')" class="lego-brick lego-studs bg-rose-400 border-rose-500 text-white p-4 flex flex-col justify-between min-h-[90px] opacity-55">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Puente BCN-BOG Directo y BOG-MAD Directo (Avianca)</h3>
-                <p class="text-[9px] text-rose-100/90 mt-0.5">Ambos trayectos transatlánticos son 100% directos. Gran comodidad.</p>
+          <div id="card-yesica-trans-directo" onclick="setOption('yesicaTrans', 'directo')" class="lego-brick lego-studs bg-rose-400 border-rose-500 text-white p-4 flex flex-col justify-between min-h-[140px] opacity-55">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <div class="bg-white/95 rounded px-2 py-0.5 flex items-center shadow-sm">
+                  <svg class="h-3 w-16" viewBox="0 0 100 25" fill="none"><path d="M5 5c15 0 20 15 30 15s10-15 5-15" fill="#E2231A"/><text x="35" y="18" fill="#E2231A" font-family="sans-serif" font-weight="bold" font-size="11">avianca</text></svg>
+                </div>
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide">Tarifa Classic</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">Avianca Directo</span>
+              <h3 class="font-bold text-xs">BCN-BOG y BOG-MAD (Ambos Directos)</h3>
+              <p class="text-[9px] text-rose-100/90 mt-1">Vuelos 100% directos tanto de ida a Colombia como de vuelta a España.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-yesica-trans-directo">$25,000 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <div class="flex gap-3 text-[9px] font-bold text-rose-200">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1">🧳 Maleta (23kg)</span>
+                <span class="flex items-center gap-1">💺 Asiento</span>
+              </div>
+              <div class="font-black text-sm">$25,000 MXN</div>
+            </div>
           </div>
 
           <!-- Opción C: Escala Larga / Económico -->
-          <div id="card-yesica-trans-eco" onclick="setOption('yesicaTrans', 'eco')" class="lego-brick lego-studs bg-rose-300 border-rose-400 text-white p-4 flex flex-col justify-between min-h-[90px] opacity-55">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-bold text-xs">Vuelo con Escalas Largas (Económico)</h3>
-                <p class="text-[9px] text-rose-100/90 mt-0.5">Escalas de mayor duración. Puede implicar cambio de aerolínea.</p>
+          <div id="card-yesica-trans-eco" onclick="setOption('yesicaTrans', 'eco')" class="lego-brick lego-studs bg-rose-300 border-rose-400 text-white p-4 flex flex-col justify-between min-h-[140px] opacity-55">
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-[9px] uppercase font-black bg-white/20 px-2 py-0.5 rounded tracking-wide text-rose-200">Tarifa Básica</span>
               </div>
-              <span class="text-[9px] uppercase font-bold bg-white/20 px-1.5 py-0.5 rounded">Económico</span>
+              <h3 class="font-bold text-xs">Trayectos con Escalas Largas</h3>
+              <p class="text-[9px] text-rose-100/90 mt-1">Escalas prolongadas y sin equipaje de bodega documentado.</p>
             </div>
-            <div class="text-right font-black text-sm mt-2" id="price-yesica-trans-eco">$19,500 MXN</div>
+            
+            <div class="flex justify-between items-end border-t border-white/20 pt-2 mt-2">
+              <div class="flex gap-3 text-[9px] font-bold text-rose-200">
+                <span class="flex items-center gap-1">🎒 Carry-on</span>
+                <span class="flex items-center gap-1 text-white/50 line-through">🧳 Sin Maleta</span>
+                <span class="flex items-center gap-1 text-white/50 line-through">💺 Sin Asiento</span>
+              </div>
+              <div class="font-black text-sm">$19,500 MXN</div>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -314,7 +435,7 @@
       const progressPercent = Math.min((grandTotal / budgetLimit) * 100, 100);
 
       // Formatear textos
-      const formatMXN = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
+      const formatMXN = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val) + ' MXN';
 
       // Actualizar DOM de Costos
       document.getElementById('cost-display').innerText = formatMXN(grandTotal);
