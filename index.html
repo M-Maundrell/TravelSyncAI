@@ -181,9 +181,19 @@
 
   </div>
 
+  <!-- CALENDARIO E ITINERARIO VISUAL -->
+  <div class="max-w-6xl mx-auto mt-6 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+    <h3 class="text-base font-extrabold text-slate-900 mb-4 flex items-center gap-2">
+      📅 Calendario de Ruta e Itinerario Visual
+    </h3>
+    <div id="calendar-timeline" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Se carga por JS -->
+    </div>
+  </div>
+
   <!-- MODAL PARA AÑADIR VUELOS -->
   <div id="modal-add-flight" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50 transition-all duration-300">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-2xl w-full p-6 space-y-4 max-h-[95vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="text-base font-extrabold text-slate-900">✈️ Añadir Vuelo / Tren Personalizado</h3>
         <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">×</button>
@@ -232,18 +242,22 @@
         <!-- Detalles Trayecto Ida -->
         <div class="space-y-2 border-t border-slate-100 pt-3">
           <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalles de Ida</h4>
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-4 gap-2.5">
             <div>
-              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Número de Vuelo</label>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Número Vuelo</label>
               <input type="text" id="form-flight-number" placeholder="Ej. IB6400" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Fecha</label>
+              <input type="text" id="form-flight-date" placeholder="Ej. Viernes 16 Oct" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
             </div>
             <div>
               <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ruta</label>
               <input type="text" id="form-details" placeholder="Ej. SPC ➔ MAD" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
             </div>
             <div>
-              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horarios y Fechas</label>
-              <input type="text" id="form-schedule" placeholder="Ej. Salida 19:30 | Llegada 23:15" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horario</label>
+              <input type="text" id="form-schedule" placeholder="Ej. 19:30 - 23:15" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
             </div>
           </div>
         </div>
@@ -257,18 +271,22 @@
         <!-- Detalles Trayecto Regreso -->
         <div id="form-return-fields" class="hidden space-y-2 border-t border-slate-100 pt-3">
           <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalles de Regreso</h4>
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-4 gap-2.5">
             <div>
-              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Número de Vuelo (Regreso)</label>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Número Vuelo (Regreso)</label>
               <input type="text" id="form-return-flight-number" placeholder="Ej. IB6401" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Fecha (Regreso)</label>
+              <input type="text" id="form-return-flight-date" placeholder="Ej. Viernes 27 Nov" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
             </div>
             <div>
               <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ruta (Regreso)</label>
               <input type="text" id="form-return-details" placeholder="Ej. MAD ➔ SPC" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
             </div>
             <div>
-              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horarios (Regreso)</label>
-              <input type="text" id="form-return-schedule" placeholder="Ej. Salida 12:00 | Llegada 15:45" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horario (Regreso)</label>
+              <input type="text" id="form-return-schedule" placeholder="Ej. 12:00 - 15:45" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
             </div>
           </div>
         </div>
@@ -335,7 +353,7 @@
     // Tipo de Cambio de referencia: 1 EUR = 19.73 MXN
     const MXN_EUR_RATE = 19.73;
 
-    // Base de Datos de Vuelos Predefinidos
+    // Base de Datos de Vuelos Predefinidos (Advisory Curated: Se añade fecha explícita en todos los tramos)
     const defaultFlights = {
       marioTrans: [
         {
@@ -348,12 +366,14 @@
           outbound: {
             route: "CDMX ➔ Madrid (Directo)",
             schedule: "Salida: 12:00 | Llegada: 06:00 (+1)",
-            flightNumber: "AM1"
+            flightNumber: "AM1",
+            date: "Viernes 16 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ CDMX (Directo)",
             schedule: "Salida: 23:00 | Llegada: 05:00 (+1)",
-            flightNumber: "IB6586"
+            flightNumber: "IB6586",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Clásica (Turista)",
           bag: true,
@@ -373,12 +393,14 @@
           outbound: {
             route: "CDMX ➔ Newark ➔ Madrid",
             schedule: "Salida: 08:30 | Llegada: 07:30 (+1)",
-            flightNumber: "UA321 / UA120"
+            flightNumber: "UA321 / UA120",
+            date: "Viernes 16 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ Newark ➔ CDMX",
             schedule: "Salida: 16:00 | Llegada: 22:30",
-            flightNumber: "UA240"
+            flightNumber: "UA240",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Clásica (Vía USA)",
           bag: true,
@@ -398,12 +420,14 @@
           outbound: {
             route: "CDMX ➔ Panamá ➔ Madrid",
             schedule: "Salida: 09:00 | Llegada: 06:00 (+1)",
-            flightNumber: "CM120 / UX64"
+            flightNumber: "CM120 / UX64",
+            date: "Viernes 16 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ Panamá ➔ CDMX",
             schedule: "Salida: 15:00 | Llegada: 21:30",
-            flightNumber: "CM440 / CM121"
+            flightNumber: "CM440 / CM121",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Turista (Sin Visa PTY)",
           bag: true,
@@ -423,12 +447,14 @@
           outbound: {
             route: "CDMX ➔ Madrid (Directo)",
             schedule: "Salida: 13:00 | Llegada: 06:30 (+1)",
-            flightNumber: "IB6402"
+            flightNumber: "IB6402",
+            date: "Viernes 16 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ CDMX (Directo)",
             schedule: "Salida: 22:30 | Llegada: 04:30 (+1)",
-            flightNumber: "IB6588"
+            flightNumber: "IB6588",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Premium (Turista Premium)",
           bag: true,
@@ -448,12 +474,14 @@
           outbound: {
             route: "CDMX (MEX) ➔ Bogotá (BOG) (Directo)",
             schedule: "Salida: 13:00 | Llegada: 17:30",
-            flightNumber: "AV73"
+            flightNumber: "AV73",
+            date: "Viernes 16 Oct 2026"
           },
           return: {
             route: "Bogotá (BOG) ➔ CDMX (MEX) (Directo)",
             schedule: "Salida: 08:30 | Llegada: 13:15",
-            flightNumber: "AV72"
+            flightNumber: "AV72",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Classic (Turista)",
           bag: true,
@@ -475,7 +503,8 @@
           outbound: {
             route: "Barcelona ➔ Bogotá (Directo)",
             schedule: "Salida: 14:30 | Llegada: 18:30",
-            flightNumber: "AV19"
+            flightNumber: "AV19",
+            date: "Viernes 30 Oct 2026"
           },
           return: null,
           class: "Tarifa Classic (Turista)",
@@ -494,7 +523,8 @@
           outbound: {
             route: "Barcelona ➔ Madrid ➔ Bogotá",
             schedule: "Salida: 12:00 | Llegada: 18:30",
-            flightNumber: "IB3001 / IB6585"
+            flightNumber: "IB3001 / IB6585",
+            date: "Viernes 30 Oct 2026"
           },
           return: null,
           class: "Tarifa Classic (Turista)",
@@ -513,7 +543,8 @@
           outbound: {
             route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
             schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 14:30)",
-            flightNumber: "AVE 03080 / AV27"
+            flightNumber: "AVE 03080 / AV27",
+            date: "Viernes 30 Oct 2026"
           },
           return: null,
           class: "Tarifa Classic (Turista + AVE)",
@@ -532,7 +563,8 @@
           outbound: {
             route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
             schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 15:00)",
-            flightNumber: "AVE 03080 / UX21"
+            flightNumber: "AVE 03080 / UX21",
+            date: "Viernes 30 Oct 2026"
           },
           return: null,
           class: "Tarifa Classic (Turista + AVE)",
@@ -551,7 +583,8 @@
           outbound: {
             route: "Barcelona ➔ Bogotá (Horarios Diferentes)",
             schedule: "Horarios variables según aerolínea",
-            flightNumber: "VY1234 / AV19"
+            flightNumber: "VY1234 / AV19",
+            date: "Viernes 30 Oct 2026"
           },
           return: null,
           class: "Tarifa Básica (Turista)",
@@ -570,12 +603,14 @@
           outbound: {
             route: "Bogotá (BOG) ➔ Madrid (MAD) (Directo)",
             schedule: "Salida: 21:00 | Llegada: 14:15 (+1)",
-            flightNumber: "AV26"
+            flightNumber: "AV26",
+            date: "Sábado 17 Oct 2026"
           },
           return: {
             route: "Barcelona (BCN) ➔ Bogotá (BOG) (Directo)",
             schedule: "Salida: 14:30 | Llegada: 18:30",
-            flightNumber: "AV19"
+            flightNumber: "AV19",
+            date: "Viernes 30 Oct 2026"
           },
           class: "Tarifa Classic (Turista)",
           bag: true,
@@ -593,12 +628,14 @@
           outbound: {
             route: "Bogotá (BOG) ➔ Madrid (MAD) (Directo)",
             schedule: "Salida: 22:30 | Llegada: 15:30 (+1)",
-            flightNumber: "IB6586"
+            flightNumber: "IB6586",
+            date: "Sábado 17 Oct 2026"
           },
           return: {
             route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)",
             schedule: "Salida: 12:00 | Llegada: 18:30",
-            flightNumber: "IB3001 / IB6585"
+            flightNumber: "IB3001 / IB6585",
+            date: "Viernes 30 Oct 2026"
           },
           class: "Tarifa Classic (Turista)",
           bag: true,
@@ -617,13 +654,15 @@
           details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
           outbound: {
             route: "La Palma (SPC) ➔ Madrid (MAD)",
-            schedule: "Salida Friday 16 Oct: 19:30 | Llegada: 23:15",
-            flightNumber: "I23841"
+            schedule: "Salida: 19:30 | Llegada: 23:15",
+            flightNumber: "I23841",
+            date: "Viernes 16 Oct 2026"
           },
           return: {
             route: "Madrid (MAD) ➔ La Palma (SPC)",
             schedule: "Salida: 12:00 | Llegada: 15:45",
-            flightNumber: "I23840"
+            flightNumber: "I23840",
+            date: "Sábado 28 Nov 2026"
           },
           class: "Tarifa Óptima (Turista)",
           bag: true,
@@ -640,13 +679,15 @@
           details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
           outbound: {
             route: "La Palma (SPC) ➔ Madrid (MAD)",
-            schedule: "Salida Friday 16 Oct: 19:30 | Llegada: 23:15",
-            flightNumber: "I23841"
+            schedule: "Salida: 19:30 | Llegada: 23:15",
+            flightNumber: "I23841",
+            date: "Viernes 16 Oct 2026"
           },
           return: {
             route: "Madrid (MAD) ➔ La Palma (SPC)",
             schedule: "Salida: 12:00 | Llegada: 15:45",
-            flightNumber: "I23840"
+            flightNumber: "I23840",
+            date: "Sábado 28 Nov 2026"
           },
           class: "Tarifa Básica (Turista)",
           bag: false,
@@ -663,13 +704,15 @@
           details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
           outbound: {
             route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)",
-            schedule: "Salida Saturday 17 Oct: 08:30 | Llegada: 13:30",
-            flightNumber: "NT342"
+            schedule: "Salida: 08:30 | Llegada: 13:30",
+            flightNumber: "NT342",
+            date: "Sábado 17 Oct 2026"
           },
           return: {
             route: "Madrid (MAD) ➔ La Palma (SPC) (Directo)",
             schedule: "Salida: 12:00 | Llegada: 15:45",
-            flightNumber: "NT5120"
+            flightNumber: "NT5120",
+            date: "Sábado 28 Nov 2026"
           },
           class: "Tarifa Básica (Turista)",
           bag: false,
@@ -686,13 +729,15 @@
           details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
           outbound: {
             route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)",
-            schedule: "Salida Saturday 17 Oct: 08:30 | Llegada: 13:30",
-            flightNumber: "NT342"
+            schedule: "Salida: 08:30 | Llegada: 13:30",
+            flightNumber: "NT342",
+            date: "Sábado 17 Oct 2026"
           },
           return: {
             route: "Madrid (MAD) ➔ La Palma (SPC) (Directo)",
             schedule: "Salida: 12:00 | Llegada: 15:45",
-            flightNumber: "NT5120"
+            flightNumber: "NT5120",
+            date: "Sábado 28 Nov 2026"
           },
           class: "Tarifa Classic (Turista)",
           bag: true,
@@ -712,12 +757,14 @@
           outbound: {
             route: "Barcelona ➔ Madrid ➔ Bogotá",
             schedule: "Salida: 12:00 | Llegada: 18:30",
-            flightNumber: "IB3001 / IB6585"
+            flightNumber: "IB3001 / IB6585",
+            date: "Viernes 30 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ Madrid (Directo)",
             schedule: "Salida: 23:00 | Llegada: 14:30 (+1)",
-            flightNumber: "IB6586"
+            flightNumber: "IB6586",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Classic (Turista)",
           bag: true,
@@ -735,12 +782,14 @@
           outbound: {
             route: "Barcelona ➔ Bogotá (Directo)",
             schedule: "Salida: 14:30 | Llegada: 18:30",
-            flightNumber: "AV19"
+            flightNumber: "AV19",
+            date: "Viernes 30 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ Madrid (Directo)",
             schedule: "Salida: 20:00 | Llegada: 11:30 (+1)",
-            flightNumber: "AV10"
+            flightNumber: "AV10",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Classic (Turista)",
           bag: true,
@@ -758,12 +807,14 @@
           outbound: {
             route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
             schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 14:30)",
-            flightNumber: "AVE 03080 / AV27"
+            flightNumber: "AVE 03080 / AV27",
+            date: "Viernes 30 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ Madrid (Directo)",
             schedule: "Salida: 20:00 | Llegada: 11:30 (+1)",
-            flightNumber: "AV10"
+            flightNumber: "AV10",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Classic (Turista + AVE)",
           bag: true,
@@ -781,12 +832,14 @@
           outbound: {
             route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
             schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 15:00)",
-            flightNumber: "AVE 03080 / UX21"
+            flightNumber: "AVE 03080 / UX21",
+            date: "Viernes 30 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ Madrid (Directo)",
             schedule: "Salida: 23:30 | Llegada: 15:00 (+1)",
-            flightNumber: "UX22"
+            flightNumber: "UX22",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Básica (Turista + AVE)",
           bag: false,
@@ -804,12 +857,14 @@
           outbound: {
             route: "Barcelona ➔ Madrid ➔ Bogotá",
             schedule: "Escala larga 6h",
-            flightNumber: "UX7702"
+            flightNumber: "UX7702",
+            date: "Viernes 30 Oct 2026"
           },
           return: {
             route: "Bogotá ➔ Madrid ➔ Barcelona",
             schedule: "Escala larga 8h",
-            flightNumber: "UX21"
+            flightNumber: "UX21",
+            date: "Viernes 27 Nov 2026"
           },
           class: "Tarifa Básica (Turista)",
           bag: false,
@@ -1182,12 +1237,14 @@
         outbound: {
           route: document.getElementById('form-details').value,
           schedule: document.getElementById('form-schedule').value,
-          flightNumber: document.getElementById('form-flight-number').value
+          flightNumber: document.getElementById('form-flight-number').value,
+          date: document.getElementById('form-flight-date').value
         },
         return: isRoundtrip ? {
           route: document.getElementById('form-return-details').value,
           schedule: document.getElementById('form-return-schedule').value,
-          flightNumber: document.getElementById('form-return-flight-number').value
+          flightNumber: document.getElementById('form-return-flight-number').value,
+          date: document.getElementById('form-return-flight-date').value
         } : null,
         class: document.getElementById('form-class').value,
         bag: document.getElementById('form-bag').checked,
@@ -1207,6 +1264,119 @@
       
       closeModal();
       broadcastState(); // Propagar cambios
+    }
+
+    // Render del Calendario/Itinerario dinámico
+    function renderCalendar(marioTransObj, marioBcnObj, yesicaSpcObj, yesicaTransObj) {
+      const dateMarioOut = marioTransObj.outbound.date || "Viernes 16 Oct 2026";
+      const dateYesicaOut = yesicaSpcObj.outbound.date || (state.yesicaSpc.startsWith('17') ? "Sábado 17 Oct 2026" : "Viernes 16 Oct 2026");
+      const dateBcnBog = marioBcnObj.outbound.date || "Viernes 30 Oct 2026";
+      const dateReturn = marioTransObj.return ? (marioTransObj.return.date || "Viernes 27 Nov 2026") : "Viernes 27 Nov 2026";
+
+      const container = document.getElementById('calendar-timeline');
+      container.innerHTML = `
+        <!-- CARD 1 -->
+        <div class="border border-slate-100 bg-slate-50/50 rounded-xl p-4 space-y-2">
+          <div class="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Paso 1: Salida de Origen</div>
+          <div class="text-sm font-black text-slate-900">16 - 17 Octubre 2026</div>
+          <div class="text-xs space-y-1.5 text-slate-600">
+            <div class="flex items-start gap-1">
+              <span class="text-blue-500">🇲🇽</span>
+              <div>
+                <strong>Mario:</strong> MEX ➔ MAD (${dateMarioOut.replace(" 2026", "")})
+                <span class="text-[10px] text-slate-400 block">${marioTransObj.outbound.flightNumber || 'N/A'} | ${marioTransObj.outbound.schedule}</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-1">
+              <span class="text-pink-500">🇪🇸</span>
+              <div>
+                <strong>Yesica:</strong> SPC ➔ MAD (${dateYesicaOut.replace(" 2026", "")})
+                <span class="text-[10px] text-slate-400 block">${yesicaSpcObj.outbound.flightNumber || 'N/A'} | ${yesicaSpcObj.outbound.schedule}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2 -->
+        <div class="border border-slate-100 bg-slate-50/50 rounded-xl p-4 space-y-2">
+          <div class="text-[10px] uppercase font-bold text-purple-600 tracking-wider">Paso 2: Reunión en Madrid</div>
+          <div class="text-sm font-black text-slate-900">17 - 23 Octubre 2026</div>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p>🌟 <strong>Estancia Conjunta:</strong> 6 noches en Madrid.</p>
+            <p class="text-[10px] text-slate-400">Hospedaje a seleccionar en el Paso 2 (Chamberí vs. Chueca).</p>
+          </div>
+        </div>
+
+        <!-- CARD 3 -->
+        <div class="border border-slate-100 bg-slate-50/50 rounded-xl p-4 space-y-2">
+          <div class="text-[10px] uppercase font-bold text-amber-600 tracking-wider">Paso 3: Enlace a Barcelona</div>
+          <div class="text-sm font-black text-slate-900">Viernes 23 Octubre 2026</div>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p>🚄 <strong>Traslado:</strong> Madrid ➔ Barcelona.</p>
+            <p class="text-[10px] text-slate-500 font-medium">
+              ${marioBcnObj.train ? "Enlace en Tren AVE de alta velocidad (3 hrs) ATOCHA-SANTS." : "Enlace vía aérea de conexión Barcelona."}
+            </p>
+          </div>
+        </div>
+
+        <!-- CARD 4 -->
+        <div class="border border-slate-100 bg-slate-50/50 rounded-xl p-4 space-y-2">
+          <div class="text-[10px] uppercase font-bold text-purple-600 tracking-wider">Paso 4: Estancia Barcelona</div>
+          <div class="text-sm font-black text-slate-900">23 - 30 Octubre 2026</div>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p>🏢 <strong>Estancia Conjunta:</strong> 7 noches en Barcelona.</p>
+            <p class="text-[10px] text-slate-400">Hospedaje a seleccionar en Paso 2 (Eixample vs. Born).</p>
+          </div>
+        </div>
+
+        <!-- CARD 5 -->
+        <div class="border border-slate-100 bg-slate-50/50 rounded-xl p-4 space-y-2">
+          <div class="text-[10px] uppercase font-bold text-emerald-600 tracking-wider">Paso 5: Salto a Colombia</div>
+          <div class="text-sm font-black text-slate-900">Viernes 30 Octubre 2026</div>
+          <div class="text-xs text-slate-600 space-y-1.5">
+            <div class="flex items-start gap-1">
+              <span>✈️</span>
+              <div>
+                <strong>Juntos:</strong> BCN ➔ BOG (Vuelo transatlántico)
+                <span class="text-[10px] text-slate-400 block">${marioBcnObj.outbound.flightNumber || 'N/A'} | ${marioBcnObj.outbound.schedule}</span>
+              </div>
+            </div>
+            <p class="text-[10px] text-slate-500 font-medium mt-1">
+              ${marioBcnObj.train ? "Nota: Salen en Tren AVE temprano BCN-MAD para tomar vuelo desde Barajas (MAD)." : "Nota: Salen directo de Barcelona (BCN)."}
+            </p>
+          </div>
+        </div>
+
+        <!-- CARD 6 -->
+        <div class="border border-slate-100 bg-slate-50/50 rounded-xl p-4 space-y-2">
+          <div class="text-[10px] uppercase font-bold text-purple-600 tracking-wider">Paso 6: Estancia Bogotá</div>
+          <div class="text-sm font-black text-slate-900">30 Oct - Retorno</div>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p>🇨🇴 <strong>Estancia Conjunta:</strong> 4 a 5 semanas en Bogotá.</p>
+            <p class="text-[10px] text-slate-400">Retorno planificado el ${dateReturn.replace(" 2026", "")}.</p>
+          </div>
+        </div>
+
+        <!-- CARD 7 -->
+        <div class="border border-slate-100 bg-slate-50/50 rounded-xl p-4 space-y-2 md:col-span-2 lg:col-span-2">
+          <div class="text-[10px] uppercase font-bold text-rose-600 tracking-wider">Paso 7: Retorno Final</div>
+          <div class="text-sm font-black text-slate-900">${dateReturn}</div>
+          <div class="text-xs space-y-1.5 text-slate-600 grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div>
+              <strong>Mario:</strong> BOG ➔ MEX
+              <span class="text-[10px] text-slate-400 block font-mono">
+                ${marioTransObj.return ? `${marioTransObj.return.flightNumber} | ${marioTransObj.return.schedule}` : 'N/A'}
+              </span>
+            </div>
+            <div>
+              <strong>Yesica:</strong> BOG ➔ MAD ➔ SPC
+              <span class="text-[10px] text-slate-400 block font-mono">
+                ${yesicaTransObj.return ? `${yesicaTransObj.return.flightNumber} | ${yesicaTransObj.return.schedule}` : 'N/A'}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     // Render y cálculo en vivo
@@ -1282,8 +1452,9 @@
                     <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">Ida</span>
                     <span class="text-sm font-black text-slate-950">${flight.outbound.route}</span>
                   </div>
-                  <div class="text-xs text-slate-500 font-mono mt-1 flex items-center gap-1.5">
-                    ⏱️ ${flight.outbound.schedule}
+                  <div class="text-xs text-slate-500 font-mono mt-1 flex flex-col gap-0.5">
+                    <span>📅 ${flight.outbound.date || 'Pendiente'}</span>
+                    <span>⏱️ ${flight.outbound.schedule}</span>
                   </div>
                 </div>
                 <div class="text-right">
@@ -1300,8 +1471,9 @@
                     <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">Regreso</span>
                     <span class="text-sm font-black text-slate-950">${flight.return.route}</span>
                   </div>
-                  <div class="text-xs text-slate-500 font-mono mt-1 flex items-center gap-1.5">
-                    ⏱️ ${flight.return.schedule}
+                  <div class="text-xs text-slate-500 font-mono mt-1 flex flex-col gap-0.5">
+                    <span>📅 ${flight.return.date || 'Pendiente'}</span>
+                    <span>⏱️ ${flight.return.schedule}</span>
                   </div>
                 </div>
                 <div class="text-right">
@@ -1339,6 +1511,9 @@
       renderBrick('brick-marioBcn', marioBcnObj, true);
       renderBrick('brick-yesicaSpc', yesicaSpcObj, false);
       renderBrick('brick-yesicaTrans', yesicaTransObj, false);
+
+      // Renderizar el Calendario Dinámico
+      renderCalendar(marioTransObj, marioBcnObj, yesicaSpcObj, yesicaTransObj);
 
       // 4. DETECCION DE CONFLICTOS Y ALERTAS DUALES
       const warnings = [];
