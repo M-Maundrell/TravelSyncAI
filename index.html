@@ -164,7 +164,7 @@
 
   <!-- MODAL PARA AÑADIR VUELOS -->
   <div id="modal-add-flight" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50 transition-all duration-300">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-lg w-full p-6 space-y-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-lg w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
         <h3 class="text-base font-extrabold text-slate-900">✈️ Añadir Vuelo / Tren Personalizado</h3>
         <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">×</button>
@@ -210,24 +210,52 @@
           </div>
         </div>
 
-        <!-- Detalles, Horarios e Identificador de Vuelo -->
-        <div class="grid grid-cols-3 gap-3">
-          <div class="col-span-1">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Número de Vuelo(s)</label>
-            <input type="text" id="form-flight-number" placeholder="Ej. IB6400 / AV19" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+        <!-- Detalles Trayecto Ida -->
+        <div class="space-y-2 border-t border-slate-100 pt-3">
+          <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalles de Ida</h4>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Número de Vuelo</label>
+              <input type="text" id="form-flight-number" placeholder="Ej. IB6400" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ruta</label>
+              <input type="text" id="form-details" placeholder="Ej. SPC ➔ MAD" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horarios y Fechas</label>
+              <input type="text" id="form-schedule" placeholder="Ej. Salida 19:30 | Llegada 23:15" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            </div>
           </div>
-          <div class="col-span-1">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ruta</label>
-            <input type="text" id="form-details" placeholder="Ej. MEX ➔ MAD" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
-          </div>
-          <div class="col-span-1">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horarios y Fechas</label>
-            <input type="text" id="form-schedule" placeholder="Ej. Ida: 12:00 | Vuelta: 23:00" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+        </div>
+
+        <!-- Checkbox de Regreso -->
+        <div class="flex items-center gap-2 pt-2">
+          <input type="checkbox" id="form-is-roundtrip" onchange="toggleFormReturnFields(this.checked)" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+          <label for="form-is-roundtrip" class="text-xs font-bold text-slate-700 cursor-pointer">¿El boleto incluye trayecto de Regreso? (Ida y Vuelta)</label>
+        </div>
+
+        <!-- Detalles Trayecto Regreso -->
+        <div id="form-return-fields" class="hidden space-y-2 border-t border-slate-100 pt-3">
+          <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detalles de Regreso</h4>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Número de Vuelo (Regreso)</label>
+              <input type="text" id="form-return-flight-number" placeholder="Ej. IB6401" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ruta (Regreso)</label>
+              <input type="text" id="form-return-details" placeholder="Ej. MAD ➔ SPC" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horarios (Regreso)</label>
+              <input type="text" id="form-return-schedule" placeholder="Ej. Salida 12:00 | Llegada 15:45" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            </div>
           </div>
         </div>
 
         <!-- Precio y Descripción -->
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-3 gap-3 border-t border-slate-100 pt-3">
           <div class="col-span-1">
             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Precio Total (MXN)</label>
             <input type="number" id="form-price" placeholder="Ej. 13000" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
@@ -278,11 +306,19 @@
           id: "directo",
           title: "Aeroméxico / Iberia (Directo, Clásica)",
           airline: "aeromexico-iberia",
-          flightNumber: "AM1 / IB6586",
           price: 20000,
           description: "Trayecto de larga distancia directo, sin escalas incómodas de ida ni vuelta.",
-          details: "Ida: MEX ➔ MAD (Directo) | Vuelta: BOG ➔ MEX (Directo)",
-          schedule: "Ida: 12:00 - 06:00 (+1) | Vuelta: 23:00 - 05:00 (+1)",
+          details: "Ida: MEX ➔ MAD (Directo) & Vuelta: BOG ➔ MEX (Directo)",
+          outbound: {
+            route: "CDMX ➔ Madrid (Directo)",
+            schedule: "Salida: 12:00 | Llegada: 06:00 (+1)",
+            flightNumber: "AM1"
+          },
+          return: {
+            route: "Bogotá ➔ CDMX (Directo)",
+            schedule: "Salida: 23:00 | Llegada: 05:00 (+1)",
+            flightNumber: "IB6586"
+          },
           class: "Tarifa Clásica (Turista)",
           bag: true,
           carry: true,
@@ -293,11 +329,19 @@
           id: "escala",
           title: "Air Canada (Escala en YUL, Básica)",
           airline: "air-canada",
-          flightNumber: "AC992 / AC846",
           price: 16500,
           description: "Escalas de conexión en Montreal. Se requiere eTA canadiense para tránsito.",
-          details: "Ida: MEX ➔ YUL ➔ MAD (1 Escala) | Vuelta: BOG ➔ YUL ➔ MEX (1 Escala)",
-          schedule: "Ida: 07:00 - 23:00 | Vuelta: 14:00 - 01:00 (+1)",
+          details: "Ida: MEX ➔ YUL ➔ MAD & Vuelta: BOG ➔ YUL ➔ MEX",
+          outbound: {
+            route: "CDMX ➔ Montreal ➔ Madrid",
+            schedule: "Salida: 07:00 | Llegada: 23:00",
+            flightNumber: "AC992 / AC846"
+          },
+          return: {
+            route: "Bogotá ➔ Montreal ➔ CDMX",
+            schedule: "Salida: 14:00 | Llegada: 01:00 (+1)",
+            flightNumber: "AC995"
+          },
           class: "Tarifa Básica (Turista)",
           bag: false,
           carry: true,
@@ -308,11 +352,19 @@
           id: "united",
           title: "United Airlines (Escala en EWR, Classic)",
           airline: "united",
-          flightNumber: "UA321 / UA120",
           price: 18900,
           description: "Escalas rápidas en Newark. Se requiere visa estadounidense (C-1) para tránsito.",
-          details: "Ida: MEX ➔ EWR ➔ MAD (1 Escala) | Vuelta: BOG ➔ EWR ➔ MEX (1 Escala)",
-          schedule: "Ida: 08:30 - 07:30 (+1) | Vuelta: 16:00 - 22:30",
+          details: "Ida: MEX ➔ EWR ➔ MAD & Vuelta: BOG ➔ EWR ➔ MEX",
+          outbound: {
+            route: "CDMX ➔ Newark ➔ Madrid",
+            schedule: "Salida: 08:30 | Llegada: 07:30 (+1)",
+            flightNumber: "UA321 / UA120"
+          },
+          return: {
+            route: "Bogotá ➔ Newark ➔ CDMX",
+            schedule: "Salida: 16:00 | Llegada: 22:30",
+            flightNumber: "UA240"
+          },
           class: "Tarifa Classic (Turista)",
           bag: true,
           carry: true,
@@ -323,11 +375,19 @@
           id: "premium",
           title: "Iberia Directo (Premium Economy)",
           airline: "iberia",
-          flightNumber: "IB6402 / IB6588",
           price: 35000,
           description: "Vuelo directo con comodidades de clase preferente y prioridad de abordaje.",
-          details: "Ida: MEX ➔ MAD (Directo) | Vuelta: BOG ➔ MEX (Directo)",
-          schedule: "Ida: 13:00 - 06:30 (+1) | Vuelta: 22:30 - 04:30 (+1)",
+          details: "Ida: MEX ➔ MAD (Directo) & Vuelta: BOG ➔ MEX (Directo)",
+          outbound: {
+            route: "CDMX ➔ Madrid (Directo)",
+            schedule: "Salida: 13:00 | Llegada: 06:30 (+1)",
+            flightNumber: "IB6402"
+          },
+          return: {
+            route: "Bogotá ➔ CDMX (Directo)",
+            schedule: "Salida: 22:30 | Llegada: 04:30 (+1)",
+            flightNumber: "IB6588"
+          },
           class: "Tarifa Premium (Turista Premium)",
           bag: true,
           carry: true,
@@ -340,11 +400,15 @@
           id: "directo",
           title: "Avianca Directo (Desde BCN, Classic)",
           airline: "avianca",
-          flightNumber: "AV19",
           price: 14000,
           description: "Vuelo transatlántico sin escalas de 10.5 horas desde Barcelona.",
           details: "BCN ➔ BOG (Directo)",
-          schedule: "Salida: 14:30 | Llegada: 18:30 (Mismo día)",
+          outbound: {
+            route: "Barcelona ➔ Bogotá (Directo)",
+            schedule: "Salida: 14:30 | Llegada: 18:30",
+            flightNumber: "AV19"
+          },
+          return: null,
           class: "Tarifa Classic (Turista)",
           bag: true,
           carry: true,
@@ -355,11 +419,15 @@
           id: "escala",
           title: "Iberia Escala en Madrid (Desde BCN, Classic)",
           airline: "iberia",
-          flightNumber: "IB3001 / IB6585",
           price: 13000,
           description: "Salida de Barcelona con escala rápida de conexión aérea en Madrid (MAD).",
-          details: "BCN ➔ MAD ➔ BOG (1 Escala Aérea)",
-          schedule: "Salida: 12:00 | Llegada: 18:30 (Mismo día)",
+          details: "BCN ➔ MAD ➔ BOG (1 Escala)",
+          outbound: {
+            route: "Barcelona ➔ Madrid ➔ Bogotá",
+            schedule: "Salida: 12:00 | Llegada: 18:30",
+            flightNumber: "IB3001 / IB6585"
+          },
+          return: null,
           class: "Tarifa Classic (Turista)",
           bag: true,
           carry: true,
@@ -370,11 +438,15 @@
           id: "directo-mad",
           title: "Avianca Directo (Desde MAD) + Tren AVE BCN-MAD",
           airline: "avianca",
-          flightNumber: "AV27 / AVE 03080",
           price: 13000,
-          description: "Vuelo directo desde Madrid a Bogotá. Incluye el trayecto de tren de alta velocidad BCN-MAD (estimado en $1,500 MXN).",
-          details: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo Directo)",
-          schedule: "Tren: 3h | Vuelo Directo: 10h",
+          description: "Vuelo directo desde Madrid a Bogotá. Incluye el trayecto de tren de alta velocidad BCN-MAD.",
+          details: "BCN ➔ MAD (Tren) + MAD ➔ BOG (Vuelo)",
+          outbound: {
+            route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
+            schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 14:30)",
+            flightNumber: "AVE 03080 / AV27"
+          },
+          return: null,
           class: "Tarifa Classic (Turista + AVE)",
           bag: true,
           carry: true,
@@ -385,11 +457,15 @@
           id: "air-europa-mad",
           title: "Air Europa Directo (Desde MAD) + Tren AVE BCN-MAD",
           airline: "air-europa",
-          flightNumber: "UX21 / AVE 03080",
           price: 11500,
           description: "Vuelo directo desde Madrid a Bogotá con Air Europa. Incluye el billete de tren AVE BCN-MAD.",
-          details: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo Directo)",
-          schedule: "Tren: 3h | Vuelo Directo: 10h",
+          details: "BCN ➔ MAD (Tren) + MAD ➔ BOG (Vuelo)",
+          outbound: {
+            route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
+            schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 15:00)",
+            flightNumber: "AVE 03080 / UX21"
+          },
+          return: null,
           class: "Tarifa Classic (Turista + AVE)",
           bag: true,
           carry: true,
@@ -400,11 +476,15 @@
           id: "separado",
           title: "Low Cost (Vuelos Separados)",
           airline: "vueling",
-          flightNumber: "VY1234 / AV19",
           price: 11000,
           description: "Vuelan en aerolíneas u horarios separados. Rompe el viaje en conjunto.",
           details: "BCN ➔ BOG (Vuelos no coordinados)",
-          schedule: "Horarios variables según aerolínea",
+          outbound: {
+            route: "Barcelona ➔ Bogotá (Horarios Diferentes)",
+            schedule: "Horarios variables según aerolínea",
+            flightNumber: "VY1234 / AV19"
+          },
+          return: null,
           class: "Tarifa Básica (Turista)",
           bag: false,
           carry: true,
@@ -417,11 +497,19 @@
           id: "16",
           title: "Iberia Express (Viernes 16 Oct, Directo, Óptima)",
           airline: "iberia-express",
-          flightNumber: "I23841 / I23840",
           price: 3646,
-          description: "Directo (2h 45m). Viaja tranquila el viernes por la noche tras empacar.",
-          details: "SPC ➔ MAD (Directo)",
-          schedule: "Salida 19:30 | Llegada 23:15",
+          description: "Vuelo nacional de conexión redondo. Viaja tranquila el viernes por la noche tras empacar.",
+          details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
+          outbound: {
+            route: "La Palma (SPC) ➔ Madrid (MAD)",
+            schedule: "Salida Friday 16 Oct: 19:30 | Llegada: 23:15",
+            flightNumber: "I23841"
+          },
+          return: {
+            route: "Madrid (MAD) ➔ La Palma (SPC)",
+            schedule: "Salida: 12:00 | Llegada: 15:45",
+            flightNumber: "I23840"
+          },
           class: "Tarifa Óptima (Turista)",
           bag: true,
           carry: true,
@@ -432,11 +520,19 @@
           id: "16-basic",
           title: "Iberia Express (Viernes 16 Oct, sin maleta)",
           airline: "iberia-express",
-          flightNumber: "I23841 / I23840",
           price: 2800,
-          description: "Directo (2h 45m). Tarifa básica para viajar ligero de equipaje.",
-          details: "SPC ➔ MAD (Directo)",
-          schedule: "Salida 19:30 | Llegada 23:15",
+          description: "Vuelo nacional redondo. Tarifa básica para viajar ligero de equipaje.",
+          details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
+          outbound: {
+            route: "La Palma (SPC) ➔ Madrid (MAD)",
+            schedule: "Salida Friday 16 Oct: 19:30 | Llegada: 23:15",
+            flightNumber: "I23841"
+          },
+          return: {
+            route: "Madrid (MAD) ➔ La Palma (SPC)",
+            schedule: "Salida: 12:00 | Llegada: 15:45",
+            flightNumber: "I23840"
+          },
           class: "Tarifa Básica (Turista)",
           bag: false,
           carry: true,
@@ -447,11 +543,19 @@
           id: "17",
           title: "Binter Canarias (Sábado 17 Oct, Escala TFN, Básica)",
           airline: "binter",
-          flightNumber: "NT342 / NT5120",
           price: 5000,
-          description: "Con escala de 1h 5m en Tenerife Norte. Tarda más de 5 horas de viaje.",
-          details: "SPC ➔ TFN ➔ MAD (1 Escala)",
-          schedule: "Salida 08:30 | Llegada 13:30",
+          description: "Con escala de 1h 5m en Tenerife Norte. Tarda más de 5 horas de viaje de ida.",
+          details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
+          outbound: {
+            route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)",
+            schedule: "Salida Saturday 17 Oct: 08:30 | Llegada: 13:30",
+            flightNumber: "NT342"
+          },
+          return: {
+            route: "Madrid (MAD) ➔ La Palma (SPC) (Directo)",
+            schedule: "Salida: 12:00 | Llegada: 15:45",
+            flightNumber: "NT5120"
+          },
           class: "Tarifa Básica (Turista)",
           bag: false,
           carry: true,
@@ -462,11 +566,19 @@
           id: "17-plus",
           title: "Binter Canarias Plus (Sábado 17 Oct, con maleta)",
           airline: "binter",
-          flightNumber: "NT342 / NT5120",
           price: 6200,
           description: "Con escala en Tenerife Norte. Tarifa con maleta documentada incluida.",
-          details: "SPC ➔ TFN ➔ MAD (1 Escala)",
-          schedule: "Salida 08:30 | Llegada 13:30",
+          details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
+          outbound: {
+            route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)",
+            schedule: "Salida Saturday 17 Oct: 08:30 | Llegada: 13:30",
+            flightNumber: "NT342"
+          },
+          return: {
+            route: "Madrid (MAD) ➔ La Palma (SPC) (Directo)",
+            schedule: "Salida: 12:00 | Llegada: 15:45",
+            flightNumber: "NT5120"
+          },
           class: "Tarifa Classic (Turista)",
           bag: true,
           carry: true,
@@ -479,11 +591,19 @@
           id: "escala",
           title: "Iberia Escala de Ida, Vuelta Directa (Juntos, Classic)",
           airline: "iberia",
-          flightNumber: "IB3001 / IB6585 / IB6586",
           price: 22881,
           description: "Vuela de ida contigo con conexión aérea BCN-MAD-BOG. Regresa directo BOG-MAD para conectar a La Palma.",
-          details: "BCN ➔ MAD ➔ BOG (Ida con Escala) & BOG ➔ MAD (Vuelta Directa)",
-          schedule: "Ida: Conexión aérea en MAD | Vuelta: Vuelo Directo BOG-MAD",
+          details: "BCN ➔ BOG (Ida con Escala) & BOG ➔ MAD (Vuelta Directa)",
+          outbound: {
+            route: "Barcelona ➔ Madrid ➔ Bogotá",
+            schedule: "Salida: 12:00 | Llegada: 18:30",
+            flightNumber: "IB3001 / IB6585"
+          },
+          return: {
+            route: "Bogotá ➔ Madrid (Directo)",
+            schedule: "Salida: 23:00 | Llegada: 14:30 (+1)",
+            flightNumber: "IB6586"
+          },
           class: "Tarifa Classic (Turista)",
           bag: true,
           carry: true,
@@ -494,11 +614,19 @@
           id: "directo",
           title: "Avianca Ambos Directos (Desde BCN, Classic)",
           airline: "avianca",
-          flightNumber: "AV19 / AV10",
           price: 25000,
           description: "Trayecto transatlántico completamente directo tanto de ida (desde BCN) como de regreso (BOG-MAD).",
-          details: "Ida: BCN ➔ BOG (Directo) | Vuelta: BOG ➔ MAD (Directo)",
-          schedule: "Ida: Vuelo Directo | Vuelta: Vuelo Directo",
+          details: "BCN ➔ BOG (Directo) & BOG ➔ MAD (Directo)",
+          outbound: {
+            route: "Barcelona ➔ Bogotá (Directo)",
+            schedule: "Salida: 14:30 | Llegada: 18:30",
+            flightNumber: "AV19"
+          },
+          return: {
+            route: "Bogotá ➔ Madrid (Directo)",
+            schedule: "Salida: 20:00 | Llegada: 11:30 (+1)",
+            flightNumber: "AV10"
+          },
           class: "Tarifa Classic (Turista)",
           bag: true,
           carry: true,
@@ -509,11 +637,19 @@
           id: "directo-mad",
           title: "Avianca Directo (Desde MAD) + Tren AVE BCN-MAD",
           airline: "avianca",
-          flightNumber: "AV27 / AV10 / AVE 03080",
           price: 21000,
-          description: "Vuelo directo Madrid-Bogotá ida/vuelta. Incluye el billete de tren de alta velocidad BCN-MAD para el enlace de ida (estimado en $1,500 MXN).",
-          details: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo Directo) | Vuelta: BOG ➔ MAD (Directo)",
-          schedule: "Tren: 3h | Vuelo Directo: 10h",
+          description: "Vuelo directo Madrid-Bogotá ida/vuelta. Incluye el billete de tren de alta velocidad BCN-MAD para el enlace de ida.",
+          details: "BCN ➔ MAD (Tren) + MAD ➔ BOG (Vuelo) & BOG ➔ MAD (Vuelo)",
+          outbound: {
+            route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
+            schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 14:30)",
+            flightNumber: "AVE 03080 / AV27"
+          },
+          return: {
+            route: "Bogotá ➔ Madrid (Directo)",
+            schedule: "Salida: 20:00 | Llegada: 11:30 (+1)",
+            flightNumber: "AV10"
+          },
           class: "Tarifa Classic (Turista + AVE)",
           bag: true,
           carry: true,
@@ -524,11 +660,19 @@
           id: "air-europa-mad",
           title: "Air Europa Directo (Desde MAD, Básica) + Tren AVE BCN-MAD",
           airline: "air-europa",
-          flightNumber: "UX21 / UX22 / AVE 03080",
           price: 18000,
           description: "Vuelo Air Europa desde Madrid a Bogotá ida/vuelta. Incluye billete de tren AVE BCN-MAD.",
-          details: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo Directo) | Vuelta: BOG ➔ MAD (Directo)",
-          schedule: "Tren: 3h | Vuelo Directo: 10h",
+          details: "BCN ➔ MAD (Tren) + MAD ➔ BOG (Vuelo) & BOG ➔ MAD (Vuelo)",
+          outbound: {
+            route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
+            schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 15:00)",
+            flightNumber: "AVE 03080 / UX21"
+          },
+          return: {
+            route: "Bogotá ➔ Madrid (Directo)",
+            schedule: "Salida: 23:30 | Llegada: 15:00 (+1)",
+            flightNumber: "UX22"
+          },
           class: "Tarifa Básica (Turista + AVE)",
           bag: false,
           carry: true,
@@ -539,11 +683,19 @@
           id: "eco",
           title: "Air Europa Escalas Largas (Separados, Básica)",
           airline: "air-europa",
-          flightNumber: "UX7702 / UX21",
           price: 19500,
           description: "Escalas prolongadas de más de 6 horas en Madrid. Sin maleta de bodega.",
-          details: "BCN ➔ MAD ➔ BOG (Ida con Escala) & BOG ➔ MAD (Vuelta con Escala)",
-          schedule: "Escalas largas en Madrid de 6-8 horas",
+          details: "BCN ➔ MAD ➔ BOG & BOG ➔ MAD ➔ BCN",
+          outbound: {
+            route: "Barcelona ➔ Madrid ➔ Bogotá",
+            schedule: "Escala larga 6h",
+            flightNumber: "UX7702"
+          },
+          return: {
+            route: "Bogotá ➔ Madrid ➔ Barcelona",
+            schedule: "Escala larga 8h",
+            flightNumber: "UX21"
+          },
           class: "Tarifa Básica (Turista)",
           bag: false,
           carry: true,
@@ -703,6 +855,7 @@
       document.getElementById('modal-add-flight').classList.add('hidden');
       document.getElementById('modal-add-flight').classList.remove('flex');
       document.getElementById('form-flight').reset();
+      document.getElementById('form-return-fields').classList.add('hidden');
     }
 
     function updateFormSegments(traveler) {
@@ -715,9 +868,18 @@
         `;
       } else {
         segmentSelect.innerHTML = `
-          <option value="yesicaSpc">Vuelo 1: Conexión SPC ➔ MAD</option>
+          <option value="yesicaSpc">Vuelo 1: Conexión SPC ➔ MAD Redondo</option>
           <option value="yesicaTrans">Vuelo 2: Conexión España ➔ Colombia</option>
         `;
+      }
+    }
+
+    function toggleFormReturnFields(checked) {
+      const returnFields = document.getElementById('form-return-fields');
+      if (checked) {
+        returnFields.classList.remove('hidden');
+      } else {
+        returnFields.classList.add('hidden');
       }
     }
 
@@ -727,16 +889,27 @@
       const segment = document.getElementById('form-segment').value;
       const airline = document.getElementById('form-airline').value;
       const airlineText = document.getElementById('form-airline').options[document.getElementById('form-airline').selectedIndex].text;
-      
+      const isRoundtrip = document.getElementById('form-is-roundtrip').checked;
+
       const newFlight = {
         id: "custom_" + Date.now(),
         title: `${airlineText} (Personalizado)`,
         airline: airline,
-        flightNumber: document.getElementById('form-flight-number').value,
         price: parseFloat(document.getElementById('form-price').value),
         description: document.getElementById('form-desc').value,
-        details: document.getElementById('form-details').value,
-        schedule: document.getElementById('form-schedule').value,
+        details: isRoundtrip 
+          ? `${document.getElementById('form-details').value} (Ida) & ${document.getElementById('form-return-details').value} (Vuelta)` 
+          : document.getElementById('form-details').value,
+        outbound: {
+          route: document.getElementById('form-details').value,
+          schedule: document.getElementById('form-schedule').value,
+          flightNumber: document.getElementById('form-flight-number').value
+        },
+        return: isRoundtrip ? {
+          route: document.getElementById('form-return-details').value,
+          schedule: document.getElementById('form-return-schedule').value,
+          flightNumber: document.getElementById('form-return-flight-number').value
+        } : null,
         class: document.getElementById('form-class').value,
         bag: document.getElementById('form-bag').checked,
         carry: document.getElementById('form-carry').checked,
@@ -804,35 +977,69 @@
         
         container.innerHTML = `
           <div class="ticket-card border ${activeClass} rounded-xl p-4 flex flex-col justify-between shadow-sm bg-white">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow flex flex-col gap-2">
-                <div class="flex flex-wrap items-center gap-2">
-                  ${airlineLogos[flight.airline] || ''}
-                  <span class="text-[10px] font-extrabold uppercase tracking-wide bg-slate-50 px-2 py-0.5 rounded border border-slate-100 text-slate-600">${flight.class}</span>
-                  <span class="text-[10px] font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded font-mono ml-auto">
-                    Nº Vuelo: ${flight.flightNumber || 'N/A'}
-                  </span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900 mt-1">${flight.details}</div>
-                <div class="text-xs font-mono text-slate-500 flex items-center gap-1.5">
-                  ⏱️ ${flight.schedule}
-                </div>
-                <p class="text-xs text-slate-500 leading-relaxed">${flight.description}</p>
-              </div>
-              <div class="text-right flex flex-col items-end">
-                <span class="text-[10px] text-slate-400 uppercase font-black tracking-wider">Costo</span>
+            <!-- Cabecera del Boleto -->
+            <div class="flex flex-wrap items-center gap-2 mb-3 pb-3 border-b border-slate-100">
+              ${airlineLogos[flight.airline] || ''}
+              <span class="text-[10px] font-extrabold uppercase tracking-wide bg-slate-50 px-2 py-0.5 rounded border border-slate-100 text-slate-600">${flight.class}</span>
+              <div class="ml-auto text-right">
+                <span class="text-[9px] text-slate-400 uppercase font-bold block tracking-wider">Costo</span>
                 <span class="text-base font-black text-slate-900">${formatMXN(flight.price)}</span>
               </div>
             </div>
-            <!-- Beneficios -->
+
+            <!-- Cuerpo del Boleto: Trayectos -->
+            <div class="space-y-3.5">
+              <!-- Trayecto Ida -->
+              <div class="flex justify-between items-start gap-4">
+                <div class="flex-grow">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">Ida</span>
+                    <span class="text-sm font-black text-slate-950">${flight.outbound.route}</span>
+                  </div>
+                  <div class="text-xs text-slate-500 font-mono mt-1 flex items-center gap-1.5">
+                    ⏱️ ${flight.outbound.schedule}
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded font-mono block">
+                    ${flight.outbound.flightNumber || 'N/A'}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Trayecto Regreso (si existe) -->
+              ${flight.return ? `
+              <div class="flex justify-between items-start gap-4 pt-3 border-t border-dashed border-slate-100">
+                <div class="flex-grow">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">Regreso</span>
+                    <span class="text-sm font-black text-slate-950">${flight.return.route}</span>
+                  </div>
+                  <div class="text-xs text-slate-500 font-mono mt-1 flex items-center gap-1.5">
+                    ⏱️ ${flight.return.schedule}
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded font-mono block">
+                    ${flight.return.flightNumber || 'N/A'}
+                  </span>
+                </div>
+              </div>
+              ` : ''}
+            </div>
+
+            <!-- Descripción (si existe) -->
+            ${flight.description ? `<p class="text-xs text-slate-500 mt-3 pt-2 border-t border-slate-50 leading-relaxed">${flight.description}</p>` : ''}
+
+            <!-- Beneficios / Equipaje -->
             <div class="flex flex-wrap items-center gap-4 mt-4 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 ${flight.bag ? 'text-emerald-600' : 'text-rose-500'}">
+              <span class="flex items-center gap-1 ${flight.bag ? 'text-emerald-600 font-bold' : 'text-rose-500'}">
                 ${flight.bag ? '✓ 🧳 Maleta' : '✗ Sin Maleta'}
               </span>
-              <span class="flex items-center gap-1 ${flight.carry ? 'text-emerald-600' : 'text-rose-500'}">
+              <span class="flex items-center gap-1 ${flight.carry ? 'text-emerald-600 font-bold' : 'text-rose-500'}">
                 ${flight.carry ? '✓ 🎒 Carry-on' : '✗ Sin Carry-on'}
               </span>
-              <span class="flex items-center gap-1 ${flight.seat ? 'text-emerald-600' : 'text-rose-500'}">
+              <span class="flex items-center gap-1 ${flight.seat ? 'text-emerald-600 font-bold' : 'text-rose-500'}">
                 ${flight.seat ? '✓ 💺 Asiento' : '✗ Sin Asiento'}
               </span>
               ${flight.train ? `
