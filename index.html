@@ -42,11 +42,12 @@
           <span>+</span> Añadir Vuelo / Tren Personalizado
         </button>
 
-        <!-- Indicador Presupuesto -->
+        <!-- Indicador Presupuesto Dual -->
         <div class="flex items-center gap-4 bg-slate-50 px-4 py-2.5 border border-slate-200 rounded-xl">
           <div class="text-right">
             <div class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Total Seleccionado</div>
             <div id="cost-display" class="text-lg font-black text-emerald-600">$0.00 MXN</div>
+            <div id="cost-display-eur" class="text-xs font-bold text-slate-500 mt-0.5">€0,00 EUR</div>
           </div>
         </div>
       </div>
@@ -61,7 +62,7 @@
       <div id="budget-status" class="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 font-extrabold uppercase">
         ¡Dentro del Presupuesto!
       </div>
-      <div id="budget-percent" class="font-mono">0% del presupuesto (Límite: $58,000 MXN)</div>
+      <div id="budget-percent" class="font-mono text-xs text-slate-500">0% del presupuesto (Límite: $58,000 MXN / €2,939 EUR)</div>
     </div>
 
     <!-- Pestañas del Planificador -->
@@ -96,7 +97,10 @@
           <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
           <h2 class="text-lg font-extrabold tracking-tight text-slate-900">Mario (CDMX)</h2>
         </div>
-        <span id="mario-total-cost" class="text-sm font-extrabold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">$0.00 MXN</span>
+        <div id="mario-total-cost" class="text-right bg-blue-50 px-3.5 py-1.5 rounded-xl flex flex-col items-end">
+          <span class="text-sm font-extrabold text-blue-700">$0.00 MXN</span>
+          <span class="text-[10px] font-bold text-blue-500/80 mt-0.5">€0,00 EUR</span>
+        </div>
       </div>
 
       <!-- Segmento 1: MEX-MAD o MEX-BOG -->
@@ -138,7 +142,10 @@
           <div class="w-2.5 h-2.5 bg-pink-500 rounded-full"></div>
           <h2 class="text-lg font-extrabold tracking-tight text-slate-900">Yesica (La Palma)</h2>
         </div>
-        <span id="yesica-total-cost" class="text-sm font-extrabold text-pink-600 bg-pink-50 px-3 py-1 rounded-lg">$0.00 MXN</span>
+        <div id="yesica-total-cost" class="text-right bg-pink-50 px-3.5 py-1.5 rounded-xl flex flex-col items-end">
+          <span class="text-sm font-extrabold text-pink-700">$0.00 MXN</span>
+          <span class="text-[10px] font-bold text-pink-500/80 mt-0.5">€0,00 EUR</span>
+        </div>
       </div>
 
       <!-- Segmento 1: SPC-MAD-SPC -->
@@ -266,11 +273,17 @@
           </div>
         </div>
 
-        <!-- Precio y Descripción -->
+        <!-- Precio y Descripción con selector de Moneda -->
         <div class="grid grid-cols-3 gap-3 border-t border-slate-100 pt-3">
           <div class="col-span-1">
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Precio Total (MXN)</label>
-            <input type="number" id="form-price" placeholder="Ej. 13000" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Precio Total</label>
+            <div class="flex gap-1">
+              <input type="number" id="form-price" placeholder="Ej. 13000" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+              <select id="form-currency" class="bg-slate-50 border border-slate-200 rounded-lg p-1 text-[10px] font-bold focus:outline-none focus:border-blue-500">
+                <option value="MXN">MXN ($)</option>
+                <option value="EUR">EUR (€)</option>
+              </select>
+            </div>
           </div>
           <div class="col-span-2">
             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Breve Descripción</label>
@@ -319,7 +332,10 @@
   </div>
 
   <script>
-    // Base de Datos de Vuelos Predefinidos (Advisory Curated: Se reincorpora United con precio optimizado y regla de ahorro)
+    // Tipo de Cambio de referencia: 1 EUR = 19.73 MXN
+    const MXN_EUR_RATE = 19.73;
+
+    // Base de Datos de Vuelos Predefinidos
     const defaultFlights = {
       marioTrans: [
         {
@@ -887,6 +903,10 @@
     let collabRoomId = null;
     const myClientId = 'travel_' + Math.random().toString(16).substr(2, 8);
 
+    // Formateadores de Moneda Dual
+    const formatMXN = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val);
+    const formatEUR = (val) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(val / MXN_EUR_RATE);
+
     // Sistema de Toasts para feedback
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
@@ -1006,7 +1026,7 @@
       }
     }
 
-    // Inicializar los Dropdowns
+    // Inicializar los Dropdowns con Moneda Dual (MXN y EUR)
     function initDropdowns() {
       ['marioTrans', 'marioBcn', 'yesicaSpc', 'yesicaTrans'].forEach(key => {
         const select = document.getElementById(`select-${key}`);
@@ -1015,7 +1035,12 @@
         getFlights(key).forEach(opt => {
           const option = document.createElement('option');
           option.value = opt.id;
-          option.innerText = `${opt.title} - $${new Intl.NumberFormat('es-MX').format(opt.price)} MXN`;
+          
+          const priceMXN = opt.price;
+          const priceEUR = Math.round(priceMXN / MXN_EUR_RATE);
+          
+          // Formateo del dropdown
+          option.innerText = `${opt.title} - $${new Intl.NumberFormat('es-MX').format(priceMXN)} MXN (€${new Intl.NumberFormat('es-ES').format(priceEUR)})`;
           select.appendChild(option);
         });
         
@@ -1131,7 +1156,7 @@
       }
     }
 
-    // Guardar Vuelo Custom
+    // Guardar Vuelo Custom (Soporta entrada en EUR y conversión a MXN de base)
     function saveCustomFlight(e) {
       e.preventDefault();
       const segment = document.getElementById('form-segment').value;
@@ -1139,11 +1164,17 @@
       const airlineText = document.getElementById('form-airline').options[document.getElementById('form-airline').selectedIndex].text;
       const isRoundtrip = document.getElementById('form-is-roundtrip').checked;
 
+      let priceInput = parseFloat(document.getElementById('form-price').value);
+      const currency = document.getElementById('form-currency').value;
+      
+      // Conversión a MXN base si se introduce en EUR
+      const priceMXN = currency === 'EUR' ? priceInput * MXN_EUR_RATE : priceInput;
+
       const newFlight = {
         id: "custom_" + Date.now(),
         title: `${airlineText} (Personalizado)`,
         airline: airline,
-        price: parseFloat(document.getElementById('form-price').value),
+        price: priceMXN,
         description: document.getElementById('form-desc').value,
         details: isRoundtrip 
           ? `${document.getElementById('form-details').value} (Ida) & ${document.getElementById('form-return-details').value} (Vuelta)` 
@@ -1191,31 +1222,43 @@
       const budgetLimit = 58000;
       const progressPercent = Math.min((grandTotal / budgetLimit) * 100, 100);
 
-      const formatMXN = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
-
+      // Actualizar visualizaciones de presupuesto dual
       document.getElementById('cost-display').innerText = formatMXN(grandTotal);
-      document.getElementById('mario-total-cost').innerText = formatMXN(marioTotal);
-      document.getElementById('yesica-total-cost').innerText = formatMXN(yesicaTotal);
+      document.getElementById('cost-display-eur').innerText = `${formatEUR(grandTotal)} EUR`;
+
+      // Totales por persona duales
+      const marioCostBadge = document.getElementById('mario-total-cost');
+      marioCostBadge.innerHTML = `
+        <span class="text-sm font-extrabold text-blue-700">${formatMXN(marioTotal)}</span>
+        <span class="text-[10px] font-bold text-blue-500/80 mt-0.5">${formatEUR(marioTotal)} EUR</span>
+      `;
+
+      const yesicaCostBadge = document.getElementById('yesica-total-cost');
+      yesicaCostBadge.innerHTML = `
+        <span class="text-sm font-extrabold text-pink-700">${formatMXN(yesicaTotal)}</span>
+        <span class="text-[10px] font-bold text-pink-500/80 mt-0.5">${formatEUR(yesicaTotal)} EUR</span>
+      `;
 
       const progressBar = document.getElementById('budget-progress-bar');
       const budgetStatus = document.getElementById('budget-status');
       const budgetPercentText = document.getElementById('budget-percent');
       
       progressBar.style.width = progressPercent + '%';
-      budgetPercentText.innerText = `${Math.round(progressPercent)}% del presupuesto`;
+      budgetPercentText.innerText = `${Math.round(progressPercent)}% del presupuesto (Límite: ${formatMXN(budgetLimit)} / ${formatEUR(budgetLimit)} EUR)`;
 
       if (grandTotal <= budgetLimit) {
         progressBar.className = "h-full bg-emerald-500 transition-all duration-500";
         budgetStatus.className = "px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 font-extrabold uppercase";
         budgetStatus.innerText = "¡Dentro del Presupuesto!";
-        document.getElementById('cost-display').className = "text-xl font-black text-emerald-600";
+        document.getElementById('cost-display').className = "text-lg font-black text-emerald-600";
       } else {
         progressBar.className = "h-full bg-rose-500 transition-all duration-500";
         budgetStatus.className = "px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 font-extrabold uppercase animate-pulse";
         budgetStatus.innerText = "¡Presupuesto Excedido!";
-        document.getElementById('cost-display').className = "text-xl font-black text-rose-600";
+        document.getElementById('cost-display').className = "text-lg font-black text-rose-600";
       }
 
+      // Renderizado del ladrillo lego
       const renderBrick = (targetId, flight, isActiveMario) => {
         const container = document.getElementById(targetId);
         const activeClass = isActiveMario ? 'border-blue-500 bg-blue-50/20' : 'border-pink-500 bg-pink-50/20';
@@ -1225,9 +1268,10 @@
             <div class="flex flex-wrap items-center gap-2 mb-3 pb-3 border-b border-slate-100">
               ${airlineLogos[flight.airline] || ''}
               <span class="text-[10px] font-extrabold uppercase tracking-wide bg-slate-50 px-2 py-0.5 rounded border border-slate-100 text-slate-600">${flight.class}</span>
-              <div class="ml-auto text-right">
+              <div class="ml-auto text-right flex flex-col items-end">
                 <span class="text-[9px] text-slate-400 uppercase font-bold block tracking-wider">Costo</span>
-                <span class="text-base font-black text-slate-900">${formatMXN(flight.price)}</span>
+                <span class="text-sm font-black text-slate-900">${formatMXN(flight.price)}</span>
+                <span class="text-[10px] font-bold text-slate-400 mt-0.5">${formatEUR(flight.price)} EUR</span>
               </div>
             </div>
 
@@ -1296,14 +1340,14 @@
       renderBrick('brick-yesicaSpc', yesicaSpcObj, false);
       renderBrick('brick-yesicaTrans', yesicaTransObj, false);
 
-      // 4. DETECCION DE CONFLICTOS Y ALERTAS
+      // 4. DETECCION DE CONFLICTOS Y ALERTAS DUALES
       const warnings = [];
       const infos = [];
 
       if (grandTotal > budgetLimit) {
         warnings.push({
           title: "Presupuesto Excedido",
-          text: `El total de vuelos supera el límite establecido por ${formatMXN(grandTotal - budgetLimit)}. Considera cambiar a vuelos con escalas o tarifas básicas.`
+          text: `El total de vuelos supera el límite establecido por ${formatMXN(grandTotal - budgetLimit)} (${formatEUR(grandTotal - budgetLimit)} EUR). Considera cambiar a vuelos con escalas o tarifas básicas.`
         });
       }
 
@@ -1361,15 +1405,16 @@
 
       if (isUsTransit) {
         const savingsPercent = ((refDirectPrice - marioTransObj.price) / refDirectPrice) * 100;
+        const savedAmount = refDirectPrice - marioTransObj.price;
         if (savingsPercent >= 30) {
           infos.push({
             title: "Tránsito por EE.UU. Autorizado (Visa US)",
-            text: `Esta opción transita por EE.UU. Dado que cuentas con visa estadounidense y el ahorro respecto al vuelo directo de referencia es del ${savingsPercent.toFixed(1)}% (ahorro de $${new Intl.NumberFormat('es-MX').format(refDirectPrice - marioTransObj.price)} MXN), esta conexión es financieramente eficiente.`
+            text: `Esta opción transita por EE.UU. Dado que cuentas con visa estadounidense y el ahorro respecto al vuelo directo de referencia es del ${savingsPercent.toFixed(1)}% (ahorro de ${formatMXN(savedAmount)} / ${formatEUR(savedAmount)} EUR), esta conexión es financieramente eficiente.`
           });
         } else {
           warnings.push({
             title: "⚠️ Conexión en EE.UU. Ineficiente",
-            text: `Esta ruta transita por EE.UU. y el ahorro respecto al vuelo directo de referencia ($20,000 MXN) es del ${savingsPercent.toFixed(1)}% (menor al 30% requerido). Debido al desgaste y tiempos de espera migratorios en aeropuertos de EE.UU., no se recomienda reservar esta opción por un ahorro tan bajo.`
+            text: `Esta ruta transita por EE.UU. y el ahorro respecto al vuelo directo de referencia es del ${savingsPercent.toFixed(1)}% (menor al 30% requerido). Debido al desgaste y tiempos de espera migratorios en aeropuertos de EE.UU., no se recomienda reservar esta opción por un ahorro tan bajo.`
           });
         }
       }
