@@ -282,9 +282,13 @@
               <input type="checkbox" id="form-seat" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
               💺 Asiento incluido
             </label>
-            <label class="flex items-center gap-1.5 cursor-pointer text-blue-600">
+            <label class="flex items-center gap-1.5 cursor-pointer text-blue-600 mr-2">
               <input type="checkbox" id="form-train" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
               🚄 Incluye Tren AVE BCN-MAD
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-rose-600">
+              <input type="checkbox" id="form-visa-required" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500">
+              ⚠️ Requiere Visa Tránsito (USA/Canadá)
             </label>
           </div>
         </div>
@@ -299,7 +303,7 @@
   </div>
 
   <script>
-    // Base de Datos de Vuelos Predefinidos
+    // Base de Datos de Vuelos Predefinidos (Advisory Curated: Se removieron United y Air Canada por restricción de Visas)
     const defaultFlights = {
       marioTrans: [
         {
@@ -323,53 +327,32 @@
           bag: true,
           carry: true,
           seat: true,
-          train: false
+          train: false,
+          visaRequired: false
         },
         {
-          id: "escala",
-          title: "Air Canada (Escala en YUL, Básica)",
-          airline: "air-canada",
-          price: 16500,
-          description: "Escalas de conexión en Montreal. Se requiere eTA canadiense para tránsito.",
-          details: "Ida: MEX ➔ YUL ➔ MAD & Vuelta: BOG ➔ YUL ➔ MEX",
+          id: "copa_pty",
+          title: "Copa Airlines / Air Europa (Escala Panamá, Sin Visa)",
+          airline: "air-europa",
+          price: 16800,
+          description: "Conexión a través de Ciudad de Panamá (PTY). NO requiere visa de tránsito para mexicanos.",
+          details: "Ida: MEX ➔ PTY ➔ MAD & Vuelta: BOG ➔ PTY ➔ MEX",
           outbound: {
-            route: "CDMX ➔ Montreal ➔ Madrid",
-            schedule: "Salida: 07:00 | Llegada: 23:00",
-            flightNumber: "AC992 / AC846"
+            route: "CDMX ➔ Panamá ➔ Madrid",
+            schedule: "Salida: 09:00 | Llegada: 06:00 (+1)",
+            flightNumber: "CM120 / UX64"
           },
           return: {
-            route: "Bogotá ➔ Montreal ➔ CDMX",
-            schedule: "Salida: 14:00 | Llegada: 01:00 (+1)",
-            flightNumber: "AC995"
+            route: "Bogotá ➔ Panamá ➔ CDMX",
+            schedule: "Salida: 15:00 | Llegada: 21:30",
+            flightNumber: "CM440 / CM121"
           },
-          class: "Tarifa Básica (Turista)",
-          bag: false,
-          carry: true,
-          seat: false,
-          train: false
-        },
-        {
-          id: "united",
-          title: "United Airlines (Escala en EWR, Classic)",
-          airline: "united",
-          price: 18900,
-          description: "Escalas rápidas en Newark. Se requiere visa estadounidense (C-1) para tránsito.",
-          details: "Ida: MEX ➔ EWR ➔ MAD & Vuelta: BOG ➔ EWR ➔ MEX",
-          outbound: {
-            route: "CDMX ➔ Newark ➔ Madrid",
-            schedule: "Salida: 08:30 | Llegada: 07:30 (+1)",
-            flightNumber: "UA321 / UA120"
-          },
-          return: {
-            route: "Bogotá ➔ Newark ➔ CDMX",
-            schedule: "Salida: 16:00 | Llegada: 22:30",
-            flightNumber: "UA240"
-          },
-          class: "Tarifa Classic (Turista)",
+          class: "Tarifa Turista (Sin Visa PTY)",
           bag: true,
           carry: true,
           seat: true,
-          train: false
+          train: false,
+          visaRequired: false
         },
         {
           id: "premium",
@@ -392,7 +375,8 @@
           bag: true,
           carry: true,
           seat: true,
-          train: false
+          train: false,
+          visaRequired: false
         },
         {
           id: "alt_cdmx_bog",
@@ -415,7 +399,8 @@
           bag: true,
           carry: true,
           seat: true,
-          train: false
+          train: false,
+          visaRequired: false
         }
       ],
       marioBcn: [
@@ -1012,7 +997,8 @@
         bag: document.getElementById('form-bag').checked,
         carry: document.getElementById('form-carry').checked,
         seat: document.getElementById('form-seat').checked,
-        train: document.getElementById('form-train').checked
+        train: document.getElementById('form-train').checked,
+        visaRequired: document.getElementById('form-visa-required').checked
       };
 
       customFlights[segment].push(newFlight);
@@ -1212,11 +1198,11 @@
         });
       }
 
-      // E. Alerta: Visa de transito para Mario (solo si no es la ruta alternativa)
-      if (!isMarioTransAlt && (state.marioTrans === 'escala' || state.marioTrans === 'united')) {
+      // E. Alerta Crítica: Visa de transito para Mario
+      if (marioTransObj.visaRequired || (marioTransObj.details && (marioTransObj.details.includes('YUL') || marioTransObj.details.includes('EWR') || marioTransObj.details.includes('USA') || marioTransObj.details.includes('Canadá')))) {
         warnings.push({
-          title: "Visa / Permiso Requerido para Mario",
-          text: `Tu vuelo con escala transatlántica pasa por ${state.marioTrans === 'escala' ? 'Canadá' : 'EE.UU.'}. Necesitarás ${state.marioTrans === 'escala' ? 'eTA canadiense' : 'visa estadounidense (C-1 o B1/B2)'} para abordar.`
+          title: "⚠️ Tránsito no viable (Visa Requerida)",
+          text: "La opción seleccionada requiere visa estadounidense o canadiense para realizar el tránsito, la cual Mario no posee. Evita reservar esta ruta."
         });
       }
 
