@@ -298,9 +298,13 @@
               <input type="checkbox" id="form-train" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
               🚄 Incluye Tren AVE BCN-MAD
             </label>
+            <label class="flex items-center gap-1.5 cursor-pointer text-amber-600 mr-2">
+              <input type="checkbox" id="form-us-transit" class="rounded border-slate-300 text-amber-600 focus:ring-amber-500">
+              🇺🇸 Tránsito EE.UU.
+            </label>
             <label class="flex items-center gap-1.5 cursor-pointer text-rose-600">
-              <input type="checkbox" id="form-visa-required" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500">
-              ⚠️ Requiere Visa Tránsito (USA/Canadá)
+              <input type="checkbox" id="form-canada-transit" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500">
+              🇨🇦 Tránsito Canadá
             </label>
           </div>
         </div>
@@ -315,7 +319,7 @@
   </div>
 
   <script>
-    // Base de Datos de Vuelos Predefinidos
+    // Base de Datos de Vuelos Predefinidos (Advisory Curated: Se reincorpora United con precio optimizado y regla de ahorro)
     const defaultFlights = {
       marioTrans: [
         {
@@ -340,7 +344,33 @@
           carry: true,
           seat: true,
           train: false,
-          visaRequired: false
+          usTransit: false,
+          canadaTransit: false
+        },
+        {
+          id: "united_ewr",
+          title: "United Airlines (Escala Newark, Ahorro >30%)",
+          airline: "united",
+          price: 13500,
+          description: "Escala en Newark (EWR). Viable gracias a tu visa estadounidense. El ahorro de $6,500 MXN supera tu límite de tolerancia del 30%.",
+          details: "Ida: MEX ➔ EWR ➔ MAD & Vuelta: BOG ➔ EWR ➔ MEX",
+          outbound: {
+            route: "CDMX ➔ Newark ➔ Madrid",
+            schedule: "Salida: 08:30 | Llegada: 07:30 (+1)",
+            flightNumber: "UA321 / UA120"
+          },
+          return: {
+            route: "Bogotá ➔ Newark ➔ CDMX",
+            schedule: "Salida: 16:00 | Llegada: 22:30",
+            flightNumber: "UA240"
+          },
+          class: "Tarifa Clásica (Vía USA)",
+          bag: true,
+          carry: true,
+          seat: true,
+          train: false,
+          usTransit: true,
+          canadaTransit: false
         },
         {
           id: "copa_pty",
@@ -364,7 +394,8 @@
           carry: true,
           seat: true,
           train: false,
-          visaRequired: false
+          usTransit: false,
+          canadaTransit: false
         },
         {
           id: "premium",
@@ -388,7 +419,8 @@
           carry: true,
           seat: true,
           train: false,
-          visaRequired: false
+          usTransit: false,
+          canadaTransit: false
         },
         {
           id: "alt_cdmx_bog",
@@ -412,7 +444,8 @@
           carry: true,
           seat: true,
           train: false,
-          visaRequired: false
+          usTransit: false,
+          canadaTransit: false
         }
       ],
       marioBcn: [
@@ -1130,7 +1163,8 @@
         carry: document.getElementById('form-carry').checked,
         seat: document.getElementById('form-seat').checked,
         train: document.getElementById('form-train').checked,
-        visaRequired: document.getElementById('form-visa-required').checked
+        usTransit: document.getElementById('form-us-transit').checked,
+        canadaTransit: document.getElementById('form-canada-transit').checked
       };
 
       customFlights[segment].push(newFlight);
@@ -1313,12 +1347,31 @@
         });
       }
 
-      // Alerta de Visa de Tránsito
-      if (marioTransObj.visaRequired || (marioTransObj.details && (marioTransObj.details.includes('YUL') || marioTransObj.details.includes('EWR') || marioTransObj.details.includes('USA') || marioTransObj.details.includes('Canadá')))) {
+      // Alerta de Visa de Tránsito y Lógica de Ahorro del 30%
+      const refDirectPrice = 20000;
+      const isCanadaTransit = marioTransObj.canadaTransit || (marioTransObj.details && (marioTransObj.details.includes('YUL') || marioTransObj.details.includes('YYZ') || marioTransObj.details.includes('Canadá')));
+      const isUsTransit = marioTransObj.usTransit || (marioTransObj.details && (marioTransObj.details.includes('EWR') || marioTransObj.details.includes('JFK') || marioTransObj.details.includes('MIA') || marioTransObj.details.includes('USA') || marioTransObj.details.includes('EE.UU.')));
+
+      if (isCanadaTransit) {
         warnings.push({
-          title: "⚠️ Tránsito no viable (Visa Requerida)",
-          text: "La opción seleccionada requiere visa estadounidense o canadiense para realizar el tránsito, la cual Mario no posee. Evita reservar esta ruta."
+          title: "⚠️ Vuelo No Viable (Tránsito por Canadá)",
+          text: "Esta ruta transita por Canadá. Como Mario no cuenta con visa canadiense, no se puede reservar esta opción."
         });
+      }
+
+      if (isUsTransit) {
+        const savingsPercent = ((refDirectPrice - marioTransObj.price) / refDirectPrice) * 100;
+        if (savingsPercent >= 30) {
+          infos.push({
+            title: "Tránsito por EE.UU. Autorizado (Visa US)",
+            text: `Esta opción transita por EE.UU. Dado que cuentas con visa estadounidense y el ahorro respecto al vuelo directo de referencia es del ${savingsPercent.toFixed(1)}% (ahorro de $${new Intl.NumberFormat('es-MX').format(refDirectPrice - marioTransObj.price)} MXN), esta conexión es financieramente eficiente.`
+          });
+        } else {
+          warnings.push({
+            title: "⚠️ Conexión en EE.UU. Ineficiente",
+            text: `Esta ruta transita por EE.UU. y el ahorro respecto al vuelo directo de referencia ($20,000 MXN) es del ${savingsPercent.toFixed(1)}% (menor al 30% requerido). Debido al desgaste y tiempos de espera migratorios en aeropuertos de EE.UU., no se recomienda reservar esta opción por un ahorro tan bajo.`
+          });
+        }
       }
 
       if (marioBcnObj.train || yesicaTransObj.train) {
