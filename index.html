@@ -87,10 +87,10 @@
         <span id="mario-total-cost" class="text-sm font-extrabold text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">$0.00 MXN</span>
       </div>
 
-      <!-- Segmento 1: MEX-MAD y BOG-MEX -->
+      <!-- Segmento 1: MEX-MAD o MEX-BOG -->
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 1: CDMX ➔ Madrid (Ida y Vuelta)</label>
+          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 1: Ruta Principal o de Enlace CDMX (Ida y Vuelta)</label>
           <select id="select-marioTrans" onchange="changeFlight('marioTrans', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm">
             <!-- Cargado por JS -->
           </select>
@@ -102,10 +102,10 @@
         </div>
       </div>
 
-      <!-- Segmento 2: BCN-BOG o MAD-BOG -->
+      <!-- Segmento 2: BCN-BOG o BOG-MAD-BOG -->
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 2: Enlace España ➔ Colombia (BCN/MAD ➔ BOG)</label>
+          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 2: Enlace España ➔ Colombia (Ida y Vuelta / Regreso)</label>
           <select id="select-marioBcn" onchange="changeFlight('marioBcn', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm">
             <!-- Cargado por JS -->
           </select>
@@ -393,6 +393,29 @@
           carry: true,
           seat: true,
           train: false
+        },
+        {
+          id: "alt_cdmx_bog",
+          title: "Ruta Alternativa: CDMX ➔ Bogotá Redondo (Avianca)",
+          airline: "avianca",
+          price: 9800,
+          description: "Parte 1 de tu ruta de salto internacional. Vuelo redondo México-Bogotá.",
+          details: "Ida: MEX ➔ BOG (Directo) & Vuelta: BOG ➔ MEX (Directo)",
+          outbound: {
+            route: "CDMX (MEX) ➔ Bogotá (BOG) (Directo)",
+            schedule: "Salida: 13:00 | Llegada: 17:30",
+            flightNumber: "AV73"
+          },
+          return: {
+            route: "Bogotá (BOG) ➔ CDMX (MEX) (Directo)",
+            schedule: "Salida: 08:30 | Llegada: 13:15",
+            flightNumber: "AV72"
+          },
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true,
+          train: false
         }
       ],
       marioBcn: [
@@ -489,6 +512,52 @@
           bag: false,
           carry: true,
           seat: false,
+          train: false
+        },
+        {
+          id: "alt_bog_esp",
+          title: "Ruta Alternativa: Bogotá ➔ España Redondo (Avianca)",
+          airline: "avianca",
+          price: 19500,
+          description: "Parte 2 de la ruta alternativa. Vuela BOG-MAD para iniciar y regresa BCN-BOG contigo.",
+          details: "Ida: BOG ➔ MAD (Directo) & Vuelta: BCN ➔ BOG (Directo)",
+          outbound: {
+            route: "Bogotá (BOG) ➔ Madrid (MAD) (Directo)",
+            schedule: "Salida: 21:00 | Llegada: 14:15 (+1)",
+            flightNumber: "AV26"
+          },
+          return: {
+            route: "Barcelona (BCN) ➔ Bogotá (BOG) (Directo)",
+            schedule: "Salida: 14:30 | Llegada: 18:30",
+            flightNumber: "AV19"
+          },
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true,
+          train: false
+        },
+        {
+          id: "alt_bog_esp_mad",
+          title: "Ruta Alternativa: Bogotá ➔ España Redondo (Iberia, Escala)",
+          airline: "iberia",
+          price: 18200,
+          description: "Parte 2 de la ruta alternativa. Vuela BOG-MAD para iniciar y regresa BCN-MAD-BOG con Iberia.",
+          details: "Ida: BOG ➔ MAD (Directo) & Vuelta: BCN ➔ MAD ➔ BOG",
+          outbound: {
+            route: "Bogotá (BOG) ➔ Madrid (MAD) (Directo)",
+            schedule: "Salida: 22:30 | Llegada: 15:30 (+1)",
+            flightNumber: "IB6586"
+          },
+          return: {
+            route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)",
+            schedule: "Salida: 12:00 | Llegada: 18:30",
+            flightNumber: "IB3001 / IB6585"
+          },
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true,
           train: false
         }
       ],
@@ -809,12 +878,31 @@
     function changeFlight(key, val) {
       state[key] = val;
 
-      // SINCRONIZACIÓN DE VUELO DE CONEXIÓN ESPAÑA -> COLOMBIA (JUNTOS)
-      if (key === 'marioBcn') {
-        if (val === 'directo') {
+      // COMPORTAMIENTO INTELIGENTE AL CAMBIAR VUELO 1 DE MARIO
+      if (key === 'marioTrans') {
+        if (val.startsWith('alt_') && !state.marioBcn.startsWith('alt_')) {
+          // Cambiar Vuelo 2 de Mario a la versión alternativa
+          state.marioBcn = 'alt_bog_esp';
+          document.getElementById('select-marioBcn').value = 'alt_bog_esp';
+          // Sincronizar Vuelo 2 de Yesica a Avianca Directo (para que viajen en el mismo avión)
           state.yesicaTrans = 'directo';
           document.getElementById('select-yesicaTrans').value = 'directo';
-        } else if (val === 'escala') {
+        } else if (!val.startsWith('alt_') && state.marioBcn.startsWith('alt_')) {
+          // Regresar a versión estándar
+          state.marioBcn = 'directo';
+          document.getElementById('select-marioBcn').value = 'directo';
+          // Sincronizar Vuelo 2 de Yesica a Avianca Directo
+          state.yesicaTrans = 'directo';
+          document.getElementById('select-yesicaTrans').value = 'directo';
+        }
+      }
+
+      // SINCRONIZACIÓN DE VUELO DE CONEXIÓN ESPAÑA -> COLOMBIA (JUNTOS)
+      if (key === 'marioBcn') {
+        if (val === 'directo' || val === 'alt_bog_esp') {
+          state.yesicaTrans = 'directo';
+          document.getElementById('select-yesicaTrans').value = 'directo';
+        } else if (val === 'escala' || val === 'alt_bog_esp_mad') {
           state.yesicaTrans = 'escala';
           document.getElementById('select-yesicaTrans').value = 'escala';
         } else if (val === 'directo-mad') {
@@ -826,11 +914,21 @@
         }
       } else if (key === 'yesicaTrans') {
         if (val === 'directo') {
-          state.marioBcn = 'directo';
-          document.getElementById('select-marioBcn').value = 'directo';
+          if (state.marioTrans.startsWith('alt_')) {
+            state.marioBcn = 'alt_bog_esp';
+            document.getElementById('select-marioBcn').value = 'alt_bog_esp';
+          } else {
+            state.marioBcn = 'directo';
+            document.getElementById('select-marioBcn').value = 'directo';
+          }
         } else if (val === 'escala') {
-          state.marioBcn = 'escala';
-          document.getElementById('select-marioBcn').value = 'escala';
+          if (state.marioTrans.startsWith('alt_')) {
+            state.marioBcn = 'alt_bog_esp_mad';
+            document.getElementById('select-marioBcn').value = 'alt_bog_esp_mad';
+          } else {
+            state.marioBcn = 'escala';
+            document.getElementById('select-marioBcn').value = 'escala';
+          }
         } else if (val === 'directo-mad') {
           state.marioBcn = 'directo-mad';
           document.getElementById('select-marioBcn').value = 'directo-mad';
@@ -863,8 +961,8 @@
       segmentSelect.innerHTML = "";
       if (traveler === 'mario') {
         segmentSelect.innerHTML = `
-          <option value="marioTrans">Vuelo 1: Ruta Transatlántica (MEX-MAD-BOG-MEX)</option>
-          <option value="marioBcn">Vuelo 2: Conexión BCN/MAD ➔ BOG</option>
+          <option value="marioTrans">Vuelo 1: Ruta Principal o de Enlace CDMX</option>
+          <option value="marioBcn">Vuelo 2: Enlace España ➔ Colombia</option>
         `;
       } else {
         segmentSelect.innerHTML = `
@@ -1069,11 +1167,29 @@
         });
       }
 
-      // B. Conflicto: Viajan por separado España -> Colombia
+      // B. Conflicto: Inconsistencia de Ruta Alternativa de Mario
+      const isMarioTransAlt = state.marioTrans.startsWith('alt_');
+      const isMarioBcnAlt = state.marioBcn.startsWith('alt_');
+      
+      if (isMarioTransAlt && !isMarioBcnAlt) {
+        warnings.push({
+          title: "Inconsistencia de Ruta (Vacaciones de Mario)",
+          text: "Has seleccionado volar a Bogotá en el Vuelo 1, pero tu Vuelo 2 está configurado para una salida directa europea. Mario no tiene vuelo de ida a España desde Colombia. Cambia el Vuelo 2 a una opción de Ruta Alternativa."
+        });
+      } else if (!isMarioTransAlt && isMarioBcnAlt) {
+        warnings.push({
+          title: "Inconsistencia de Ruta (Vuelo Transatlántico Duplicado)",
+          text: "Has seleccionado volar directo a Madrid en el Vuelo 1, pero tu Vuelo 2 está configurado para la Ruta Alternativa (BOG-MAD Redondo). Tienes vuelos transatlánticos duplicados."
+        });
+      }
+
+      // C. Conflicto: Viajan por separado España -> Colombia
       const isMarioSeparated = state.marioBcn === 'separado';
       const isYesicaSeparated = state.yesicaTrans === 'eco';
       const isDifferentFlightType = (state.marioBcn !== state.yesicaTrans) && 
-                                    !(state.marioBcn.includes('mad') && state.yesicaTrans.includes('mad'));
+                                    !(state.marioBcn.includes('mad') && state.yesicaTrans.includes('mad')) &&
+                                    !(state.marioBcn.includes('alt_') && state.yesicaTrans === 'directo' && state.marioBcn.includes('alt_bog_esp')) &&
+                                    !(state.marioBcn === 'alt_bog_esp_mad' && state.yesicaTrans === 'escala');
       
       if (isMarioSeparated || isYesicaSeparated || isDifferentFlightType) {
         warnings.push({
@@ -1082,7 +1198,7 @@
         });
       }
 
-      // C. Alerta: Escala Muy Corta (Binter)
+      // D. Alerta: Escala Muy Corta (Binter)
       if (state.yesicaSpc.startsWith('17')) {
         warnings.push({
           title: "Escala Corta en Tenerife (Binter)",
@@ -1096,19 +1212,27 @@
         });
       }
 
-      // D. Alerta: Visa de transito para Mario
-      if (state.marioTrans === 'escala' || state.marioTrans === 'united') {
+      // E. Alerta: Visa de transito para Mario (solo si no es la ruta alternativa)
+      if (!isMarioTransAlt && (state.marioTrans === 'escala' || state.marioTrans === 'united')) {
         warnings.push({
           title: "Visa / Permiso Requerido para Mario",
           text: `Tu vuelo con escala transatlántica pasa por ${state.marioTrans === 'escala' ? 'Canadá' : 'EE.UU.'}. Necesitarás ${state.marioTrans === 'escala' ? 'eTA canadiense' : 'visa estadounidense (C-1 o B1/B2)'} para abordar.`
         });
       }
 
-      // E. Alerta Crítica: Requiere coordinación de trenes Barcelona <-> Madrid
+      // F. Alerta Crítica: Requiere coordinación de trenes Barcelona <-> Madrid
       if (marioBcnObj.train || yesicaTransObj.train) {
         warnings.push({
           title: "🚄 Conexión Terrestre BCN ➔ MAD Requerida",
           text: "Han seleccionado un vuelo de conexión transatlántica que despega desde Madrid (MAD) en lugar de Barcelona. Es CRÍTICO coordinar y reservar los trenes AVE correspondientes. Se recomienda llegar a Madrid-Atocha con al menos 4.5 horas de holgura respecto a la hora de salida del vuelo para permitir el traslado Atocha ➔ Aeropuerto Barajas (Cercanías/Taxi) y la facturación de maletas."
+        });
+      }
+
+      // G. Info: Ruta Alternativa de Mario Activa
+      if (isMarioTransAlt && isMarioBcnAlt) {
+        infos.push({
+          title: "Ruta de Saltos Activa para Mario (CDMX-COL-ESP-COL-CDMX)",
+          text: "Mario está volando primero CDMX-BOG, luego vuela BOG-MAD para reunirse con Yesica en España, regresan juntos España-Bogotá, y finalmente Mario vuelve BOG-MEX. Toda la logística transatlántica y de enlace está balanceada."
         });
       }
 
