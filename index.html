@@ -24,9 +24,9 @@
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
       <div>
         <h1 class="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
-          ✈️ Configuración de Vuelos y Trenes
+          🧩 Constructor de Ruta con Lego Bricks
         </h1>
-        <p class="text-slate-500 text-sm mt-1">Compara rutas volando desde Barcelona o desde Madrid (incorporando tren AVE de enlace).</p>
+        <p class="text-slate-500 text-sm mt-1">Añade o elimina bloques de vuelo y tren. El sistema reacomodará los tramos necesarios en tiempo real.</p>
       </div>
 
       <!-- Acciones Globales -->
@@ -37,9 +37,9 @@
           <span>🔗 Compartir e Invitar (Colaboración)</span>
         </button>
 
-        <!-- Botón Añadir Vuelo -->
+        <!-- Botón Añadir Vuelo Manual -->
         <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-sm transition flex items-center gap-2">
-          <span>+</span> Añadir Vuelo / Tren Personalizado
+          <span>+</span> Crear Vuelo / Tren Personalizado
         </button>
 
         <!-- Indicador Presupuesto Dual -->
@@ -89,14 +89,14 @@
   <!-- COBERTURA DE RUTA (LEGO BRICKS) -->
   <div class="max-w-6xl mx-auto mb-6 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
     <h3 class="text-base font-extrabold text-slate-900 mb-4 flex items-center gap-2">
-      🧩 Estatus de Cobertura de Ruta (Lego Bricks del Itinerario)
+      🧩 Cobertura e Integridad del Itinerario
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Columna Mario -->
       <div>
         <div class="flex items-center gap-2 mb-3">
           <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
-          <h4 class="text-xs font-black text-blue-600 uppercase tracking-wider">Ladrillos de Mario</h4>
+          <h4 class="text-xs font-black text-blue-600 uppercase tracking-wider">Tramos Requeridos de Mario</h4>
         </div>
         <div id="coverage-mario" class="space-y-2.5">
           <!-- Carga dinámica -->
@@ -106,7 +106,7 @@
       <div>
         <div class="flex items-center gap-2 mb-3">
           <div class="w-2.5 h-2.5 bg-pink-500 rounded-full"></div>
-          <h4 class="text-xs font-black text-pink-600 uppercase tracking-wider">Ladrillos de Yesica</h4>
+          <h4 class="text-xs font-black text-pink-600 uppercase tracking-wider">Tramos Requeridos de Yesica</h4>
         </div>
         <div id="coverage-yesica" class="space-y-2.5">
           <!-- Carga dinámica -->
@@ -115,7 +115,7 @@
     </div>
   </div>
 
-  <!-- CONTENEDOR EN PARALELO -->
+  <!-- CONTENEDOR EN PARALELO (ITINERARIO LEGO DE BOLETOS) -->
   <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
 
     <!-- COLUMNA MARIO (CDMX) -->
@@ -124,7 +124,7 @@
       <div class="flex justify-between items-center border-b border-slate-100 pb-4">
         <div class="flex items-center gap-2.5">
           <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
-          <h2 class="text-lg font-extrabold tracking-tight text-slate-900">Mario (CDMX)</h2>
+          <h2 class="text-lg font-extrabold tracking-tight text-slate-900">Boletos de Mario</h2>
         </div>
         <div id="mario-total-cost" class="text-right bg-blue-50 px-3.5 py-1.5 rounded-xl flex flex-col items-end">
           <span class="text-sm font-extrabold text-blue-700">$0.00 MXN</span>
@@ -132,33 +132,19 @@
         </div>
       </div>
 
-      <!-- Segmento 1: MEX-MAD o MEX-BOG -->
+      <!-- Ladrillos Seleccionados de Mario -->
       <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 1: CDMX ➔ Europa o Enlace (Ida y Vuelta)</label>
-          <select id="select-marioTrans" onchange="changeFlight('marioTrans', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm">
-            <!-- Cargado por JS -->
-          </select>
-        </div>
-        
-        <!-- Contenedor del Boleto Activo (Lego Brick) -->
-        <div id="brick-marioTrans">
-          <!-- Renderizado dinamicamente -->
+        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Ladrillos Seleccionados (Reservas)</h3>
+        <div id="selected-bricks-mario" class="space-y-3.5">
+          <!-- Dinamico -->
         </div>
       </div>
 
-      <!-- Segmento 2: BCN-BOG o BOG-MAD-BOG -->
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 2: Enlace España ➔ Colombia (Ida y Vuelta / Regreso)</label>
-          <select id="select-marioBcn" onchange="changeFlight('marioBcn', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm">
-            <!-- Cargado por JS -->
-          </select>
-        </div>
-        
-        <!-- Contenedor del Boleto Activo (Lego Brick) -->
-        <div id="brick-marioBcn">
-          <!-- Renderizado dinamicamente -->
+      <!-- Añadir Bloques Disponibles -->
+      <div class="border-t border-slate-100 pt-6 space-y-4">
+        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">➕ Catálogo de Ladrillos de Vuelo/Tren (Disponibles)</h3>
+        <div id="available-bricks-mario" class="space-y-3">
+          <!-- Renderizado por JS -->
         </div>
       </div>
     </div>
@@ -169,7 +155,7 @@
       <div class="flex justify-between items-center border-b border-slate-100 pb-4">
         <div class="flex items-center gap-2.5">
           <div class="w-2.5 h-2.5 bg-pink-500 rounded-full"></div>
-          <h2 class="text-lg font-extrabold tracking-tight text-slate-900">Yesica (La Palma)</h2>
+          <h2 class="text-lg font-extrabold tracking-tight text-slate-900">Boletos de Yesica</h2>
         </div>
         <div id="yesica-total-cost" class="text-right bg-pink-50 px-3.5 py-1.5 rounded-xl flex flex-col items-end">
           <span class="text-sm font-extrabold text-pink-700">$0.00 MXN</span>
@@ -177,33 +163,19 @@
         </div>
       </div>
 
-      <!-- Segmento 1: SPC-MAD-SPC -->
+      <!-- Ladrillos Seleccionados de Yesica -->
       <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 1: Conexión Nacional (La Palma ➔ Madrid Redondo)</label>
-          <select id="select-yesicaSpc" onchange="changeFlight('yesicaSpc', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 shadow-sm">
-            <!-- Cargado por JS -->
-          </select>
-        </div>
-        
-        <!-- Contenedor del Boleto Activo (Lego Brick) -->
-        <div id="brick-yesicaSpc">
-          <!-- Renderizado dinamicamente -->
+        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">Ladrillos Seleccionados (Reservas)</h3>
+        <div id="selected-bricks-yesica" class="space-y-3.5">
+          <!-- Dinamico -->
         </div>
       </div>
 
-      <!-- Segmento 2: BCN-BOG o MAD-BOG -->
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 2: Conexión España ➔ Colombia (Multidestino)</label>
-          <select id="select-yesicaTrans" onchange="changeFlight('yesicaTrans', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 shadow-sm">
-            <!-- Cargado por JS -->
-          </select>
-        </div>
-        
-        <!-- Contenedor del Boleto Activo (Lego Brick) -->
-        <div id="brick-yesicaTrans">
-          <!-- Renderizado dinamicamente -->
+      <!-- Añadir Bloques Disponibles -->
+      <div class="border-t border-slate-100 pt-6 space-y-4">
+        <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">➕ Catálogo de Ladrillos de Vuelo/Tren (Disponibles)</h3>
+        <div id="available-bricks-yesica" class="space-y-3">
+          <!-- Renderizado por JS -->
         </div>
       </div>
     </div>
@@ -220,11 +192,11 @@
     </div>
   </div>
 
-  <!-- MODAL PARA AÑADIR VUELOS -->
+  <!-- MODAL PARA CREAR VUELOS MANUALES -->
   <div id="modal-add-flight" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50 transition-all duration-300">
     <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-2xl w-full p-6 space-y-4 max-h-[95vh] overflow-y-auto">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="text-base font-extrabold text-slate-900">✈️ Añadir Vuelo / Tren Personalizado</h3>
+        <h3 class="text-base font-extrabold text-slate-900">✈️ Crear Ladrillo de Vuelo / Tren Personalizado</h3>
         <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-lg font-bold">×</button>
       </div>
 
@@ -233,15 +205,17 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Viajero</label>
-            <select id="form-traveler" onchange="updateFormSegments(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
+            <select id="form-traveler" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
               <option value="mario">Mario (CDMX)</option>
               <option value="yesica">Yesica (La Palma)</option>
             </select>
           </div>
           <div>
-            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tramo de Vuelo</label>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Categoría / Tramo de Ruta</label>
             <select id="form-segment" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-semibold focus:outline-none focus:border-blue-500">
-              <!-- Dinamico -->
+              <option value="transatlantico-inicio">Salida de Origen (CDMX / La Palma)</option>
+              <option value="espana-colombia">Salto España ➔ Colombia</option>
+              <option value="alternativo-regreso">Ruta Alternativa (Colombia ➔ España)</option>
             </select>
           </div>
         </div>
@@ -256,7 +230,6 @@
               <option value="avianca">Avianca</option>
               <option value="binter">Binter Canarias</option>
               <option value="aeromexico-iberia">Aeroméxico / Iberia</option>
-              <option value="air-canada">Air Canada</option>
               <option value="united">United Airlines</option>
               <option value="vueling">Vueling</option>
               <option value="air-europa">Air Europa</option>
@@ -372,7 +345,7 @@
         <!-- Botones de Acción -->
         <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
           <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-600 transition">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-sm transition">Guardar Opción</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-sm transition">Crear Ladrillo</button>
         </div>
       </form>
     </div>
@@ -382,526 +355,193 @@
     // Tipo de Cambio de referencia: 1 EUR = 19.73 MXN
     const MXN_EUR_RATE = 19.73;
 
-    // Base de Datos de Vuelos Predefinidos (Advisory Curated: Se añade fecha explícita en todos los tramos)
-    const defaultFlights = {
-      marioTrans: [
-        {
-          id: "directo",
-          title: "Aeroméxico / Iberia (Directo, Clásica)",
-          airline: "aeromexico-iberia",
-          price: 20000,
-          description: "Trayecto de larga distancia directo, sin escalas incómodas de ida ni vuelta.",
-          details: "Ida: MEX ➔ MAD (Directo) & Vuelta: BOG ➔ MEX (Directo)",
-          outbound: {
-            route: "CDMX ➔ Madrid (Directo)",
-            schedule: "Salida: 12:00 | Llegada: 06:00 (+1)",
-            flightNumber: "AM1",
-            date: "Viernes 16 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ CDMX (Directo)",
-            schedule: "Salida: 23:00 | Llegada: 05:00 (+1)",
-            flightNumber: "IB6586",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Clásica (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false,
-          usTransit: false,
-          canadaTransit: false
-        },
-        {
-          id: "united_ewr",
-          title: "United Airlines (Escala Newark, Ahorro >30%)",
-          airline: "united",
-          price: 13500,
-          description: "Escala en Newark (EWR). Viable gracias a tu visa estadounidense. El ahorro de $6,500 MXN supera tu límite de tolerancia del 30%.",
-          details: "Ida: MEX ➔ EWR ➔ MAD & Vuelta: BOG ➔ EWR ➔ MEX",
-          outbound: {
-            route: "CDMX ➔ Newark ➔ Madrid",
-            schedule: "Salida: 08:30 | Llegada: 07:30 (+1)",
-            flightNumber: "UA321 / UA120",
-            date: "Viernes 16 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ Newark ➔ CDMX",
-            schedule: "Salida: 16:00 | Llegada: 22:30",
-            flightNumber: "UA240",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Clásica (Vía USA)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false,
-          usTransit: true,
-          canadaTransit: false
-        },
-        {
-          id: "copa_pty",
-          title: "Copa Airlines / Air Europa (Escala Panamá, Sin Visa)",
-          airline: "air-europa",
-          price: 16800,
-          description: "Conexión a través de Ciudad de Panamá (PTY). NO requiere visa de tránsito para mexicanos.",
-          details: "Ida: MEX ➔ PTY ➔ MAD & Vuelta: BOG ➔ PTY ➔ MEX",
-          outbound: {
-            route: "CDMX ➔ Panamá ➔ Madrid",
-            schedule: "Salida: 09:00 | Llegada: 06:00 (+1)",
-            flightNumber: "CM120 / UX64",
-            date: "Viernes 16 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ Panamá ➔ CDMX",
-            schedule: "Salida: 15:00 | Llegada: 21:30",
-            flightNumber: "CM440 / CM121",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Turista (Sin Visa PTY)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false,
-          usTransit: false,
-          canadaTransit: false
-        },
-        {
-          id: "premium",
-          title: "Iberia Directo (Premium Economy)",
-          airline: "iberia",
-          price: 35000,
-          description: "Vuelo directo con comodidades de clase preferente y prioridad de abordaje.",
-          details: "Ida: MEX ➔ MAD (Directo) & Vuelta: BOG ➔ MEX (Directo)",
-          outbound: {
-            route: "CDMX ➔ Madrid (Directo)",
-            schedule: "Salida: 13:00 | Llegada: 06:30 (+1)",
-            flightNumber: "IB6402",
-            date: "Viernes 16 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ CDMX (Directo)",
-            schedule: "Salida: 22:30 | Llegada: 04:30 (+1)",
-            flightNumber: "IB6588",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Premium (Turista Premium)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false,
-          usTransit: false,
-          canadaTransit: false
-        },
-        {
-          id: "alt_cdmx_bog",
-          title: "Ruta Alternativa: CDMX ➔ Bogotá Redondo (Avianca)",
-          airline: "avianca",
-          price: 9800,
-          description: "Parte 1 de tu ruta de salto internacional. Vuelo redondo México-Bogotá.",
-          details: "Ida: MEX ➔ BOG (Directo) & Vuelta: BOG ➔ MEX (Directo)",
-          outbound: {
-            route: "CDMX (MEX) ➔ Bogotá (BOG) (Directo)",
-            schedule: "Salida: 13:00 | Llegada: 17:30",
-            flightNumber: "AV73",
-            date: "Viernes 16 Oct 2026"
-          },
-          return: {
-            route: "Bogotá (BOG) ➔ CDMX (MEX) (Directo)",
-            schedule: "Salida: 08:30 | Llegada: 13:15",
-            flightNumber: "AV72",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Classic (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false,
-          usTransit: false,
-          canadaTransit: false
-        }
-      ],
-      marioBcn: [
-        {
-          id: "directo",
-          title: "Avianca Directo (Desde BCN, Classic)",
-          airline: "avianca",
-          price: 14000,
-          description: "Vuelo transatlántico sin escalas de 10.5 horas desde Barcelona.",
-          details: "BCN ➔ BOG (Directo)",
-          outbound: {
-            route: "Barcelona ➔ Bogotá (Directo)",
-            schedule: "Salida: 14:30 | Llegada: 18:30",
-            flightNumber: "AV19",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: null,
-          class: "Tarifa Classic (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false
-        },
-        {
-          id: "escala",
-          title: "Iberia Escala en Madrid (Desde BCN, Classic)",
-          airline: "iberia",
-          price: 13000,
-          description: "Salida de Barcelona con escala rápida de conexión aérea en Madrid (MAD).",
-          details: "BCN ➔ MAD ➔ BOG (1 Escala)",
-          outbound: {
-            route: "Barcelona ➔ Madrid ➔ Bogotá",
-            schedule: "Salida: 12:00 | Llegada: 18:30",
-            flightNumber: "IB3001 / IB6585",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: null,
-          class: "Tarifa Classic (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false
-        },
-        {
-          id: "directo-mad",
-          title: "Avianca Directo (Desde MAD) + Tren AVE BCN-MAD",
-          airline: "avianca",
-          price: 13000,
-          description: "Vuelo directo desde Madrid a Bogotá. Incluye el trayecto de tren de alta velocidad BCN-MAD.",
-          details: "BCN ➔ MAD (Tren) + MAD ➔ BOG (Vuelo)",
-          outbound: {
-            route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
-            schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 14:30)",
-            flightNumber: "AVE 03080 / AV27",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: null,
-          class: "Tarifa Classic (Turista + AVE)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: true
-        },
-        {
-          id: "air-europa-mad",
-          title: "Air Europa Directo (Desde MAD) + Tren AVE BCN-MAD",
-          airline: "air-europa",
-          price: 11500,
-          description: "Vuelo directo desde Madrid a Bogotá con Air Europa. Incluye el billete de tren AVE BCN-MAD.",
-          details: "BCN ➔ MAD (Tren) + MAD ➔ BOG (Vuelo)",
-          outbound: {
-            route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
-            schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 15:00)",
-            flightNumber: "AVE 03080 / UX21",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: null,
-          class: "Tarifa Classic (Turista + AVE)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: true
-        },
-        {
-          id: "separado",
-          title: "Low Cost (Vuelos Separados)",
-          airline: "vueling",
-          price: 11000,
-          description: "Vuelan en aerolíneas u horarios separados. Rompe el viaje en conjunto.",
-          details: "BCN ➔ BOG (Vuelos no coordinados)",
-          outbound: {
-            route: "Barcelona ➔ Bogotá (Horarios Diferentes)",
-            schedule: "Horarios variables según aerolínea",
-            flightNumber: "VY1234 / AV19",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: null,
-          class: "Tarifa Básica (Turista)",
-          bag: false,
-          carry: true,
-          seat: false,
-          train: false
-        },
-        {
-          id: "alt_bog_esp",
-          title: "Ruta Alternativa: Bogotá ➔ España Redondo (Avianca)",
-          airline: "avianca",
-          price: 19500,
-          description: "Parte 2 de la ruta alternativa. Vuela BOG-MAD para iniciar y regresa BCN-BOG contigo.",
-          details: "Ida: BOG ➔ MAD (Directo) & Vuelta: BCN ➔ BOG (Directo)",
-          outbound: {
-            route: "Bogotá (BOG) ➔ Madrid (MAD) (Directo)",
-            schedule: "Salida: 21:00 | Llegada: 14:15 (+1)",
-            flightNumber: "AV26",
-            date: "Sábado 17 Oct 2026"
-          },
-          return: {
-            route: "Barcelona (BCN) ➔ Bogotá (BOG) (Directo)",
-            schedule: "Salida: 14:30 | Llegada: 18:30",
-            flightNumber: "AV19",
-            date: "Viernes 30 Oct 2026"
-          },
-          class: "Tarifa Classic (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false
-        },
-        {
-          id: "alt_bog_esp_mad",
-          title: "Ruta Alternativa: Bogotá ➔ España Redondo (Iberia, Escala)",
-          airline: "iberia",
-          price: 18200,
-          description: "Parte 2 de la ruta alternativa. Vuela BOG-MAD para iniciar y regresa BCN-MAD-BOG con Iberia.",
-          details: "Ida: BOG ➔ MAD (Directo) & Vuelta: BCN ➔ MAD ➔ BOG",
-          outbound: {
-            route: "Bogotá (BOG) ➔ Madrid (MAD) (Directo)",
-            schedule: "Salida: 22:30 | Llegada: 15:30 (+1)",
-            flightNumber: "IB6586",
-            date: "Sábado 17 Oct 2026"
-          },
-          return: {
-            route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)",
-            schedule: "Salida: 12:00 | Llegada: 18:30",
-            flightNumber: "IB3001 / IB6585",
-            date: "Viernes 30 Oct 2026"
-          },
-          class: "Tarifa Classic (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false
-        }
-      ],
-      yesicaSpc: [
-        {
-          id: "16",
-          title: "Iberia Express (Viernes 16 Oct, Directo, Óptima)",
-          airline: "iberia-express",
-          price: 3646,
-          description: "Vuelo nacional de conexión redondo. Viaja tranquila el viernes por la noche tras empacar.",
-          details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
-          outbound: {
-            route: "La Palma (SPC) ➔ Madrid (MAD)",
-            schedule: "Salida: 19:30 | Llegada: 23:15",
-            flightNumber: "I23841",
-            date: "Viernes 16 Oct 2026"
-          },
-          return: {
-            route: "Madrid (MAD) ➔ La Palma (SPC)",
-            schedule: "Salida: 12:00 | Llegada: 15:45",
-            flightNumber: "I23840",
-            date: "Sábado 28 Nov 2026"
-          },
-          class: "Tarifa Óptima (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false
-        },
-        {
-          id: "16-basic",
-          title: "Iberia Express (Viernes 16 Oct, sin maleta)",
-          airline: "iberia-express",
-          price: 2800,
-          description: "Vuelo nacional redondo. Tarifa básica para viajar ligero de equipaje.",
-          details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
-          outbound: {
-            route: "La Palma (SPC) ➔ Madrid (MAD)",
-            schedule: "Salida: 19:30 | Llegada: 23:15",
-            flightNumber: "I23841",
-            date: "Viernes 16 Oct 2026"
-          },
-          return: {
-            route: "Madrid (MAD) ➔ La Palma (SPC)",
-            schedule: "Salida: 12:00 | Llegada: 15:45",
-            flightNumber: "I23840",
-            date: "Sábado 28 Nov 2026"
-          },
-          class: "Tarifa Básica (Turista)",
-          bag: false,
-          carry: true,
-          seat: false,
-          train: false
-        },
-        {
-          id: "17",
-          title: "Binter Canarias (Sábado 17 Oct, Escala TFN, Básica)",
-          airline: "binter",
-          price: 5000,
-          description: "Con escala de 1h 5m en Tenerife Norte. Tarda más de 5 horas de viaje de ida.",
-          details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
-          outbound: {
-            route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)",
-            schedule: "Salida: 08:30 | Llegada: 13:30",
-            flightNumber: "NT342",
-            date: "Sábado 17 Oct 2026"
-          },
-          return: {
-            route: "Madrid (MAD) ➔ La Palma (SPC) (Directo)",
-            schedule: "Salida: 12:00 | Llegada: 15:45",
-            flightNumber: "NT5120",
-            date: "Sábado 28 Nov 2026"
-          },
-          class: "Tarifa Básica (Turista)",
-          bag: false,
-          carry: true,
-          seat: false,
-          train: false
-        },
-        {
-          id: "17-plus",
-          title: "Binter Canarias Plus (Sábado 17 Oct, con maleta)",
-          airline: "binter",
-          price: 6200,
-          description: "Con escala en Tenerife Norte. Tarifa con maleta documentada incluida.",
-          details: "SPC ➔ MAD (Ida) & MAD ➔ SPC (Vuelta)",
-          outbound: {
-            route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)",
-            schedule: "Salida: 08:30 | Llegada: 13:30",
-            flightNumber: "NT342",
-            date: "Sábado 17 Oct 2026"
-          },
-          return: {
-            route: "Madrid (MAD) ➔ La Palma (SPC) (Directo)",
-            schedule: "Salida: 12:00 | Llegada: 15:45",
-            flightNumber: "NT5120",
-            date: "Sábado 28 Nov 2026"
-          },
-          class: "Tarifa Classic (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false
-        }
-      ],
-      yesicaTrans: [
-        {
-          id: "escala",
-          title: "Iberia Escala de Ida, Vuelta Directa (Juntos, Classic)",
-          airline: "iberia",
-          price: 22881,
-          description: "Vuela de ida contigo con conexión aérea BCN-MAD-BOG. Regresa directo BOG-MAD para conectar a La Palma.",
-          details: "BCN ➔ BOG (Ida con Escala) & BOG ➔ MAD (Vuelta Directa)",
-          outbound: {
-            route: "Barcelona ➔ Madrid ➔ Bogotá",
-            schedule: "Salida: 12:00 | Llegada: 18:30",
-            flightNumber: "IB3001 / IB6585",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ Madrid (Directo)",
-            schedule: "Salida: 23:00 | Llegada: 14:30 (+1)",
-            flightNumber: "IB6586",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Classic (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false
-        },
-        {
-          id: "directo",
-          title: "Avianca Ambos Directos (Desde BCN, Classic)",
-          airline: "avianca",
-          price: 25000,
-          description: "Trayecto transatlántico completamente directo tanto de ida (desde BCN) como de regreso (BOG-MAD).",
-          details: "BCN ➔ BOG (Directo) & BOG ➔ MAD (Directo)",
-          outbound: {
-            route: "Barcelona ➔ Bogotá (Directo)",
-            schedule: "Salida: 14:30 | Llegada: 18:30",
-            flightNumber: "AV19",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ Madrid (Directo)",
-            schedule: "Salida: 20:00 | Llegada: 11:30 (+1)",
-            flightNumber: "AV10",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Classic (Turista)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: false
-        },
-        {
-          id: "directo-mad",
-          title: "Avianca Directo (Desde MAD) + Tren AVE BCN-MAD",
-          airline: "avianca",
-          price: 21000,
-          description: "Vuelo directo Madrid-Bogotá ida/vuelta. Incluye el billete de tren de alta velocidad BCN-MAD para el enlace de ida.",
-          details: "BCN ➔ MAD (Tren) + MAD ➔ BOG (Vuelo) & BOG ➔ MAD (Vuelo)",
-          outbound: {
-            route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
-            schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 14:30)",
-            flightNumber: "AVE 03080 / AV27",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ Madrid (Directo)",
-            schedule: "Salida: 20:00 | Llegada: 11:30 (+1)",
-            flightNumber: "AV10",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Classic (Turista + AVE)",
-          bag: true,
-          carry: true,
-          seat: true,
-          train: true
-        },
-        {
-          id: "air-europa-mad",
-          title: "Air Europa Directo (Desde MAD, Básica) + Tren AVE BCN-MAD",
-          airline: "air-europa",
-          price: 18000,
-          description: "Vuelo Air Europa desde Madrid a Bogotá ida/vuelta. Incluye billete de tren AVE BCN-MAD.",
-          details: "BCN ➔ MAD (Tren) + MAD ➔ BOG (Vuelo) & BOG ➔ MAD (Vuelo)",
-          outbound: {
-            route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
-            schedule: "Tren: 3h | Vuelo Directo: 10h (Salida MAD 15:00)",
-            flightNumber: "AVE 03080 / UX21",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ Madrid (Directo)",
-            schedule: "Salida: 23:30 | Llegada: 15:00 (+1)",
-            flightNumber: "UX22",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Básica (Turista + AVE)",
-          bag: false,
-          carry: true,
-          seat: false,
-          train: true
-        },
-        {
-          id: "eco",
-          title: "Air Europa Escalas Largas (Separados, Básica)",
-          airline: "air-europa",
-          price: 19500,
-          description: "Escalas prolongadas de más de 6 horas en Madrid. Sin maleta de bodega.",
-          details: "BCN ➔ MAD ➔ BOG & BOG ➔ MAD ➔ BCN",
-          outbound: {
-            route: "Barcelona ➔ Madrid ➔ Bogotá",
-            schedule: "Escala larga 6h",
-            flightNumber: "UX7702",
-            date: "Viernes 30 Oct 2026"
-          },
-          return: {
-            route: "Bogotá ➔ Madrid ➔ Barcelona",
-            schedule: "Escala larga 8h",
-            flightNumber: "UX21",
-            date: "Viernes 27 Nov 2026"
-          },
-          class: "Tarifa Básica (Turista)",
-          bag: false,
-          carry: true,
-          seat: false,
-          train: false
-        }
-      ]
+    // Catálogo Global de Ladrillos de Viaje Disponibles
+    const flightsCatalog = {
+      // MARIO - TRANSATLÁNTICOS DE INICIO (CDMX -> ESPAÑA/COLOMBIA)
+      "mex_mad_directo": {
+        id: "mex_mad_directo",
+        traveler: "mario",
+        segment: "transatlantico-inicio",
+        title: "Aeroméxico / Iberia (Directo, Clásica)",
+        airline: "aeromexico-iberia",
+        price: 20000,
+        description: "Trayecto de larga distancia directo, sin escalas incómodas de ida ni vuelta.",
+        outbound: { route: "CDMX ➔ Madrid (Directo)", schedule: "Salida: 12:00 | Llegada: 06:00 (+1)", flightNumber: "AM1", date: "Viernes 16 Oct 2026" },
+        return: { route: "Bogotá ➔ CDMX (Directo)", schedule: "Salida: 23:00 | Llegada: 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Clásica (Turista)", bag: true, carry: true, seat: true, train: false, usTransit: false, canadaTransit: false
+      },
+      "mex_mad_united": {
+        id: "mex_mad_united",
+        traveler: "mario",
+        segment: "transatlantico-inicio",
+        title: "United Airlines (Escala Newark, Ahorro >30%)",
+        airline: "united",
+        price: 13500,
+        description: "Escala en Newark (EWR). Viable gracias a tu visa estadounidense. El ahorro de $6,500 MXN supera tu límite de tolerancia.",
+        outbound: { route: "CDMX ➔ Newark ➔ Madrid", schedule: "Salida: 08:30 | Llegada: 07:30 (+1)", flightNumber: "UA321 / UA120", date: "Viernes 16 Oct 2026" },
+        return: { route: "Bogotá ➔ Newark ➔ CDMX", schedule: "Salida: 16:00 | Llegada: 22:30", flightNumber: "UA240", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Clásica (Vía USA)", bag: true, carry: true, seat: true, train: false, usTransit: true, canadaTransit: false
+      },
+      "mex_mad_copa": {
+        id: "mex_mad_copa",
+        traveler: "mario",
+        segment: "transatlantico-inicio",
+        title: "Copa Airlines / Air Europa (Escala Panamá, Sin Visa)",
+        airline: "air-europa",
+        price: 16800,
+        description: "Conexión a través de Ciudad de Panamá (PTY). NO requiere visa de tránsito para mexicanos.",
+        outbound: { route: "CDMX ➔ Panamá ➔ Madrid", schedule: "Salida: 09:00 | Llegada: 06:00 (+1)", flightNumber: "CM120 / UX64", date: "Viernes 16 Oct 2026" },
+        return: { route: "Bogotá ➔ Panamá ➔ CDMX", schedule: "Salida: 15:00 | Llegada: 21:30", flightNumber: "CM440 / CM121", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Turista (Sin Visa PTY)", bag: true, carry: true, seat: true, train: false, usTransit: false, canadaTransit: false
+      },
+      "mex_bog_avianca": {
+        id: "mex_bog_avianca",
+        traveler: "mario",
+        segment: "transatlantico-inicio",
+        title: "Ruta Alternativa: CDMX ➔ Bogotá Redondo (Avianca)",
+        airline: "avianca",
+        price: 9800,
+        description: "Parte 1 de tu ruta de salto internacional. Vuelo redondo México-Bogotá.",
+        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG) (Directo)", schedule: "Salida: 13:00 | Llegada: 17:30", flightNumber: "AV73", date: "Viernes 16 Oct 2026" },
+        return: { route: "Bogotá (BOG) ➔ CDMX (MEX) (Directo)", schedule: "Salida: 08:30 | Llegada: 13:15", flightNumber: "AV72", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false, usTransit: false, canadaTransit: false
+      },
+
+      // MARIO - TRAMO ESPAÑA -> COLOMBIA
+      "esp_col_avianca_bcn": {
+        id: "esp_col_avianca_bcn",
+        traveler: "mario",
+        segment: "espana-colombia",
+        title: "Avianca Directo (Desde BCN, Classic)",
+        airline: "avianca",
+        price: 14000,
+        description: "Vuelo transatlántico sin escalas de 10.5 horas desde Barcelona.",
+        outbound: { route: "Barcelona ➔ Bogotá (Directo)", schedule: "Salida: 14:30 | Llegada: 18:30", flightNumber: "AV19", date: "Viernes 30 Oct 2026" },
+        class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false
+      },
+      "esp_col_iberia_bcn": {
+        id: "esp_col_iberia_bcn",
+        traveler: "mario",
+        segment: "espana-colombia",
+        title: "Iberia Escala en Madrid (Desde BCN, Classic)",
+        airline: "iberia",
+        price: 13000,
+        description: "Salida de Barcelona con escala rápida de conexión aérea en Madrid (MAD).",
+        outbound: { route: "Barcelona ➔ Madrid ➔ Bogotá", schedule: "Salida: 12:00 | Llegada: 18:30", flightNumber: "IB3001 / IB6585", date: "Viernes 30 Oct 2026" },
+        class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false
+      },
+      "esp_col_avianca_mad": {
+        id: "esp_col_avianca_mad",
+        traveler: "mario",
+        segment: "espana-colombia",
+        title: "Avianca Directo (Desde MAD) + Tren AVE BCN-MAD",
+        airline: "avianca",
+        price: 13000,
+        description: "Vuelo directo desde Madrid a Bogotá. Incluye el trayecto de tren de alta velocidad BCN-MAD.",
+        outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo Directo: 10h", flightNumber: "AVE 03080 / AV27", date: "Viernes 30 Oct 2026" },
+        class: "Tarifa Classic (Turista + AVE)", bag: true, carry: true, seat: true, train: true
+      },
+      "esp_col_europa_mad": {
+        id: "esp_col_europa_mad",
+        traveler: "mario",
+        segment: "espana-colombia",
+        title: "Air Europa Directo (Desde MAD) + Tren AVE BCN-MAD",
+        airline: "air-europa",
+        price: 11500,
+        description: "Vuelo directo desde Madrid a Bogotá con Air Europa. Incluye el billete de tren AVE BCN-MAD.",
+        outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo Directo: 10h", flightNumber: "AVE 03080 / UX21", date: "Viernes 30 Oct 2026" },
+        class: "Tarifa Classic (Turista + AVE)", bag: true, carry: true, seat: true, train: true
+      },
+
+      // MARIO - TRAMO ALTERNATIVO (COLOMBIA -> ESPAÑA)
+      "bog_esp_avianca": {
+        id: "bog_esp_avianca",
+        traveler: "mario",
+        segment: "alternativo-regreso",
+        title: "Ruta Alternativa: Bogotá ➔ España Redondo (Avianca)",
+        airline: "avianca",
+        price: 19500,
+        description: "Parte 2 de la ruta de saltos. Vuela BOG-MAD para iniciar y regresa BCN-BOG contigo.",
+        outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD) (Directo)", schedule: "Salida: 21:00 | Llegada: 14:15 (+1)", flightNumber: "AV26", date: "Sábado 17 Oct 2026" },
+        return: { route: "Barcelona (BCN) ➔ Bogotá (BOG) (Directo)", schedule: "Salida: 14:30 | Llegada: 18:30", flightNumber: "AV19", date: "Viernes 30 Oct 2026" },
+        class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false
+      },
+      "bog_esp_iberia": {
+        id: "bog_esp_iberia",
+        traveler: "mario",
+        segment: "alternativo-regreso",
+        title: "Ruta Alternativa: Bogotá ➔ España Redondo (Iberia, Escala)",
+        airline: "iberia",
+        price: 18200,
+        description: "Parte 2 de la ruta de saltos. Vuela BOG-MAD de ida y regresa BCN-MAD-BOG con Iberia.",
+        outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD) (Directo)", schedule: "Salida: 22:30 | Llegada: 15:30 (+1)", flightNumber: "IB6586", date: "Sábado 17 Oct 2026" },
+        return: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "Salida: 12:00 | Llegada: 18:30", flightNumber: "IB3001 / IB6585", date: "Viernes 30 Oct 2026" },
+        class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false
+      },
+
+      // YESICA - CONEXIÓN NACIONAL (LA PALMA -> MADRID)
+      "yes_spc_mad_16": {
+        id: "yes_spc_mad_16",
+        traveler: "yesica",
+        segment: "transatlantico-inicio",
+        title: "Iberia Express (Viernes 16 Oct, Directo, Óptima)",
+        airline: "iberia-express",
+        price: 3646,
+        description: "Vuelo nacional de conexión redondo. Viaja tranquila el viernes por la noche tras empacar.",
+        outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "Salida: 19:30 | Llegada: 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
+        return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "Salida: 12:00 | Llegada: 15:45", flightNumber: "I23840", date: "Sábado 28 Nov 2026" },
+        class: "Tarifa Óptima (Turista)", bag: true, carry: true, seat: true, train: false
+      },
+      "yes_spc_mad_17": {
+        id: "yes_spc_mad_17",
+        traveler: "yesica",
+        segment: "transatlantico-inicio",
+        title: "Binter Canarias (Sábado 17 Oct, Escala TFN, Básica)",
+        airline: "binter",
+        price: 5000,
+        description: "Con escala de 1h 5m en Tenerife Norte. Tarda más de 5 horas de viaje de ida.",
+        outbound: { route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)", schedule: "Salida: 08:30 | Llegada: 13:30", flightNumber: "NT342", date: "Sábado 17 Oct 2026" },
+        return: { route: "Madrid (MAD) ➔ La Palma (SPC) (Directo)", schedule: "Salida: 12:00 | Llegada: 15:45", flightNumber: "NT5120", date: "Sábado 28 Nov 2026" },
+        class: "Tarifa Básica (Turista)", bag: false, carry: true, seat: false, train: false
+      },
+
+      // YESICA - SALTO ESPAÑA -> COLOMBIA (MULTIDESTINO)
+      "yes_trans_iberia": {
+        id: "yes_trans_iberia",
+        traveler: "yesica",
+        segment: "espana-colombia",
+        title: "Iberia Escala de Ida, Vuelta Directa (Juntos, Classic)",
+        airline: "iberia",
+        price: 22881,
+        description: "Vuela de ida contigo con conexión aérea BCN-MAD-BOG. Regresa directo BOG-MAD para conectar a La Palma.",
+        outbound: { route: "Barcelona ➔ Madrid ➔ Bogotá", schedule: "Salida: 12:00 | Llegada: 18:30", flightNumber: "IB3001 / IB6585", date: "Viernes 30 Oct 2026" },
+        return: { route: "Bogotá ➔ Madrid (Directo)", schedule: "Salida: 23:00 | Llegada: 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false
+      },
+      "yes_trans_avianca": {
+        id: "yes_trans_avianca",
+        traveler: "yesica",
+        segment: "espana-colombia",
+        title: "Avianca Ambos Directos (Desde BCN, Classic)",
+        airline: "avianca",
+        price: 25000,
+        description: "Trayecto transatlántico completamente directo tanto de ida (desde BCN) como de regreso (BOG-MAD).",
+        outbound: { route: "Barcelona ➔ Bogotá (Directo)", schedule: "Salida: 14:30 | Llegada: 18:30", flightNumber: "AV19", date: "Viernes 30 Oct 2026" },
+        return: { route: "Bogotá ➔ Madrid (Directo)", schedule: "Salida: 20:00 | Llegada: 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false
+      },
+      "yes_trans_avianca_mad": {
+        id: "yes_trans_avianca_mad",
+        traveler: "yesica",
+        segment: "espana-colombia",
+        title: "Avianca Directo (Desde MAD) + Tren AVE BCN-MAD",
+        airline: "avianca",
+        price: 21000,
+        description: "Vuelo directo Madrid-Bogotá ida/vuelta. Incluye el billete de tren de alta velocidad BCN-MAD para el enlace de ida.",
+        outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo Directo: 10h", flightNumber: "AVE 03080 / AV27", date: "Viernes 30 Oct 2026" },
+        return: { route: "Bogotá ➔ Madrid (Directo)", schedule: "Salida: 20:00 | Llegada: 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Classic (Turista + AVE)", bag: true, carry: true, seat: true, train: true
+      }
     };
 
     // SVGs de las Aerolíneas para el renderizado
@@ -931,13 +571,13 @@
       "air-canada": `
         <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
           <span class="text-[10px] font-black text-red-600 mr-1">🍁</span>
-          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase">Air Canada</span>
+          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase font-bold">Air Canada</span>
         </div>
       `,
       "united": `
         <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
           <span class="text-[10px] font-black text-blue-600 mr-1">🇺🇸</span>
-          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase font-mono">United</span>
+          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase font-mono font-bold">United</span>
         </div>
       `,
       "binter": `
@@ -948,39 +588,32 @@
       "vueling": `
         <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
           <span class="text-[10px] font-black text-amber-500 mr-1">🟡</span>
-          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase">Vueling</span>
+          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase font-bold">Vueling</span>
         </div>
       `,
       "air-europa": `
         <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
           <span class="text-[10px] font-black text-blue-500 mr-1">🔵</span>
-          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase">Air Europa</span>
+          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase font-bold">Air Europa</span>
         </div>
       `
     };
 
-    // Cargar Vuelos Customizados de LocalStorage
-    let customFlights = JSON.parse(localStorage.getItem('travel_planner_custom_flights')) || {
-      marioTrans: [],
-      marioBcn: [],
-      yesicaSpc: [],
-      yesicaTrans: []
-    };
+    // Vuelos personalizados creados por el usuario
+    let customFlightsCatalog = JSON.parse(localStorage.getItem('travel_planner_custom_catalog')) || {};
 
-    // Obtener lista unificada de vuelos (Default + Custom)
-    function getFlights(key) {
-      return [...defaultFlights[key], ...(customFlights[key] || [])];
+    // Obtener catálogo unificado (Predefinidos + Personalizados)
+    function getCatalogBrick(id) {
+      return customFlightsCatalog[id] || flightsCatalog[id];
     }
 
-    // Variables de Estado Inicial
-    const defaultState = {
-      marioTrans: 'directo',
-      marioBcn: 'escala',
-      yesicaSpc: '16',
-      yesicaTrans: 'escala'
+    // Estado del Itinerario Seleccionado (Array de IDs de Ladrillos de Lego)
+    const defaultSelectedBricks = {
+      mario: ["mex_mad_directo", "esp_col_avianca_bcn"],
+      yesica: ["yes_spc_mad_16", "yes_trans_iberia"]
     };
 
-    let state = JSON.parse(localStorage.getItem('travel_planner_state')) || defaultState;
+    let selectedBricks = JSON.parse(localStorage.getItem('travel_planner_selected_bricks')) || defaultSelectedBricks;
 
     // Variables de Colaboración en Vivo (MQTT)
     let mqttClient = null;
@@ -1072,20 +705,16 @@
           if (data.sender === myClientId) return;
 
           if (topic === `viaje_octubre_2026/room/${roomId}/request`) {
-            // Un nuevo compañero se unió y pide el estado actual
             broadcastState();
           } else if (topic === `viaje_octubre_2026/room/${roomId}/state`) {
-            // Recibimos estado actualizado
-            if (data.state) {
-              state = data.state;
-              localStorage.setItem('travel_planner_state', JSON.stringify(state));
+            if (data.selectedBricks) {
+              selectedBricks = data.selectedBricks;
+              localStorage.setItem('travel_planner_selected_bricks', JSON.stringify(selectedBricks));
             }
-            if (data.customFlights) {
-              customFlights = data.customFlights;
-              localStorage.setItem('travel_planner_custom_flights', JSON.stringify(customFlights));
+            if (data.customFlightsCatalog) {
+              customFlightsCatalog = data.customFlightsCatalog;
+              localStorage.setItem('travel_planner_custom_catalog', JSON.stringify(customFlightsCatalog));
             }
-            // Actualizar selectores e interfaz
-            initDropdowns();
             render();
             showToast('Sincronizando elecciones de tu compañero...', 'success');
           }
@@ -1103,109 +732,17 @@
     function broadcastState() {
       if (mqttClient && collabRoomId) {
         mqttClient.publish(`viaje_octubre_2026/room/${collabRoomId}/state`, JSON.stringify({
-          state: state,
-          customFlights: customFlights,
+          selectedBricks: selectedBricks,
+          customFlightsCatalog: customFlightsCatalog,
           sender: myClientId
         }));
       }
     }
 
-    // Inicializar los Dropdowns con Moneda Dual (MXN y EUR)
-    function initDropdowns() {
-      ['marioTrans', 'marioBcn', 'yesicaSpc', 'yesicaTrans'].forEach(key => {
-        const select = document.getElementById(`select-${key}`);
-        select.innerHTML = "";
-        
-        getFlights(key).forEach(opt => {
-          const option = document.createElement('option');
-          option.value = opt.id;
-          
-          const priceMXN = opt.price;
-          const priceEUR = Math.round(priceMXN / MXN_EUR_RATE);
-          
-          // Formateo del dropdown
-          option.innerText = `${opt.title} - $${new Intl.NumberFormat('es-MX').format(priceMXN)} MXN (€${new Intl.NumberFormat('es-ES').format(priceEUR)})`;
-          select.appendChild(option);
-        });
-        
-        const exists = getFlights(key).some(f => f.id === state[key]);
-        if (!exists && getFlights(key).length > 0) {
-          state[key] = getFlights(key)[0].id;
-        }
-        select.value = state[key];
-      });
-    }
-
-    // Modificar selección de vuelo
-    function changeFlight(key, val) {
-      state[key] = val;
-
-      // COMPORTAMIENTO INTELIGENTE AL CAMBIAR VUELO 1 DE MARIO
-      if (key === 'marioTrans') {
-        if (val.startsWith('alt_') && !state.marioBcn.startsWith('alt_')) {
-          state.marioBcn = 'alt_bog_esp';
-          document.getElementById('select-marioBcn').value = 'alt_bog_esp';
-          state.yesicaTrans = 'directo';
-          document.getElementById('select-yesicaTrans').value = 'directo';
-        } else if (!val.startsWith('alt_') && state.marioBcn.startsWith('alt_')) {
-          state.marioBcn = 'directo';
-          document.getElementById('select-marioBcn').value = 'directo';
-          state.yesicaTrans = 'directo';
-          document.getElementById('select-yesicaTrans').value = 'directo';
-        }
-      }
-
-      // SINCRONIZACIÓN DE VUELO DE CONEXIÓN ESPAÑA -> COLOMBIA (JUNTOS)
-      if (key === 'marioBcn') {
-        if (val === 'directo' || val === 'alt_bog_esp') {
-          state.yesicaTrans = 'directo';
-          document.getElementById('select-yesicaTrans').value = 'directo';
-        } else if (val === 'escala' || val === 'alt_bog_esp_mad') {
-          state.yesicaTrans = 'escala';
-          document.getElementById('select-yesicaTrans').value = 'escala';
-        } else if (val === 'directo-mad') {
-          state.yesicaTrans = 'directo-mad';
-          document.getElementById('select-yesicaTrans').value = 'directo-mad';
-        } else if (val === 'air-europa-mad') {
-          state.yesicaTrans = 'air-europa-mad';
-          document.getElementById('select-yesicaTrans').value = 'air-europa-mad';
-        }
-      } else if (key === 'yesicaTrans') {
-        if (val === 'directo') {
-          if (state.marioTrans.startsWith('alt_')) {
-            state.marioBcn = 'alt_bog_esp';
-            document.getElementById('select-marioBcn').value = 'alt_bog_esp';
-          } else {
-            state.marioBcn = 'directo';
-            document.getElementById('select-marioBcn').value = 'directo';
-          }
-        } else if (val === 'escala') {
-          if (state.marioTrans.startsWith('alt_')) {
-            state.marioBcn = 'alt_bog_esp_mad';
-            document.getElementById('select-marioBcn').value = 'alt_bog_esp_mad';
-          } else {
-            state.marioBcn = 'escala';
-            document.getElementById('select-marioBcn').value = 'escala';
-          }
-        } else if (val === 'directo-mad') {
-          state.marioBcn = 'directo-mad';
-          document.getElementById('select-marioBcn').value = 'directo-mad';
-        } else if (val === 'air-europa-mad') {
-          state.marioBcn = 'air-europa-mad';
-          document.getElementById('select-marioBcn').value = 'air-europa-mad';
-        }
-      }
-
-      localStorage.setItem('travel_planner_state', JSON.stringify(state));
-      render();
-      broadcastState(); // Propagar cambios en tiempo real
-    }
-
-    // LÓGICA DE MODAL
+    // LÓGICA DE MODAL DE NUEVO VUELO MANUAL
     function openModal() {
       document.getElementById('modal-add-flight').classList.remove('hidden');
       document.getElementById('modal-add-flight').classList.add('flex');
-      updateFormSegments('mario');
     }
 
     function closeModal() {
@@ -1213,22 +750,6 @@
       document.getElementById('modal-add-flight').classList.remove('flex');
       document.getElementById('form-flight').reset();
       document.getElementById('form-return-fields').classList.add('hidden');
-    }
-
-    function updateFormSegments(traveler) {
-      const segmentSelect = document.getElementById('form-segment');
-      segmentSelect.innerHTML = "";
-      if (traveler === 'mario') {
-        segmentSelect.innerHTML = `
-          <option value="marioTrans">Vuelo 1: CDMX ➔ Europa o Enlace</option>
-          <option value="marioBcn">Vuelo 2: Enlace España ➔ Colombia</option>
-        `;
-      } else {
-        segmentSelect.innerHTML = `
-          <option value="yesicaSpc">Vuelo 1: Conexión SPC ➔ MAD Redondo</option>
-          <option value="yesicaTrans">Vuelo 2: Conexión España ➔ Colombia</option>
-        `;
-      }
     }
 
     function toggleFormReturnFields(checked) {
@@ -1240,9 +761,10 @@
       }
     }
 
-    // Guardar Vuelo Custom (Soporta entrada en EUR y conversión a MXN de base)
+    // Guardar Ladrillo Personalizado
     function saveCustomFlight(e) {
       e.preventDefault();
+      const traveler = document.getElementById('form-traveler').value;
       const segment = document.getElementById('form-segment').value;
       const airline = document.getElementById('form-airline').value;
       const airlineText = document.getElementById('form-airline').options[document.getElementById('form-airline').selectedIndex].text;
@@ -1251,18 +773,17 @@
       let priceInput = parseFloat(document.getElementById('form-price').value);
       const currency = document.getElementById('form-currency').value;
       
-      // Conversión a MXN base si se introduce en EUR
       const priceMXN = currency === 'EUR' ? priceInput * MXN_EUR_RATE : priceInput;
 
+      const newId = "custom_" + Date.now();
       const newFlight = {
-        id: "custom_" + Date.now(),
+        id: newId,
+        traveler: traveler,
+        segment: segment,
         title: `${airlineText} (Personalizado)`,
         airline: airline,
         price: priceMXN,
         description: document.getElementById('form-desc').value,
-        details: isRoundtrip 
-          ? `${document.getElementById('form-details').value} (Ida) & ${document.getElementById('form-return-details').value} (Vuelta)` 
-          : document.getElementById('form-details').value,
         outbound: {
           route: document.getElementById('form-details').value,
           schedule: document.getElementById('form-schedule').value,
@@ -1284,156 +805,449 @@
         canadaTransit: document.getElementById('form-canada-transit').checked
       };
 
-      customFlights[segment].push(newFlight);
-      localStorage.setItem('travel_planner_custom_flights', JSON.stringify(customFlights));
+      customFlightsCatalog[newId] = newFlight;
+      localStorage.setItem('travel_planner_custom_catalog', JSON.stringify(customFlightsCatalog));
 
-      // Recargar dropdowns y seleccionar el nuevo
-      initDropdowns();
-      changeFlight(segment, newFlight.id);
+      // Agregar directamente al itinerario
+      addBrickToItinerary(traveler, newId);
       
       closeModal();
-      broadcastState(); // Propagar cambios
     }
 
-    // Render del Estatus de Cobertura de Ruta (Lego Bricks del Itinerario)
-    function renderCoverage(marioTransObj, marioBcnObj, yesicaSpcObj, yesicaTransObj) {
-      const marioContainer = document.getElementById('coverage-mario');
-      const yesicaContainer = document.getElementById('coverage-yesica');
+    // Funciones para modificar la selección (Ladrillos Activos)
+    function addBrickToItinerary(traveler, id) {
+      if (!selectedBricks[traveler].includes(id)) {
+        selectedBricks[traveler].push(id);
+        localStorage.setItem('travel_planner_selected_bricks', JSON.stringify(selectedBricks));
+        render();
+        broadcastState();
+        showToast('¡Bloque agregado a la ruta!', 'success');
+      }
+    }
 
-      // Analizar Mario
-      let marioHtml = "";
-      
-      // Tramo 1: MEX a Europa/Colombia
-      if (marioTransObj.id === 'alt_cdmx_bog') {
-        marioHtml += `
-          <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-            <span class="font-bold text-emerald-800">1. MEX ➔ BOG (Ida Transatlántica)</span>
-            <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${marioTransObj.outbound.flightNumber || 'N/A'} (${marioTransObj.outbound.date ? marioTransObj.outbound.date.replace(" 2026", "") : ''})</span>
-          </div>
-        `;
+    function removeBrickFromItinerary(traveler, id) {
+      selectedBricks[traveler] = selectedBricks[traveler].filter(item => item !== id);
+      localStorage.setItem('travel_planner_selected_bricks', JSON.stringify(selectedBricks));
+      render();
+      broadcastState();
+      showToast('Bloque eliminado de la ruta.', 'info');
+    }
+
+    // Render del Itinerario y análisis de cobertura
+    function render() {
+      const budgetLimit = 58000;
+      let grandTotal = 0;
+
+      const renderColumn = (traveler) => {
+        const selectedContainer = document.getElementById(`selected-bricks-${traveler}`);
+        const availableContainer = document.getElementById(`available-bricks-${traveler}`);
         
-        // Al volar CDMX-BOG, requiere BOG-MAD/BCN (COL-ESP)
-        if (marioBcnObj.id.startsWith('alt_')) {
-          marioHtml += `
-            <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-              <span class="font-bold text-emerald-800">2. BOG ➔ MAD (Enlace COL ➔ ESP)</span>
-              <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${marioBcnObj.outbound.flightNumber || 'N/A'} (${marioBcnObj.outbound.date ? marioBcnObj.outbound.date.replace(" 2026", "") : ''})</span>
+        let totalCost = 0;
+        selectedContainer.innerHTML = "";
+        availableContainer.innerHTML = "";
+
+        // 1. Renderizar Bloques Seleccionados (Lego Bricks en Itinerario)
+        selectedBricks[traveler].forEach(id => {
+          const brick = getCatalogBrick(id);
+          if (!brick) return;
+          
+          totalCost += brick.price;
+          grandTotal += brick.price;
+
+          const card = document.createElement('div');
+          const borderClass = traveler === 'mario' ? 'border-blue-500 bg-blue-50/10' : 'border-pink-500 bg-pink-50/20';
+          
+          card.className = `ticket-card border ${borderClass} rounded-xl p-4 flex flex-col justify-between shadow-sm bg-white relative`;
+          card.innerHTML = `
+            <button onclick="removeBrickFromItinerary('${traveler}', '${id}')" class="absolute top-3 right-3 text-slate-400 hover:text-rose-600 font-extrabold text-xs bg-slate-50 hover:bg-rose-50 px-2 py-1 rounded border border-slate-200 transition">
+              🗑️ Eliminar Ladrillo
+            </button>
+
+            <div class="flex flex-wrap items-center gap-2 mb-3 pb-3 border-b border-slate-100 pr-24">
+              ${airlineLogos[brick.airline] || ''}
+              <span class="text-[9px] font-extrabold uppercase tracking-wide bg-slate-50 px-2 py-0.5 rounded border border-slate-100 text-slate-600">${brick.class || 'Turista'}</span>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex justify-between items-start gap-4">
+                <div class="flex-grow">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">Ida</span>
+                    <span class="text-xs font-black text-slate-950">${brick.outbound.route}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 font-mono mt-1">
+                    <span>📅 ${brick.outbound.date || 'Pendiente'}</span> | <span>⏱️ ${brick.outbound.schedule}</span>
+                  </div>
+                </div>
+                <div class="text-right text-[10px] font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded font-mono">
+                  ${brick.outbound.flightNumber || 'N/A'}
+                </div>
+              </div>
+
+              ${brick.return ? `
+              <div class="flex justify-between items-start gap-4 pt-2.5 border-t border-dashed border-slate-100">
+                <div class="flex-grow">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">Regreso</span>
+                    <span class="text-xs font-black text-slate-950">${brick.return.route}</span>
+                  </div>
+                  <div class="text-[11px] text-slate-500 font-mono mt-1">
+                    <span>📅 ${brick.return.date || 'Pendiente'}</span> | <span>⏱️ ${brick.return.schedule}</span>
+                  </div>
+                </div>
+                <div class="text-right text-[10px] font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded font-mono">
+                  ${brick.return.flightNumber || 'N/A'}
+                </div>
+              </div>
+              ` : ''}
+            </div>
+
+            <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-100">
+              <div class="flex flex-wrap items-center gap-3 text-[10px] font-medium text-slate-500">
+                <span class="${brick.bag ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${brick.bag ? '✓ 🧳 Maleta' : '✗ Maleta'}</span>
+                <span class="${brick.carry ? 'text-emerald-600 font-bold' : 'text-slate-400'}">${brick.carry ? '✓ 🎒 Mano' : '✗ Mano'}</span>
+                ${brick.train ? '<span class="text-blue-600 font-extrabold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">🚄 Tren AVE</span>' : ''}
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-black text-slate-900 block">${formatMXN(brick.price)}</span>
+                <span class="text-[9px] font-bold text-slate-400 block">${formatEUR(brick.price)} EUR</span>
+              </div>
             </div>
           `;
-        } else {
-          marioHtml += `
-            <div class="flex items-center justify-between p-2.5 bg-rose-50 border border-rose-100 rounded-xl text-xs">
-              <span class="font-bold text-rose-800">2. BOG ➔ MAD (Enlace COL ➔ ESP)</span>
-              <span class="font-bold text-rose-700 bg-white px-2 py-0.5 rounded border border-rose-100">❌ Falta Bloque COL-ESP</span>
+          selectedContainer.appendChild(card);
+        });
+
+        if (selectedBricks[traveler].length === 0) {
+          selectedContainer.innerHTML = `
+            <div class="border border-dashed border-slate-200 rounded-xl p-6 text-center text-xs text-slate-400 font-semibold bg-slate-50/50">
+              ⚠️ No hay ladrillos de viaje seleccionados. Añade uno del catálogo abajo.
             </div>
           `;
         }
-      } else {
-        // Vuelo Directo MEX-MAD
-        marioHtml += `
-          <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-            <span class="font-bold text-emerald-800">1. MEX ➔ MAD (Ida Transatlántica)</span>
-            <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${marioTransObj.outbound.flightNumber || 'N/A'} (${marioTransObj.outbound.date ? marioTransObj.outbound.date.replace(" 2026", "") : ''})</span>
-          </div>
+
+        // 2. Renderizar Catálogo de Ladrillos Disponibles
+        // Agrupados por Segmento/Categoría
+        const segments = {
+          "transatlantico-inicio": "1. Salida de Origen (CDMX / La Palma)",
+          "espana-colombia": "2. Salto España ➔ Colombia (BCN / MAD ➔ BOG)",
+          "alternativo-regreso": "3. Saltos Alternativos (Bogotá ➔ España Redondo)"
+        };
+
+        Object.keys(segments).forEach(seg => {
+          // Filtrar bricks del catálogo para este viajero y este segmento
+          const avail = Object.values(flightsCatalog).filter(f => f.traveler === traveler && f.segment === seg);
+          const customAvail = Object.values(customFlightsCatalog).filter(f => f.traveler === traveler && f.segment === seg);
+          const allAvail = [...avail, ...customAvail];
+
+          if (allAvail.length === 0) return;
+
+          const group = document.createElement('div');
+          group.className = "space-y-2";
+          group.innerHTML = `<h4 class="text-[10px] font-black text-slate-500 uppercase tracking-wider pl-1">${segments[seg]}</h4>`;
+
+          allAvail.forEach(brick => {
+            const isAdded = selectedBricks[traveler].includes(brick.id);
+            const item = document.createElement('div');
+            item.className = `p-2.5 border rounded-xl flex items-center justify-between text-xs transition bg-slate-50/50 hover:bg-slate-50 ${isAdded ? 'border-slate-300 opacity-60' : 'border-slate-200'}`;
+            item.innerHTML = `
+              <div class="flex-grow pr-4">
+                <div class="font-extrabold text-slate-900">${brick.title}</div>
+                <div class="text-[10px] text-slate-400 font-medium mt-0.5">${brick.details || brick.outbound.route}</div>
+              </div>
+              <div class="text-right flex items-center gap-3">
+                <div>
+                  <span class="font-black text-slate-950 block">${formatMXN(brick.price)}</span>
+                  <span class="text-[9px] font-bold text-slate-400 block">${formatEUR(brick.price)} EUR</span>
+                </div>
+                <button onclick="${isAdded ? `removeBrickFromItinerary('${traveler}', '${brick.id}')` : `addBrickToItinerary('${traveler}', '${brick.id}')`}" class="px-3 py-1.5 rounded-lg text-[10px] font-black transition ${isAdded ? 'bg-slate-200 hover:bg-slate-300 text-slate-600' : 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm'}">
+                  ${isAdded ? 'Quitar' : 'Añadir'}
+                </button>
+              </div>
+            `;
+            group.appendChild(item);
+          });
+          availableContainer.appendChild(group);
+        });
+
+        // Actualizar subtotal viajero
+        const costBadge = document.getElementById(`${traveler}-total-cost`);
+        costBadge.innerHTML = `
+          <span class="text-sm font-extrabold text-${traveler === 'mario' ? 'blue' : 'pink'}-700">${formatMXN(totalCost)}</span>
+          <span class="text-[10px] font-bold text-${traveler === 'mario' ? 'blue' : 'pink'}-500/80 mt-0.5">${formatEUR(totalCost)} EUR</span>
         `;
+      };
+
+      renderColumn('mario');
+      renderColumn('yesica');
+
+      // Actualizar Presupuesto Dual en el Encabezado
+      document.getElementById('cost-display').innerText = formatMXN(grandTotal);
+      document.getElementById('cost-display-eur').innerText = `${formatEUR(grandTotal)} EUR`;
+
+      const progressBar = document.getElementById('budget-progress-bar');
+      const budgetStatus = document.getElementById('budget-status');
+      const budgetPercentText = document.getElementById('budget-percent');
+      
+      const progressPercent = Math.min((grandTotal / budgetLimit) * 100, 100);
+      progressBar.style.width = progressPercent + '%';
+      budgetPercentText.innerText = `${Math.round(progressPercent)}% del presupuesto (Límite: ${formatMXN(budgetLimit)} / ${formatEUR(budgetLimit)} EUR)`;
+
+      if (grandTotal <= budgetLimit) {
+        progressBar.className = "h-full bg-emerald-500 transition-all duration-500";
+        budgetStatus.className = "px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 font-extrabold uppercase";
+        budgetStatus.innerText = "¡Dentro del Presupuesto!";
+        document.getElementById('cost-display').className = "text-lg font-black text-emerald-600";
+      } else {
+        progressBar.className = "h-full bg-rose-500 transition-all duration-500";
+        budgetStatus.className = "px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 font-extrabold uppercase animate-pulse";
+        budgetStatus.innerText = "¡Presupuesto Excedido!";
+        document.getElementById('cost-display').className = "text-lg font-black text-rose-600";
       }
 
-      // Tramo 3: Madrid a Barcelona (Enlace local en España)
-      marioHtml += `
-        <div class="flex items-center justify-between p-2.5 bg-amber-50 border border-amber-100 rounded-xl text-xs">
-          <span class="font-bold text-amber-800">3. MAD ➔ BCN (Enlace en España)</span>
-          <span class="font-bold text-amber-700 bg-white px-2 py-0.5 rounded border border-amber-100">${marioBcnObj.train ? "🚄 Tren AVE Atocha-Sants" : "🔗 Enlace Local Terrestre"}</span>
-        </div>
-      `;
+      // 3. LOGICA LOGISTICA DE COBERTURA DE RUTA DINÁMICA
+      const updateItineraryCoverage = () => {
+        const marioCovered = {
+          mex_mad: false,
+          mex_bog: false,
+          bog_mad: false,
+          mad_bcn: false, // local
+          bcn_bog: false,
+          bog_mex: false
+        };
 
-      // Tramo 4: Barcelona a Bogotá (ESP-COL)
-      if (marioTransObj.id === 'alt_cdmx_bog') {
-        if (marioBcnObj.id.startsWith('alt_')) {
-          marioHtml += `
-            <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-              <span class="font-bold text-emerald-800">4. BCN ➔ BOG (Retorno Transatlántico)</span>
-              <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${marioBcnObj.return ? marioBcnObj.return.flightNumber : 'N/A'} (${(marioBcnObj.return ? marioBcnObj.return.date : '').replace(" 2026", "")})</span>
+        const yesicaCovered = {
+          spc_mad: false,
+          mad_bcn: false, // local
+          bcn_bog: false,
+          bog_mad: false,
+          mad_spc: false
+        };
+
+        // Escanear Ladrillos de Mario
+        selectedBricks.mario.forEach(id => {
+          const b = getCatalogBrick(id);
+          if (!b) return;
+
+          const testOut = (b.outbound && b.outbound.route) ? b.outbound.route : '';
+          const testRet = (b.return && b.return.route) ? b.return.route : '';
+
+          if (testOut.includes('CDMX ➔ Madrid') || testOut.includes('MEX ➔ MAD')) marioCovered.mex_mad = true;
+          if (testOut.includes('CDMX ➔ Bogotá') || testOut.includes('CDMX (MEX) ➔ Bogotá') || testOut.includes('MEX ➔ BOG')) {
+            marioCovered.mex_bog = true;
+          }
+          if (testOut.includes('Bogotá (BOG) ➔ Madrid') || testOut.includes('BOG ➔ MAD')) marioCovered.bog_mad = true;
+          if (testOut.includes('BCN ➔ MAD') || testOut.includes('Barcelona ➔ Madrid')) marioCovered.bog_mad = true; // escala o AVE
+          if (testOut.includes('Barcelona ➔ Bogotá') || testOut.includes('BCN ➔ BOG') || testOut.includes('BCN ➔ MAD ➔ BOG')) marioCovered.bcn_bog = true;
+
+          if (testRet.includes('Bogotá ➔ CDMX') || testRet.includes('BOG ➔ MEX') || testRet.includes('BOG ➔ CDMX')) marioCovered.bog_mex = true;
+          if (testRet.includes('Barcelona ➔ Bogotá') || testRet.includes('BCN ➔ BOG')) marioCovered.bcn_bog = true;
+          if (testRet.includes('Bogotá ➔ Madrid') || testRet.includes('BOG ➔ MAD')) {
+            marioCovered.bog_mad = true;
+          }
+
+          if (b.train) marioCovered.mad_bcn = true;
+        });
+
+        // Escanear Ladrillos de Yesica
+        selectedBricks.yesica.forEach(id => {
+          const b = getCatalogBrick(id);
+          if (!b) return;
+
+          const testOut = (b.outbound && b.outbound.route) ? b.outbound.route : '';
+          const testRet = (b.return && b.return.route) ? b.return.route : '';
+
+          if (testOut.includes('La Palma ➔ Madrid') || testOut.includes('SPC ➔ MAD')) yesicaCovered.spc_mad = true;
+          if (testOut.includes('Barcelona ➔ Madrid ➔ Bogotá') || testOut.includes('BCN ➔ MAD ➔ BOG') || testOut.includes('Barcelona ➔ Bogotá') || testOut.includes('BCN ➔ BOG') || testOut.includes('BCN ➔ MAD')) {
+            yesicaCovered.bcn_bog = true;
+          }
+
+          if (testRet.includes('Madrid ➔ La Palma') || testRet.includes('MAD ➔ SPC')) yesicaCovered.mad_spc = true;
+          if (testRet.includes('Bogotá ➔ Madrid') || testRet.includes('BOG ➔ MAD')) yesicaCovered.bog_mad = true;
+
+          if (b.train) yesicaCovered.mad_bcn = true;
+        });
+
+        // Determinar ruta de Mario (Directa a España vs Ruta Alternativa)
+        // Por defecto, asumimos directa si no tiene MEX-BOG
+        const isMarioAlt = marioCovered.mex_bog;
+
+        // Renderizado del checklist para Mario
+        const marioCovDiv = document.getElementById('coverage-mario');
+        let marioHtml = "";
+
+        if (isMarioAlt) {
+          // CDMX-COL-ESP-COL-CDMX
+          marioHtml += renderSegmentRow("1. CDMX ➔ Bogotá (Ida)", marioCovered.mex_bog, "alt_cdmx_bog");
+          marioHtml += renderSegmentRow("2. Bogotá ➔ Madrid (Ida Transatlántica)", marioCovered.bog_mad, "bog_esp_avianca");
+          marioHtml += renderSegmentRow("3. Madrid ➔ Barcelona (Enlace)", true, "", true);
+          marioHtml += renderSegmentRow("4. Barcelona ➔ Bogotá (Regreso)", marioCovered.bcn_bog, "bog_esp_avianca");
+          marioHtml += renderSegmentRow("5. Bogotá ➔ CDMX (Retorno)", marioCovered.bog_mex, "mex_bog_avianca");
+        } else {
+          // MEX-MAD-BCN-BOG-MEX
+          marioHtml += renderSegmentRow("1. CDMX ➔ Madrid (Ida Transatlántica)", marioCovered.mex_mad, "mex_mad_directo");
+          marioHtml += renderSegmentRow("2. Madrid ➔ Barcelona (Enlace)", true, "", true);
+          marioHtml += renderSegmentRow("3. Barcelona ➔ Bogotá (Vuelta Transatlántica)", marioCovered.bcn_bog, "esp_col_avianca_bcn");
+          marioHtml += renderSegmentRow("4. Bogotá ➔ CDMX (Retorno)", marioCovered.bog_mex, "mex_mad_directo");
+        }
+        marioCovDiv.innerHTML = marioHtml;
+
+        // Renderizado del checklist para Yesica
+        const yesicaCovDiv = document.getElementById('coverage-yesica');
+        let yesicaHtml = "";
+        yesicaHtml += renderSegmentRow("1. La Palma ➔ Madrid (Ida)", yesicaCovered.spc_mad, "yes_spc_mad_16");
+        yesicaHtml += renderSegmentRow("2. Madrid ➔ Barcelona (Enlace)", true, "", true);
+        yesicaHtml += renderSegmentRow("3. Barcelona ➔ Bogotá (Vuelta)", yesicaCovered.bcn_bog, "yes_trans_iberia");
+        yesicaHtml += renderSegmentRow("4. Bogotá ➔ Madrid (Vuelta)", yesicaCovered.bog_mad, "yes_trans_iberia");
+        yesicaHtml += renderSegmentRow("5. Madrid ➔ La Palma (Regreso)", yesicaCovered.mad_spc, "yes_spc_mad_16");
+        yesicaCovDiv.innerHTML = yesicaHtml;
+
+        // Generar Alertas
+        const warnings = [];
+        const infos = [];
+
+        if (grandTotal > budgetLimit) {
+          warnings.push({
+            title: "Presupuesto Excedido",
+            text: `El total de vuelos supera el límite establecido por ${formatMXN(grandTotal - budgetLimit)} (${formatEUR(grandTotal - budgetLimit)} EUR).`
+          });
+        }
+
+        // Validaciones logísticas
+        if (isMarioAlt) {
+          if (!marioCovered.bog_mad) {
+            warnings.push({
+              title: "Hueco de Ruta: Falta tramo Colombia ➔ España (Mario)",
+              text: "Seleccionaste volar a Bogotá como primer paso, pero Mario no tiene boleto para cruzar de Colombia a España. Añade el Ladrillo de Ruta Alternativa (BOG-MAD Redondo)."
+            });
+          }
+          infos.push({
+            title: "Ruta de Saltos Activa para Mario (CDMX-COL-ESP-COL-CDMX)",
+            text: "Se ha estructurado la ruta cruzando por Bogotá de ida y vuelta para Mario."
+          });
+        }
+
+        // Validar si viajan juntos en el transatlántico
+        // Deben tener el mismo vuelo para BCN-BOG el 30 de octubre.
+        const marioTransFlight = selectedBricks.mario.map(id => getCatalogBrick(id)).find(b => b && b.outbound && (b.outbound.route.includes('Barcelona ➔ Bogotá') || b.outbound.route.includes('BCN ➔ BOG') || b.outbound.route.includes('BCN ➔ MAD ➔ BOG')));
+        const yesicaTransFlight = selectedBricks.yesica.map(id => getCatalogBrick(id)).find(b => b && b.outbound && (b.outbound.route.includes('Barcelona ➔ Bogotá') || b.outbound.route.includes('BCN ➔ BOG') || b.outbound.route.includes('BCN ➔ MAD ➔ BOG')));
+        
+        if (marioTransFlight && yesicaTransFlight) {
+          if (marioTransFlight.outbound.flightNumber !== yesicaTransFlight.outbound.flightNumber) {
+            warnings.push({
+              title: "No viajan juntos en el Vuelo Transatlántico",
+              text: `Mario viaja en el vuelo ${marioTransFlight.outbound.flightNumber} y Yesica en el vuelo ${yesicaTransFlight.outbound.flightNumber} para el trayecto del 30 de Octubre. Deben coordinar el mismo boleto.`
+            });
+          } else {
+            infos.push({
+              title: "¡Vuelo Transatlántico Conjunto Confirmado!",
+              text: `Ambos viajan el 30 de Octubre en el vuelo transatlántico ${marioTransFlight.outbound.flightNumber} juntos de España a Colombia.`
+            });
+          }
+        } else {
+          warnings.push({
+            title: "Falta Vuelo Transatlántico Conjunto",
+            text: "Uno o ambos viajeros no tienen seleccionado el vuelo del 30 de Octubre (España ➔ Colombia)."
+          });
+        }
+
+        const alertsPanel = document.getElementById('alerts-panel');
+        if (warnings.length === 0 && infos.length === 0) {
+          alertsPanel.className = "rounded-2xl p-5 border border-emerald-200 bg-emerald-50/50 text-emerald-800 text-xs font-medium flex items-center gap-3";
+          alertsPanel.innerHTML = `
+            <span class="text-base">✓</span>
+            <div>
+              <strong class="font-bold block">¡Itinerario consistente!</strong>
+              Todos los tramos transatlánticos y conexiones locales se encuentran cubiertos sin huecos logísticos.
             </div>
           `;
         } else {
-          marioHtml += `
-            <div class="flex items-center justify-between p-2.5 bg-rose-50 border border-rose-100 rounded-xl text-xs">
-              <span class="font-bold text-rose-800">4. BCN ➔ BOG (Retorno Transatlántico)</span>
-              <span class="font-bold text-rose-700 bg-white px-2 py-0.5 rounded border border-rose-100">❌ Falta Bloque ESP-COL</span>
+          alertsPanel.className = "rounded-2xl p-5 border border-slate-200 bg-white text-xs space-y-4 shadow-sm";
+          alertsPanel.innerHTML = "";
+
+          if (warnings.length > 0) {
+            const warnContainer = document.createElement('div');
+            warnContainer.className = "space-y-2.5";
+            warnContainer.innerHTML = `<h4 class="font-black text-rose-600 uppercase tracking-wider text-[10px] flex items-center gap-1.5">⚠️ Conflictos Críticos (${warnings.length})</h4>`;
+            
+            warnings.forEach(w => {
+              const el = document.createElement('div');
+              el.className = "pl-3 border-l-2 border-rose-500";
+              el.innerHTML = `<strong class="font-bold text-rose-800 block">${w.title}</strong><p class="text-slate-600 mt-0.5">${w.text}</p>`;
+              warnContainer.appendChild(el);
+            });
+            alertsPanel.appendChild(warnContainer);
+          }
+
+          if (infos.length > 0) {
+            const infoContainer = document.createElement('div');
+            infoContainer.className = "space-y-2.5 pt-3 border-t border-slate-100";
+            infoContainer.innerHTML = `<h4 class="font-black text-blue-600 uppercase tracking-wider text-[10px] flex items-center gap-1.5">ℹ️ Avisos e Información (${infos.length})</h4>`;
+            
+            infos.forEach(i => {
+              const el = document.createElement('div');
+              el.className = "pl-3 border-l-2 border-blue-500";
+              el.innerHTML = `<strong class="font-bold text-blue-800 block">${i.title}</strong><p class="text-slate-600 mt-0.5">${i.text}</p>`;
+              infoContainer.appendChild(el);
+            });
+            alertsPanel.appendChild(infoContainer);
+          }
+        }
+      };
+
+      // Helper para renderizar filas de cobertura con botón para resolver huecos
+      const renderSegmentRow = (label, isCovered, resolveId = "", isLocal = false) => {
+        if (isLocal) {
+          return `
+            <div class="flex items-center justify-between p-2.5 bg-amber-50 border border-amber-100 rounded-xl text-xs">
+              <span class="font-bold text-amber-800">${label}</span>
+              <span class="font-bold text-amber-700 bg-white px-2.5 py-1 rounded border border-amber-100">🚃 Enlace Terrestre Local</span>
             </div>
           `;
         }
-      } else {
-        marioHtml += `
-          <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-            <span class="font-bold text-emerald-800">4. BCN ➔ BOG (Regreso Transatlántico)</span>
-            <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${marioBcnObj.outbound.flightNumber || 'N/A'} (${marioBcnObj.outbound.date ? marioBcnObj.outbound.date.replace(" 2026", "") : ''})</span>
-          </div>
-        `;
-      }
 
-      // Tramo 5: Bogotá a CDMX (Retorno)
-      marioHtml += `
-        <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-          <span class="font-bold text-emerald-800">5. BOG ➔ MEX (Retorno Origen)</span>
-          <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${marioTransObj.return ? marioTransObj.return.flightNumber : marioTransObj.outbound.flightNumber} (${(marioTransObj.return ? marioTransObj.return.date : marioTransObj.outbound.date).replace(" 2026", "")})</span>
-        </div>
-      `;
+        if (isCovered) {
+          return `
+            <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
+              <span class="font-bold text-emerald-800">${label}</span>
+              <span class="font-bold text-emerald-700 bg-white px-2.5 py-1 rounded border border-emerald-100">✓ Cubierto</span>
+            </div>
+          `;
+        } else {
+          const traveler = label.includes("Mario") || label.startsWith("1.") || label.startsWith("2.") || label.startsWith("4.") || label.startsWith("5.") && !label.includes("Yesica") ? "mario" : "yesica";
+          return `
+            <div class="flex items-center justify-between p-2.5 bg-rose-50 border border-rose-100 rounded-xl text-xs animate-pulse">
+              <span class="font-bold text-rose-800">${label}</span>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-rose-700 bg-white px-2 py-1 rounded border border-rose-100">❌ Falta Bloque</span>
+                ${resolveId ? `
+                  <button onclick="addBrickToItinerary('${traveler}', '${resolveId}')" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-[10px] px-2.5 py-1 rounded shadow transition">
+                    ➕ Resolver
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }
+      };
 
-      marioContainer.innerHTML = marioHtml;
+      updateItineraryCoverage();
 
-      // Analizar Yesica
-      let yesicaHtml = "";
+      // Renderizar el Calendario Dinámico (a partir de los vuelos seleccionados)
+      const marioOutObj = selectedBricks.mario.map(id => getCatalogBrick(id)).find(b => b && b.segment === 'transatlantico-inicio') || getCatalogBrick('mex_mad_directo');
+      const marioBcnObj = selectedBricks.mario.map(id => getCatalogBrick(id)).find(b => b && (b.segment === 'espana-colombia' || b.segment === 'alternativo-regreso')) || getCatalogBrick('esp_col_avianca_bcn');
+      const yesicaSpcObj = selectedBricks.yesica.map(id => getCatalogBrick(id)).find(b => b && b.segment === 'transatlantico-inicio') || getCatalogBrick('yes_spc_mad_16');
+      const yesicaTransObj = selectedBricks.yesica.map(id => getCatalogBrick(id)).find(b => b && b.segment === 'espana-colombia') || getCatalogBrick('yes_trans_iberia');
 
-      // Tramo 1: La Palma a Madrid (Ida)
-      yesicaHtml += `
-        <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-          <span class="font-bold text-emerald-800">1. SPC ➔ MAD (Conexión Ida)</span>
-          <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${yesicaSpcObj.outbound.flightNumber || 'N/A'} (${yesicaSpcObj.outbound.date ? yesicaSpcObj.outbound.date.replace(" 2026", "") : ''})</span>
-        </div>
-      `;
-
-      // Tramo 2: Madrid a Barcelona (Enlace local en España)
-      yesicaHtml += `
-        <div class="flex items-center justify-between p-2.5 bg-amber-50 border border-amber-100 rounded-xl text-xs">
-          <span class="font-bold text-amber-800">2. MAD ➔ BCN (Enlace en España)</span>
-          <span class="font-bold text-amber-700 bg-white px-2 py-0.5 rounded border border-amber-100">${yesicaTransObj.train ? "🚄 Tren AVE Atocha-Sants" : "🔗 Enlace Local Terrestre"}</span>
-        </div>
-      `;
-
-      // Tramo 3: Barcelona a Bogotá (ESP-COL)
-      yesicaHtml += `
-        <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-          <span class="font-bold text-emerald-800">3. BCN ➔ BOG (Ida Conjunta)</span>
-          <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${yesicaTransObj.outbound.flightNumber || 'N/A'} (${yesicaTransObj.outbound.date ? yesicaTransObj.outbound.date.replace(" 2026", "") : ''})</span>
-        </div>
-      `;
-
-      // Tramo 4: Bogotá a Madrid (COL-ESP)
-      yesicaHtml += `
-        <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-          <span class="font-bold text-emerald-800">4. BOG ➔ MAD (Regreso Transatlántico)</span>
-          <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${yesicaTransObj.return ? yesicaTransObj.return.flightNumber : 'N/A'} (${(yesicaTransObj.return ? yesicaTransObj.return.date : 'N/A').replace(" 2026", "")})</span>
-        </div>
-      `;
-
-      // Tramo 5: Madrid a La Palma (Conexión Regreso)
-      yesicaHtml += `
-        <div class="flex items-center justify-between p-2.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs">
-          <span class="font-bold text-emerald-800">5. MAD ➔ SPC (Conexión Regreso)</span>
-          <span class="font-mono text-emerald-700 font-bold bg-white px-2 py-0.5 rounded border border-emerald-100">${yesicaSpcObj.return ? yesicaSpcObj.return.flightNumber : 'N/A'} (${(yesicaSpcObj.return ? yesicaSpcObj.return.date : 'N/A').replace(" 2026", "")})</span>
-        </div>
-      `;
-
-      yesicaContainer.innerHTML = yesicaHtml;
+      renderCalendar(marioOutObj, marioBcnObj, yesicaSpcObj, yesicaTransObj);
     }
 
     // Render del Calendario/Itinerario dinámico
     function renderCalendar(marioTransObj, marioBcnObj, yesicaSpcObj, yesicaTransObj) {
-      const dateMarioOut = marioTransObj.outbound.date || "Viernes 16 Oct 2026";
-      const dateYesicaOut = yesicaSpcObj.outbound.date || (state.yesicaSpc.startsWith('17') ? "Sábado 17 Oct 2026" : "Viernes 16 Oct 2026");
-      const dateBcnBog = marioBcnObj.outbound.date || "Viernes 30 Oct 2026";
-      const dateReturn = marioTransObj.return ? (marioTransObj.return.date || "Viernes 27 Nov 2026") : "Viernes 27 Nov 2026";
+      if (!marioTransObj || !marioBcnObj || !yesicaSpcObj || !yesicaTransObj) return;
+      
+      const dateMarioOut = (marioTransObj.outbound && marioTransObj.outbound.date) ? marioTransObj.outbound.date : "Viernes 16 Oct 2026";
+      const dateYesicaOut = (yesicaSpcObj.outbound && yesicaSpcObj.outbound.date) ? yesicaSpcObj.outbound.date : "Viernes 16 Oct 2026";
+      const dateReturn = (marioTransObj.return && marioTransObj.return.date) ? marioTransObj.return.date : "Viernes 27 Nov 2026";
 
       const container = document.getElementById('calendar-timeline');
       container.innerHTML = `
@@ -1465,7 +1279,7 @@
           <div class="text-sm font-black text-slate-900">17 - 23 Octubre 2026</div>
           <div class="text-xs text-slate-600 space-y-1">
             <p>🌟 <strong>Estancia Conjunta:</strong> 6 noches en Madrid.</p>
-            <p class="text-[10px] text-slate-400">Hospedaje a seleccionar en el Paso 2 (Chamberí vs. Chueca).</p>
+            <p class="text-[10px] text-slate-400">Chamberí vs. Only You Chueca.</p>
           </div>
         </div>
 
@@ -1476,7 +1290,7 @@
           <div class="text-xs text-slate-600 space-y-1">
             <p>🚄 <strong>Traslado:</strong> Madrid ➔ Barcelona.</p>
             <p class="text-[10px] text-slate-500 font-medium">
-              ${marioBcnObj.train ? "Enlace en Tren AVE de alta velocidad (3 hrs) ATOCHA-SANTS." : "Enlace vía aérea de conexión Barcelona."}
+              ${marioBcnObj.train ? "Enlace en Tren AVE de alta velocidad ATOCHA-SANTS." : "Enlace local terrestre España."}
             </p>
           </div>
         </div>
@@ -1487,7 +1301,7 @@
           <div class="text-sm font-black text-slate-900">23 - 30 Octubre 2026</div>
           <div class="text-xs text-slate-600 space-y-1">
             <p>🏢 <strong>Estancia Conjunta:</strong> 7 noches en Barcelona.</p>
-            <p class="text-[10px] text-slate-400">Hospedaje a seleccionar en Paso 2 (Eixample vs. Born).</p>
+            <p class="text-[10px] text-slate-400">Eixample vs. Born.</p>
           </div>
         </div>
 
@@ -1503,9 +1317,6 @@
                 <span class="text-[10px] text-slate-400 block">${marioBcnObj.outbound.flightNumber || 'N/A'} | ${marioBcnObj.outbound.schedule}</span>
               </div>
             </div>
-            <p class="text-[10px] text-slate-500 font-medium mt-1">
-              ${marioBcnObj.train ? "Nota: Salen en Tren AVE temprano BCN-MAD para tomar vuelo desde Barajas (MAD)." : "Nota: Salen directo de Barcelona (BCN)."}
-            </p>
           </div>
         </div>
 
@@ -1541,282 +1352,6 @@
       `;
     }
 
-    // Render y cálculo en vivo
-    function render() {
-      const marioTransObj = getFlights('marioTrans').find(f => f.id === state.marioTrans) || getFlights('marioTrans')[0];
-      const marioBcnObj = getFlights('marioBcn').find(f => f.id === state.marioBcn) || getFlights('marioBcn')[0];
-      const yesicaSpcObj = getFlights('yesicaSpc').find(f => f.id === state.yesicaSpc) || getFlights('yesicaSpc')[0];
-      const yesicaTransObj = getFlights('yesicaTrans').find(f => f.id === state.yesicaTrans) || getFlights('yesicaTrans')[0];
-
-      const marioTotal = marioTransObj.price + marioBcnObj.price;
-      const yesicaTotal = yesicaSpcObj.price + yesicaTransObj.price;
-      const grandTotal = marioTotal + yesicaTotal;
-      const budgetLimit = 58000;
-      const progressPercent = Math.min((grandTotal / budgetLimit) * 100, 100);
-
-      // Actualizar visualizaciones de presupuesto dual
-      document.getElementById('cost-display').innerText = formatMXN(grandTotal);
-      document.getElementById('cost-display-eur').innerText = `${formatEUR(grandTotal)} EUR`;
-
-      // Totales por persona duales
-      const marioCostBadge = document.getElementById('mario-total-cost');
-      marioCostBadge.innerHTML = `
-        <span class="text-sm font-extrabold text-blue-700">${formatMXN(marioTotal)}</span>
-        <span class="text-[10px] font-bold text-blue-500/80 mt-0.5">${formatEUR(marioTotal)} EUR</span>
-      `;
-
-      const yesicaCostBadge = document.getElementById('yesica-total-cost');
-      yesicaCostBadge.innerHTML = `
-        <span class="text-sm font-extrabold text-pink-700">${formatMXN(yesicaTotal)}</span>
-        <span class="text-[10px] font-bold text-pink-500/80 mt-0.5">${formatEUR(yesicaTotal)} EUR</span>
-      `;
-
-      const progressBar = document.getElementById('budget-progress-bar');
-      const budgetStatus = document.getElementById('budget-status');
-      const budgetPercentText = document.getElementById('budget-percent');
-      
-      progressBar.style.width = progressPercent + '%';
-      budgetPercentText.innerText = `${Math.round(progressPercent)}% del presupuesto (Límite: ${formatMXN(budgetLimit)} / ${formatEUR(budgetLimit)} EUR)`;
-
-      if (grandTotal <= budgetLimit) {
-        progressBar.className = "h-full bg-emerald-500 transition-all duration-500";
-        budgetStatus.className = "px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 font-extrabold uppercase";
-        budgetStatus.innerText = "¡Dentro del Presupuesto!";
-        document.getElementById('cost-display').className = "text-lg font-black text-emerald-600";
-      } else {
-        progressBar.className = "h-full bg-rose-500 transition-all duration-500";
-        budgetStatus.className = "px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 font-extrabold uppercase animate-pulse";
-        budgetStatus.innerText = "¡Presupuesto Excedido!";
-        document.getElementById('cost-display').className = "text-lg font-black text-rose-600";
-      }
-
-      // Renderizado del ladrillo lego
-      const renderBrick = (targetId, flight, isActiveMario) => {
-        const container = document.getElementById(targetId);
-        const activeClass = isActiveMario ? 'border-blue-500 bg-blue-50/20' : 'border-pink-500 bg-pink-50/20';
-        
-        container.innerHTML = `
-          <div class="ticket-card border ${activeClass} rounded-xl p-4 flex flex-col justify-between shadow-sm bg-white">
-            <div class="flex flex-wrap items-center gap-2 mb-3 pb-3 border-b border-slate-100">
-              ${airlineLogos[flight.airline] || ''}
-              <span class="text-[10px] font-extrabold uppercase tracking-wide bg-slate-50 px-2 py-0.5 rounded border border-slate-100 text-slate-600">${flight.class}</span>
-              <div class="ml-auto text-right flex flex-col items-end">
-                <span class="text-[9px] text-slate-400 uppercase font-bold block tracking-wider">Costo</span>
-                <span class="text-sm font-black text-slate-900">${formatMXN(flight.price)}</span>
-                <span class="text-[10px] font-bold text-slate-400 mt-0.5">${formatEUR(flight.price)} EUR</span>
-              </div>
-            </div>
-
-            <div class="space-y-3.5">
-              <div class="flex justify-between items-start gap-4">
-                <div class="flex-grow">
-                  <div class="flex items-center gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">Ida</span>
-                    <span class="text-sm font-black text-slate-950">${flight.outbound.route}</span>
-                  </div>
-                  <div class="text-xs text-slate-500 font-mono mt-1 flex flex-col gap-0.5">
-                    <span>📅 ${flight.outbound.date || 'Pendiente'}</span>
-                    <span>⏱️ ${flight.outbound.schedule}</span>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <span class="text-[10px] font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded font-mono block">
-                    ${flight.outbound.flightNumber || 'N/A'}
-                  </span>
-                </div>
-              </div>
-
-              ${flight.return ? `
-              <div class="flex justify-between items-start gap-4 pt-3 border-t border-dashed border-slate-100">
-                <div class="flex-grow">
-                  <div class="flex items-center gap-2">
-                    <span class="text-[9px] uppercase font-bold text-slate-400 bg-slate-50 border border-slate-100 rounded px-1.5 py-0.5">Regreso</span>
-                    <span class="text-sm font-black text-slate-950">${flight.return.route}</span>
-                  </div>
-                  <div class="text-xs text-slate-500 font-mono mt-1 flex flex-col gap-0.5">
-                    <span>📅 ${flight.return.date || 'Pendiente'}</span>
-                    <span>⏱️ ${flight.return.schedule}</span>
-                  </div>
-                </div>
-                <div class="text-right">
-                  <span class="text-[10px] font-black text-slate-700 bg-slate-100 px-2 py-0.5 rounded font-mono block">
-                    ${flight.return.flightNumber || 'N/A'}
-                  </span>
-                </div>
-              </div>
-              ` : ''}
-            </div>
-
-            ${flight.description ? `<p class="text-xs text-slate-500 mt-3 pt-2 border-t border-slate-50 leading-relaxed">${flight.description}</p>` : ''}
-
-            <div class="flex flex-wrap items-center gap-4 mt-4 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 ${flight.bag ? 'text-emerald-600 font-bold' : 'text-rose-500'}">
-                ${flight.bag ? '✓ 🧳 Maleta' : '✗ Sin Maleta'}
-              </span>
-              <span class="flex items-center gap-1 ${flight.carry ? 'text-emerald-600 font-bold' : 'text-rose-500'}">
-                ${flight.carry ? '✓ 🎒 Carry-on' : '✗ Sin Carry-on'}
-              </span>
-              <span class="flex items-center gap-1 ${flight.seat ? 'text-emerald-600 font-bold' : 'text-rose-500'}">
-                ${flight.seat ? '✓ 💺 Asiento' : '✗ Sin Asiento'}
-              </span>
-              ${flight.train ? `
-              <span class="flex items-center gap-1 text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded border border-blue-100 font-extrabold ml-auto animate-pulse">
-                🚄 Incluye Tren AVE BCN-MAD
-              </span>
-              ` : ''}
-            </div>
-          </div>
-        `;
-      };
-
-      renderBrick('brick-marioTrans', marioTransObj, true);
-      renderBrick('brick-marioBcn', marioBcnObj, true);
-      renderBrick('brick-yesicaSpc', yesicaSpcObj, false);
-      renderBrick('brick-yesicaTrans', yesicaTransObj, false);
-
-      // Renderizar el Calendario Dinámico
-      renderCalendar(marioTransObj, marioBcnObj, yesicaSpcObj, yesicaTransObj);
-
-      // Renderizar el Estatus de Cobertura (Lego Bricks)
-      renderCoverage(marioTransObj, marioBcnObj, yesicaSpcObj, yesicaTransObj);
-
-      // 4. DETECCION DE CONFLICTOS Y ALERTAS DUALES
-      const warnings = [];
-      const infos = [];
-
-      if (grandTotal > budgetLimit) {
-        warnings.push({
-          title: "Presupuesto Excedido",
-          text: `El total de vuelos supera el límite establecido por ${formatMXN(grandTotal - budgetLimit)} (${formatEUR(grandTotal - budgetLimit)} EUR). Considera cambiar a vuelos con escalas o tarifas básicas.`
-        });
-      }
-
-      const isMarioTransAlt = state.marioTrans.startsWith('alt_');
-      const isMarioBcnAlt = state.marioBcn.startsWith('alt_');
-      
-      if (isMarioTransAlt && !isMarioBcnAlt) {
-        warnings.push({
-          title: "Inconsistencia de Ruta: Falta Vuelo Colombia ➔ España (Mario)",
-          text: "Has seleccionado volar CDMX ➔ Bogotá en el Vuelo 1, pero tu Vuelo 2 está configurado para una salida directa europea. Te falta el boleto transatlántico de ida BOG ➔ MAD para cruzar a Europa. Cambia el Vuelo 2 a una opción de Ruta Alternativa (BOG-ESP Redondo)."
-        });
-      } else if (!isMarioTransAlt && isMarioBcnAlt) {
-        warnings.push({
-          title: "Inconsistencia de Ruta (Vuelo Transatlántico Duplicado)",
-          text: "Has seleccionado volar directo a Madrid en el Vuelo 1, pero tu Vuelo 2 está configurado para la Ruta Alternativa (BOG-MAD Redondo). Tienes vuelos transatlánticos duplicados."
-        });
-      }
-
-      const isMarioSeparated = state.marioBcn === 'separado';
-      const isYesicaSeparated = state.yesicaTrans === 'eco';
-      const isDifferentFlightType = (state.marioBcn !== state.yesicaTrans) && 
-                                    !(state.marioBcn.includes('mad') && state.yesicaTrans.includes('mad')) &&
-                                    !(state.marioBcn.includes('alt_') && state.yesicaTrans === 'directo' && state.marioBcn.includes('alt_bog_esp')) &&
-                                    !(state.marioBcn === 'alt_bog_esp_mad' && state.yesicaTrans === 'escala');
-      
-      if (isMarioSeparated || isYesicaSeparated || isDifferentFlightType) {
-        warnings.push({
-          title: "No viajan juntos de España a Colombia",
-          text: "Han seleccionado vuelos o rutas diferentes para el trayecto Barcelona ➔ Bogotá. Esto rompe la regla de viajar juntos en este tramo."
-        });
-      }
-
-      if (state.yesicaSpc.startsWith('17')) {
-        warnings.push({
-          title: "Escala Corta en Tenerife (Binter)",
-          text: "El vuelo de Yesica el sábado 17 tiene una escala de solo 1 hora y 5 minutos en Tenerife Norte (TFN). Hay riesgo de pérdida de conexión ante cualquier retraso."
-        });
-        infos.push({
-          title: "Llegadas Asíncronas a Madrid",
-          text: "Mario llega a Madrid el viernes 16 y Yesica el sábado 17. Mario pasará la primera noche solo en Madrid."
-        });
-      }
-
-      // Alerta de Visa de Tránsito y Lógica de Ahorro del 30%
-      const refDirectPrice = 20000;
-      const isCanadaTransit = marioTransObj.canadaTransit || (marioTransObj.details && (marioTransObj.details.includes('YUL') || marioTransObj.details.includes('YYZ') || marioTransObj.details.includes('Canadá')));
-      const isUsTransit = marioTransObj.usTransit || (marioTransObj.details && (marioTransObj.details.includes('EWR') || marioTransObj.details.includes('JFK') || marioTransObj.details.includes('MIA') || marioTransObj.details.includes('USA') || marioTransObj.details.includes('EE.UU.')));
-
-      if (isCanadaTransit) {
-        warnings.push({
-          title: "⚠️ Vuelo No Viable (Tránsito por Canadá)",
-          text: "Esta ruta transita por Canadá. Como Mario no cuenta con visa canadiense, no se puede reservar esta opción."
-        });
-      }
-
-      if (isUsTransit) {
-        const savingsPercent = ((refDirectPrice - marioTransObj.price) / refDirectPrice) * 100;
-        const savedAmount = refDirectPrice - marioTransObj.price;
-        if (savingsPercent >= 30) {
-          infos.push({
-            title: "Tránsito por EE.UU. Autorizado (Visa US)",
-            text: `Esta opción transita por EE.UU. Dado que cuentas con visa estadounidense y el ahorro respecto al vuelo directo de referencia es del ${savingsPercent.toFixed(1)}% (ahorro de ${formatMXN(savedAmount)} / ${formatEUR(savedAmount)} EUR), esta conexión es financieramente eficiente.`
-          });
-        } else {
-          warnings.push({
-            title: "⚠️ Conexión en EE.UU. Ineficiente",
-            text: `Esta ruta transita por EE.UU. y el ahorro respecto al vuelo directo de referencia es del ${savingsPercent.toFixed(1)}% (menor al 30% requerido). Debido al desgaste y tiempos de espera migratorios en aeropuertos de EE.UU., no se recomienda reservar esta opción por un ahorro tan bajo.`
-          });
-        }
-      }
-
-      if (marioBcnObj.train || yesicaTransObj.train) {
-        warnings.push({
-          title: "🚄 Conexión Terrestre BCN ➔ MAD Requerida",
-          text: "Han seleccionado un vuelo de conexión transatlántica que despega desde Madrid (MAD) en lugar de Barcelona. Es CRÍTICO coordinar y reservar los trenes AVE correspondientes. Se recomienda llegar a Madrid-Atocha con al menos 4.5 horas de holgura respecto a la hora de salida del vuelo para permitir el traslado Atocha ➔ Aeropuerto Barajas (Cercanías/Taxi) y la facturación de maletas."
-        });
-      }
-
-      if (isMarioTransAlt && isMarioBcnAlt) {
-        infos.push({
-          title: "Ruta de Saltos Activa para Mario (CDMX-COL-ESP-COL-CDMX)",
-          text: "Mario está volando primero CDMX-BOG, luego vuela BOG-MAD para reunirse con Yesica en España, regresan juntos España-Bogotá, y finalmente Mario vuelve BOG-MEX. Toda la logística transatlántica y de enlace está balanceada."
-        });
-      }
-
-      const alertsPanel = document.getElementById('alerts-panel');
-      if (warnings.length === 0 && infos.length === 0) {
-        alertsPanel.className = "rounded-2xl p-5 border border-emerald-200 bg-emerald-50/50 text-emerald-800 text-xs font-medium flex items-center gap-3";
-        alertsPanel.innerHTML = `
-          <span class="text-base">✓</span>
-          <div>
-            <strong class="font-bold block">¡Logística en orden!</strong>
-            No hay conflictos de horarios, escalas cortas ni presupuesto excedido con esta combinación de vuelos.
-          </div>
-        `;
-      } else {
-        alertsPanel.className = "rounded-2xl p-5 border border-slate-200 bg-white text-xs space-y-4 shadow-sm";
-        alertsPanel.innerHTML = "";
-
-        if (warnings.length > 0) {
-          const warnContainer = document.createElement('div');
-          warnContainer.className = "space-y-2.5";
-          warnContainer.innerHTML = `<h4 class="font-black text-rose-600 uppercase tracking-wider text-[10px] flex items-center gap-1.5">⚠️ Conflictos Críticos (${warnings.length})</h4>`;
-          
-          warnings.forEach(w => {
-            const el = document.createElement('div');
-            el.className = "pl-3 border-l-2 border-rose-500";
-            el.innerHTML = `<strong class="font-bold text-rose-800 block">${w.title}</strong><p class="text-slate-600 mt-0.5">${w.text}</p>`;
-            warnContainer.appendChild(el);
-          });
-          alertsPanel.appendChild(warnContainer);
-        }
-
-        if (infos.length > 0) {
-          const infoContainer = document.createElement('div');
-          infoContainer.className = "space-y-2.5 pt-3 border-t border-slate-100";
-          infoContainer.innerHTML = `<h4 class="font-black text-blue-600 uppercase tracking-wider text-[10px] flex items-center gap-1.5">ℹ️ Avisos e Información (${infos.length})</h4>`;
-          
-          infos.forEach(i => {
-            const el = document.createElement('div');
-            el.className = "pl-3 border-l-2 border-blue-500";
-            el.innerHTML = `<strong class="font-bold text-blue-800 block">${i.title}</strong><p class="text-slate-600 mt-0.5">${i.text}</p>`;
-            infoContainer.appendChild(el);
-          });
-          alertsPanel.appendChild(infoContainer);
-        }
-      }
-    }
-
     // Inicializar sala de colaboración al cargar si está en URL
     function checkUrlRoom() {
       const params = new URLSearchParams(window.location.search);
@@ -1827,7 +1362,6 @@
     }
 
     // Inicialización del DOM
-    initDropdowns();
     render();
     checkUrlRoom();
   </script>
