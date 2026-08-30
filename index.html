@@ -879,7 +879,7 @@
       if (state.yesicaSpc.startsWith('17')) {
         warnings.push({
           title: "Escala Corta en Tenerife (Binter)",
-          text: "El vuelo de Yesica el sábado 17 tiene una escala de solo 1 hora y 5 minutos en Tenerife Norte (TFN). Hay riesgo elevado de pérdida de conexión ante cualquier retraso."
+          text: "El vuelo de Yesica el sábado 17 tiene una escala de solo 1 hora y 5 minutos en Tenerife Norte (TFN). Hay riesgo de pérdida de conexión ante cualquier retraso."
         });
         
         // Llegada asíncrona a Madrid
@@ -897,11 +897,11 @@
         });
       }
 
-      // E. Info: Tren AVE requerido
+      // E. Alerta Crítica: Requiere coordinación de trenes Barcelona <-> Madrid
       if (marioBcnObj.train || yesicaTransObj.train) {
-        infos.push({
-          title: "Conexión en Tren AVE Requerida",
-          text: "Han seleccionado un vuelo de salida desde Madrid (MAD). Se requiere viajar en tren AVE de Barcelona a Madrid. El costo estimado de los pasajes de tren ($1,500 MXN c/u) ya está sumado al total."
+        warnings.push({
+          title: "🚄 Conexión Terrestre BCN ➔ MAD Requerida",
+          text: "Han seleccionado un vuelo de conexión transatlántica que despega desde Madrid (MAD) en lugar de Barcelona. Es CRÍTICO coordinar y reservar los trenes AVE correspondientes. Se recomienda llegar a Madrid-Atocha con al menos 4.5 horas de holgura respecto a la hora de salida del vuelo para permitir el traslado Atocha ➔ Aeropuerto Barajas (Cercanías/Taxi) y la facturación de maletas."
         });
       }
 
