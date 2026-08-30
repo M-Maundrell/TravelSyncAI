@@ -85,148 +85,32 @@
       </div>
 
       <!-- Segmento 1: MEX-MAD y BOG-MEX -->
-      <div>
-        <div class="flex justify-between items-center mb-3">
-          <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Vuelo 1: CDMX ➔ Madrid (Ida y Vuelta)</span>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 1: CDMX ➔ Madrid (Ida y Vuelta)</label>
+          <select id="select-marioTrans" onchange="changeFlight('marioTrans', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm">
+            <!-- Cargado por JS -->
+          </select>
         </div>
         
-        <div class="flex flex-col gap-4">
-          <!-- Opción A: Directo -->
-          <div id="card-mario-trans-directo" onclick="setOption('marioTrans', 'directo')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded">Vuelos Directos</span>
-                  <span class="text-[10px] font-bold text-slate-400">Aeroméxico / Iberia</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                  MEX <span class="text-slate-400 font-normal">➔</span> MAD
-                  <span class="text-xs text-slate-400 font-normal">y</span>
-                  BOG <span class="text-slate-400 font-normal">➔</span> MEX
-                </div>
-                <p class="text-xs text-slate-500 mt-1.5">Trayecto de larga distancia directo, sin escalas incómodas de ida ni vuelta.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$20,000</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🧳 Maleta Bodega</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 💺 Asiento</span>
-            </div>
-          </div>
-
-          <!-- Opción B: Con Escala -->
-          <div id="card-mario-trans-escala" onclick="setOption('marioTrans', 'escala')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-amber-50 text-amber-700 px-2 py-0.5 rounded">1 o 2 Escalas</span>
-                  <span class="text-[10px] font-bold text-slate-400">Airlines EE.UU. / Canadá</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                  MEX <span class="text-slate-400 font-normal">➔</span> MAD
-                  <span class="text-xs text-slate-400 font-normal">y</span>
-                  BOG <span class="text-slate-400 font-normal">➔</span> MEX
-                </div>
-                <p class="text-xs text-slate-500 mt-1.5">Escalas de conexión en EE.UU. o Canadá (se requiere visa/permiso de tránsito).</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$16,500</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-rose-500">✗ No incluye Maleta</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-rose-500">✗ Sin Asiento</span>
-            </div>
-          </div>
+        <!-- Contenedor del Boleto Activo (Lego Brick) -->
+        <div id="brick-marioTrans">
+          <!-- Renderizado dinamicamente -->
         </div>
       </div>
 
       <!-- Segmento 2: BCN-BOG -->
-      <div>
-        <div class="flex justify-between items-center mb-3">
-          <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Vuelo 2: Conexión España ➔ Colombia (BCN ➔ BOG)</span>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 2: Conexión España ➔ Colombia (BCN ➔ BOG)</label>
+          <select id="select-marioBcn" onchange="changeFlight('marioBcn', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm">
+            <!-- Cargado por JS -->
+          </select>
         </div>
         
-        <div class="flex flex-col gap-4">
-          <!-- Opción A: Avianca Directo (Juntos) -->
-          <div id="card-mario-bcn-directo" onclick="setOption('marioBcn', 'directo')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-mono">Tarifa Classic (Turista)</span>
-                  <span class="text-[10px] font-bold text-slate-400">Avianca</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900">BCN ➔ BOG (Vuelo AV19)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Vuelo transatlántico sin escalas de 10.5 horas. Sincronizado para viajar juntos.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$14,000</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🧳 Maleta Bodega</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 💺 Asiento</span>
-            </div>
-          </div>
-
-          <!-- Opción B: Iberia Escala (Juntos) -->
-          <div id="card-mario-bcn-escala" onclick="setOption('marioBcn', 'escala')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-amber-50 text-amber-700 px-2 py-0.5 rounded font-mono">Tarifa Classic (Turista)</span>
-                  <span class="text-[10px] font-bold text-slate-400">Iberia</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900">BCN ➔ MAD ➔ BOG</div>
-                <p class="text-xs text-slate-500 mt-1.5">Salida de Barcelona con escala de conexión en Madrid (MAD). Sincronizado para viajar juntos.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$13,000</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🧳 Maleta Bodega</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 💺 Asiento</span>
-            </div>
-          </div>
-
-          <!-- Opción C: Separados -->
-          <div id="card-mario-bcn-separado" onclick="setOption('marioBcn', 'separado')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-rose-50 text-rose-700 px-2 py-0.5 rounded font-mono">Tarifa Básica (Turista)</span>
-                  <span class="text-[10px] font-bold text-slate-400">Low Cost</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900">BCN ➔ BOG (Diferente Vuelo)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Vuelan en aerolíneas u horarios separados. Rompe el viaje en conjunto.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$11,000</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-rose-500">✗ No incluye Maleta</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-rose-500">✗ Sin Asiento</span>
-            </div>
-          </div>
+        <!-- Contenedor del Boleto Activo (Lego Brick) -->
+        <div id="brick-marioBcn">
+          <!-- Renderizado dinamicamente -->
         </div>
       </div>
     </div>
@@ -243,139 +127,32 @@
       </div>
 
       <!-- Segmento 1: SPC-MAD-SPC -->
-      <div>
-        <div class="flex justify-between items-center mb-3">
-          <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Vuelo 1: Conexión Nacional (La Palma ➔ Madrid Redondo)</span>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 1: Conexión Nacional (La Palma ➔ Madrid Redondo)</label>
+          <select id="select-yesicaSpc" onchange="changeFlight('yesicaSpc', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 shadow-sm">
+            <!-- Cargado por JS -->
+          </select>
         </div>
         
-        <div class="flex flex-col gap-4">
-          <!-- Opción A: Viernes 16 Oct (Iberia Express) -->
-          <div id="card-yesica-spc-16" onclick="setOption('yesicaSpc', '16')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-mono">Tarifa Óptima (Turista)</span>
-                  <span class="text-[10px] font-bold text-slate-400">Iberia Express</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900">SPC ➔ MAD (16 Oct, 19:30)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Directo (2h 45m). Viaja tranquila el viernes por la noche tras empacar.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$3,646</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🧳 Maleta Bodega</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 💺 Asiento</span>
-            </div>
-          </div>
-
-          <!-- Opción B: Sábado 17 Oct (Binter Canarias) -->
-          <div id="card-yesica-spc-17" onclick="setOption('yesicaSpc', '17')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-amber-50 text-amber-700 px-2 py-0.5 rounded font-mono">Tarifa Básica (Turista)</span>
-                  <span class="text-[10px] font-bold text-slate-400">Binter Canarias</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900">SPC ➔ TFN ➔ MAD (17 Oct)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Con escala en Tenerife Norte. Tarda más de 5 horas de viaje en total.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$5,000</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-rose-500">✗ No incluye Maleta</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-rose-500">✗ Sin Asiento</span>
-            </div>
-          </div>
+        <!-- Contenedor del Boleto Activo (Lego Brick) -->
+        <div id="brick-yesicaSpc">
+          <!-- Renderizado dinamicamente -->
         </div>
       </div>
 
       <!-- Segmento 2: BCN-BOG & BOG-MAD -->
-      <div>
-        <div class="flex justify-between items-center mb-3">
-          <span class="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Vuelo 2: Conexión España ➔ Colombia (Multidestino)</span>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-2">Vuelo 2: Conexión España ➔ Colombia (Multidestino)</label>
+          <select id="select-yesicaTrans" onchange="changeFlight('yesicaTrans', this.value)" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 shadow-sm">
+            <!-- Cargado por JS -->
+          </select>
         </div>
         
-        <div class="flex flex-col gap-4">
-          <!-- Opción A: Iberia Escala de Ida, Vuelta Directa -->
-          <div id="card-yesica-trans-escala" onclick="setOption('yesicaTrans', 'escala')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-mono">Tarifa Classic (Turista)</span>
-                  <span class="text-[10px] font-bold text-slate-400">Iberia</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900">BCN ➔ MAD ➔ BOG (Ida) & BOG ➔ MAD (Vuelta Directa)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Vuela de ida contigo vía Madrid. Regresa directo BOG-MAD para conectar fácil a La Palma.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$22,881</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🧳 Maleta Bodega</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 💺 Asiento</span>
-            </div>
-          </div>
-
-          <!-- Opción B: Avianca Directo Ida y Vuelta -->
-          <div id="card-yesica-trans-directo" onclick="setOption('yesicaTrans', 'directo')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-mono">Tarifa Classic (Turista)</span>
-                  <span class="text-[10px] font-bold text-slate-400">Avianca</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900">BCN ➔ BOG (Directo) & BOG ➔ MAD (Directo)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Trayecto transatlántico completamente directo tanto de ida como de regreso.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$25,000</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🧳 Maleta Bodega</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 💺 Asiento</span>
-            </div>
-          </div>
-
-          <!-- Opción C: Económico Escalas Largas -->
-          <div id="card-yesica-trans-eco" onclick="setOption('yesicaTrans', 'eco')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
-            <div class="flex justify-between items-start gap-4">
-              <div class="flex-grow">
-                <div class="flex items-center gap-2 mb-2">
-                  <span class="text-[10px] font-extrabold uppercase bg-rose-50 text-rose-700 px-2 py-0.5 rounded font-mono">Tarifa Básica (Turista)</span>
-                </div>
-                <div class="text-base font-extrabold text-slate-900">BCN ➔ BOG / BOG ➔ MAD (Múltiples Escalas)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Escalas de larga duración en diferentes aeropuertos. Sin equipaje documentado.</p>
-              </div>
-              <div class="text-right">
-                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
-                <span class="text-base font-black text-slate-900">$19,500</span>
-              </div>
-            </div>
-            <!-- Beneficios -->
-            <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
-              <span class="flex items-center gap-1 text-rose-500">✗ No incluye Maleta</span>
-              <span class="flex items-center gap-1 text-emerald-600">✓ 🎒 Carry-on</span>
-              <span class="flex items-center gap-1 text-rose-500">✗ Sin Asiento</span>
-            </div>
-          </div>
+        <!-- Contenedor del Boleto Activo (Lego Brick) -->
+        <div id="brick-yesicaTrans">
+          <!-- Renderizado dinamicamente -->
         </div>
       </div>
     </div>
@@ -383,6 +160,281 @@
   </div>
 
   <script>
+    // Base de Datos de Vuelos con todas las opciones
+    const flightsData = {
+      marioTrans: [
+        {
+          id: "directo",
+          title: "Aeroméxico / Iberia (Directo, Clásica)",
+          airline: "aeromexico-iberia",
+          price: 20000,
+          description: "Trayecto de larga distancia directo, sin escalas incómodas de ida ni vuelta.",
+          details: "Ida: MEX ➔ MAD (Directo) | Vuelta: BOG ➔ MEX (Directo)",
+          schedule: "Ida: 12:00 - 06:00 (+1) | Vuelta: 23:00 - 05:00 (+1)",
+          class: "Tarifa Clásica (Turista)",
+          bag: true,
+          carry: true,
+          seat: true
+        },
+        {
+          id: "escala",
+          title: "Air Canada (Escala en YUL, Básica)",
+          airline: "air-canada",
+          price: 16500,
+          description: "Escalas de conexión en Montreal. Se requiere eTA canadiense para tránsito.",
+          details: "Ida: MEX ➔ YUL ➔ MAD (1 Escala) | Vuelta: BOG ➔ YUL ➔ MEX (1 Escala)",
+          schedule: "Ida: 07:00 - 23:00 | Vuelta: 14:00 - 01:00 (+1)",
+          class: "Tarifa Básica (Turista)",
+          bag: false,
+          carry: true,
+          seat: false
+        },
+        {
+          id: "united",
+          title: "United Airlines (Escala en EWR, Classic)",
+          airline: "united",
+          price: 18900,
+          description: "Escalas rápidas en Newark. Se requiere visa estadounidense (C-1) para tránsito.",
+          details: "Ida: MEX ➔ EWR ➔ MAD (1 Escala) | Vuelta: BOG ➔ EWR ➔ MEX (1 Escala)",
+          schedule: "Ida: 08:30 - 07:30 (+1) | Vuelta: 16:00 - 22:30",
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true
+        },
+        {
+          id: "premium",
+          title: "Iberia Directo (Premium Economy)",
+          airline: "iberia",
+          price: 35000,
+          description: "Vuelo directo con comodidades de clase preferente y prioridad de abordaje.",
+          details: "Ida: MEX ➔ MAD (Directo) | Vuelta: BOG ➔ MEX (Directo)",
+          schedule: "Ida: 13:00 - 06:30 (+1) | Vuelta: 22:30 - 04:30 (+1)",
+          class: "Tarifa Premium (Turista Premium)",
+          bag: true,
+          carry: true,
+          seat: true
+        }
+      ],
+      marioBcn: [
+        {
+          id: "directo",
+          title: "Avianca Directo (Juntos, Classic)",
+          airline: "avianca",
+          price: 14000,
+          description: "Vuelo transatlántico sin escalas de 10.5 horas. Sincronizado para viajar juntos.",
+          details: "BCN ➔ BOG (Directo, Vuelo AV19)",
+          schedule: "Salida: 14:30 | Llegada: 18:30 (Mismo día)",
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true
+        },
+        {
+          id: "escala",
+          title: "Iberia Escala en Madrid (Juntos, Classic)",
+          airline: "iberia",
+          price: 13000,
+          description: "Salida de Barcelona con escala rápida de conexión en Madrid (MAD). Viajan juntos.",
+          details: "BCN ➔ MAD ➔ BOG (1 Escala)",
+          schedule: "Salida: 12:00 | Llegada: 18:30 (Mismo día)",
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true
+        },
+        {
+          id: "separado",
+          title: "Low Cost (Vuelos Separados)",
+          airline: "vueling",
+          price: 11000,
+          description: "Vuelan en aerolíneas u horarios separados. Rompe el viaje en conjunto.",
+          details: "BCN ➔ BOG (Vuelos no coordinados)",
+          schedule: "Horarios variables según aerolínea",
+          class: "Tarifa Básica (Turista)",
+          bag: false,
+          carry: true,
+          seat: false
+        },
+        {
+          id: "avianca-basic",
+          title: "Avianca Directo (Juntos, sin maleta)",
+          airline: "avianca",
+          price: 11800,
+          description: "Mismo vuelo directo AV19, pero tarifa básica sin equipaje de bodega.",
+          details: "BCN ➔ BOG (Directo, Vuelo AV19)",
+          schedule: "Salida: 14:30 | Llegada: 18:30 (Mismo día)",
+          class: "Tarifa Básica (Turista)",
+          bag: false,
+          carry: true,
+          seat: false
+        }
+      ],
+      yesicaSpc: [
+        {
+          id: "16",
+          title: "Iberia Express (Viernes 16 Oct, Directo, Óptima)",
+          airline: "iberia-express",
+          price: 3646,
+          description: "Directo (2h 45m). Viaja tranquila el viernes por la noche tras empacar.",
+          details: "SPC ➔ MAD (Directo)",
+          schedule: "Salida 19:30 | Llegada 23:15",
+          class: "Tarifa Óptima (Turista)",
+          bag: true,
+          carry: true,
+          seat: true
+        },
+        {
+          id: "16-basic",
+          title: "Iberia Express (Viernes 16 Oct, sin maleta)",
+          airline: "iberia-express",
+          price: 2800,
+          description: "Directo (2h 45m). Tarifa básica para viajar ligero de equipaje.",
+          details: "SPC ➔ MAD (Directo)",
+          schedule: "Salida 19:30 | Llegada 23:15",
+          class: "Tarifa Básica (Turista)",
+          bag: false,
+          carry: true,
+          seat: false
+        },
+        {
+          id: "17",
+          title: "Binter Canarias (Sábado 17 Oct, Escala TFN, Básica)",
+          airline: "binter",
+          price: 5000,
+          description: "Con escala de 1h 5m en Tenerife Norte. Tarda más de 5 horas de viaje.",
+          details: "SPC ➔ TFN ➔ MAD (1 Escala)",
+          schedule: "Salida 08:30 | Llegada 13:30",
+          class: "Tarifa Básica (Turista)",
+          bag: false,
+          carry: true,
+          seat: false
+        },
+        {
+          id: "17-plus",
+          title: "Binter Canarias Plus (Sábado 17 Oct, con maleta)",
+          airline: "binter",
+          price: 6200,
+          description: "Con escala en Tenerife Norte. Tarifa con maleta documentada incluida.",
+          details: "SPC ➔ TFN ➔ MAD (1 Escala)",
+          schedule: "Salida 08:30 | Llegada 13:30",
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true
+        }
+      ],
+      yesicaTrans: [
+        {
+          id: "escala",
+          title: "Iberia Escala de Ida, Vuelta Directa (Juntos, Classic)",
+          airline: "iberia",
+          price: 22881,
+          description: "Vuela de ida contigo vía Madrid. Regresa directo BOG-MAD para conectar fácil a La Palma.",
+          details: "BCN ➔ MAD ➔ BOG (Ida con Escala) & BOG ➔ MAD (Vuelta Directa)",
+          schedule: "Ida: Escala en MAD | Vuelta: Vuelo Directo BOG-MAD",
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true
+        },
+        {
+          id: "directo",
+          title: "Avianca Ambos Directos (Juntos, Classic)",
+          airline: "avianca",
+          price: 25000,
+          description: "Trayecto transatlántico completamente directo tanto de ida como de regreso.",
+          details: "Ida: BCN ➔ BOG (Directo) | Vuelta: BOG ➔ MAD (Directo)",
+          schedule: "Ida: Vuelo Directo | Vuelta: Vuelo Directo",
+          class: "Tarifa Classic (Turista)",
+          bag: true,
+          carry: true,
+          seat: true
+        },
+        {
+          id: "eco",
+          title: "Air Europa Escalas Largas (Separados, Básica)",
+          airline: "air-europa",
+          price: 19500,
+          description: "Escalas prolongadas de más de 6 horas en Madrid. Sin maleta de bodega.",
+          details: "BCN ➔ MAD ➔ BOG (Ida con Escala) & BOG ➔ MAD (Vuelta con Escala)",
+          schedule: "Escalas largas en Madrid de 6-8 horas",
+          class: "Tarifa Básica (Turista)",
+          bag: false,
+          carry: true,
+          seat: false
+        },
+        {
+          id: "escala-basic",
+          title: "Iberia Escala Ida/Vuelta (sin maleta)",
+          airline: "iberia",
+          price: 18200,
+          description: "Mismos vuelos que la opción recomendada de Iberia, pero con tarifa básica.",
+          details: "BCN ➔ MAD ➔ BOG (Ida con Escala) & BOG ➔ MAD (Vuelta Directa)",
+          schedule: "Ida: Escala en MAD | Vuelta: Vuelo Directo BOG-MAD",
+          class: "Tarifa Básica (Turista)",
+          bag: false,
+          carry: true,
+          seat: false
+        }
+      ]
+    };
+
+    // SVGs de las Aerolíneas para el renderizado
+    const airlineLogos = {
+      "aeromexico-iberia": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center gap-1.5 shadow-sm">
+          <svg class="h-3.5 w-8" viewBox="0 0 100 25" fill="none"><path d="M5 2h10v20H5V2z" fill="#D71920"/><path d="M18 2h6v20h-6V2z" fill="#FAC800"/><text x="30" y="18" fill="#D71920" font-family="sans-serif" font-weight="bold" font-size="11">IB</text></svg>
+          <span class="text-slate-300 text-xs">|</span>
+          <svg class="h-3.5 w-10" viewBox="0 0 120 25" fill="none"><circle cx="12" cy="12" r="10" fill="#0F2C59"/><path d="M7 12l4-4 4 4-4 4-4-4z" fill="white"/><text x="28" y="17" fill="#0F2C59" font-family="sans-serif" font-weight="bold" font-size="10">AM</text></svg>
+        </div>
+      `,
+      "iberia": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
+          <svg class="h-3.5 w-14" viewBox="0 0 100 25" fill="none"><path d="M5 2h10v20H5V2z" fill="#D71920"/><path d="M18 2h6v20h-6V2z" fill="#FAC800"/><text x="30" y="18" fill="#D71920" font-family="sans-serif" font-weight="bold" font-size="11">IBERIA</text></svg>
+        </div>
+      `,
+      "iberia-express": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
+          <svg class="h-3.5 w-20" viewBox="0 0 100 25" fill="none"><path d="M5 2h10v20H5V2z" fill="#D71920"/><path d="M18 2h6v20h-6V2z" fill="#FAC800"/><text x="30" y="18" fill="#D71920" font-family="sans-serif" font-weight="bold" font-size="9">EXPRESS</text></svg>
+        </div>
+      `,
+      "avianca": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
+          <svg class="h-3.5 w-16" viewBox="0 0 100 25" fill="none"><path d="M5 5c15 0 20 15 30 15s10-15 5-15" fill="#E2231A"/><text x="35" y="18" fill="#E2231A" font-family="sans-serif" font-weight="bold" font-size="11">avianca</text></svg>
+        </div>
+      `,
+      "air-canada": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
+          <span class="text-[10px] font-black text-red-600 mr-1">🍁</span>
+          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase">Air Canada</span>
+        </div>
+      `,
+      "united": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
+          <span class="text-[10px] font-black text-blue-600 mr-1">🇺🇸</span>
+          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase font-mono">United</span>
+        </div>
+      `,
+      "binter": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
+          <svg class="h-3.5 w-14" viewBox="0 0 100 25" fill="none"><path d="M5 10c5-5 10-5 15 0s10 5 15 0" stroke="#00A859" stroke-width="3" stroke-linecap="round"/><text x="40" y="18" fill="#00A859" font-family="sans-serif" font-weight="bold" font-size="11">Binter</text></svg>
+        </div>
+      `,
+      "vueling": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
+          <span class="text-[10px] font-black text-amber-500 mr-1">🟡</span>
+          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase">Vueling</span>
+        </div>
+      `,
+      "air-europa": `
+        <div class="bg-white border border-slate-100 rounded px-2 py-1 flex items-center shadow-sm">
+          <span class="text-[10px] font-black text-blue-500 mr-1">🔵</span>
+          <span class="text-[10px] font-black text-slate-800 tracking-tight uppercase">Air Europa</span>
+        </div>
+      `
+    };
+
     // Variables de Estado Inicial
     const defaultState = {
       marioTrans: 'directo',
@@ -393,37 +445,42 @@
 
     let state = JSON.parse(localStorage.getItem('travel_planner_state')) || defaultState;
 
-    // Precios de Vuelos (en MXN)
-    const pricing = {
-      mario_trans_directo: 20000,
-      mario_trans_escala: 16500,
-      mario_bcn_directo: 14000,
-      mario_bcn_escala: 13000,
-      mario_bcn_separado: 11000,
-      
-      yesica_spc_16: 3646,
-      yesica_spc_17: 5000,
-      yesica_trans_escala: 22881,
-      yesica_trans_directo: 25000,
-      yesica_trans_eco: 19500
-    };
+    // Inicializar los Dropdowns
+    function initDropdowns() {
+      ['marioTrans', 'marioBcn', 'yesicaSpc', 'yesicaTrans'].forEach(key => {
+        const select = document.getElementById(`select-${key}`);
+        select.innerHTML = "";
+        flightsData[key].forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt.id;
+          option.innerText = `${opt.title} - $${new Intl.NumberFormat('es-MX').format(opt.price)} MXN`;
+          select.appendChild(option);
+        });
+        // Seleccionar el valor guardado
+        select.value = state[key];
+      });
+    }
 
-    // Actualizar opción de vuelo
-    function setOption(key, val) {
+    // Modificar selección de vuelo
+    function changeFlight(key, val) {
       state[key] = val;
 
       // SINCRONIZACIÓN DE VUELO DE CONEXIÓN ESPAÑA -> COLOMBIA (JUNTOS)
       if (key === 'marioBcn') {
         if (val === 'directo') {
           state.yesicaTrans = 'directo';
+          document.getElementById('select-yesicaTrans').value = 'directo';
         } else if (val === 'escala') {
           state.yesicaTrans = 'escala';
+          document.getElementById('select-yesicaTrans').value = 'escala';
         }
       } else if (key === 'yesicaTrans') {
         if (val === 'directo') {
           state.marioBcn = 'directo';
+          document.getElementById('select-marioBcn').value = 'directo';
         } else if (val === 'escala') {
           state.marioBcn = 'escala';
+          document.getElementById('select-marioBcn').value = 'escala';
         }
       }
 
@@ -433,19 +490,15 @@
 
     // Render y cálculo en vivo
     function render() {
-      // 1. Costo Mario
-      const marioTransCost = state.marioTrans === 'directo' ? pricing.mario_trans_directo : pricing.mario_trans_escala;
-      const marioBcnCost = state.marioBcn === 'directo' ? pricing.mario_bcn_directo : 
-                           (state.marioBcn === 'escala' ? pricing.mario_bcn_escala : pricing.mario_bcn_separado);
-      const marioTotal = marioTransCost + marioBcnCost;
+      // Obtener objetos de vuelo seleccionados
+      const marioTransObj = flightsData.marioTrans.find(f => f.id === state.marioTrans) || flightsData.marioTrans[0];
+      const marioBcnObj = flightsData.marioBcn.find(f => f.id === state.marioBcn) || flightsData.marioBcn[0];
+      const yesicaSpcObj = flightsData.yesicaSpc.find(f => f.id === state.yesicaSpc) || flightsData.yesicaSpc[0];
+      const yesicaTransObj = flightsData.yesicaTrans.find(f => f.id === state.yesicaTrans) || flightsData.yesicaTrans[0];
 
-      // 2. Costo Yesica
-      const yesicaSpcCost = state.yesicaSpc === '16' ? pricing.yesica_spc_16 : pricing.yesica_spc_17;
-      const yesicaTransCost = state.yesicaTrans === 'escala' ? pricing.yesica_trans_escala :
-                             (state.yesicaTrans === 'directo' ? pricing.yesica_trans_directo : pricing.yesica_trans_eco);
-      const yesicaTotal = yesicaSpcCost + yesicaTransCost;
-
-      // 3. Totales
+      // Totales
+      const marioTotal = marioTransObj.price + marioBcnObj.price;
+      const yesicaTotal = yesicaSpcObj.price + yesicaTransObj.price;
       const grandTotal = marioTotal + yesicaTotal;
       const budgetLimit = 58000;
       const progressPercent = Math.min((grandTotal / budgetLimit) * 100, 100);
@@ -453,7 +506,7 @@
       // Formatear
       const formatMXN = (val) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(val);
 
-      // Inyectar en DOM
+      // Inyectar Totales en el DOM
       document.getElementById('cost-display').innerText = formatMXN(grandTotal);
       document.getElementById('mario-total-cost').innerText = formatMXN(marioTotal);
       document.getElementById('yesica-total-cost').innerText = formatMXN(yesicaTotal);
@@ -478,33 +531,50 @@
         document.getElementById('cost-display').className = "text-xl font-black text-rose-600";
       }
 
-      // Clases activas Mario (Vuelo 1)
-      const marioTransDirecto = document.getElementById('card-mario-trans-directo');
-      const marioTransEscala = document.getElementById('card-mario-trans-escala');
-      marioTransDirecto.className = `ticket-card border ${state.marioTrans === 'directo' ? 'border-blue-500 bg-blue-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
-      marioTransEscala.className = `ticket-card border ${state.marioTrans === 'escala' ? 'border-blue-500 bg-blue-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
-      
-      // Clases activas Mario (Vuelo 2)
-      const marioBcnDirecto = document.getElementById('card-mario-bcn-directo');
-      const marioBcnEscala = document.getElementById('card-mario-bcn-escala');
-      const marioBcnSeparado = document.getElementById('card-mario-bcn-separado');
-      marioBcnDirecto.className = `ticket-card border ${state.marioBcn === 'directo' ? 'border-blue-500 bg-blue-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
-      marioBcnEscala.className = `ticket-card border ${state.marioBcn === 'escala' ? 'border-blue-500 bg-blue-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
-      marioBcnSeparado.className = `ticket-card border ${state.marioBcn === 'separado' ? 'border-blue-500 bg-blue-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
+      // Renderizar los Lego Bricks Activos (Boletos de abordar)
+      const renderBrick = (targetId, flight, isActiveMario) => {
+        const container = document.getElementById(targetId);
+        const activeClass = isActiveMario ? 'border-blue-500 bg-blue-50/20' : 'border-pink-500 bg-pink-50/20';
+        
+        container.innerHTML = `
+          <div class="ticket-card border ${activeClass} rounded-xl p-4 flex flex-col justify-between shadow-sm">
+            <div class="flex justify-between items-start gap-4">
+              <div class="flex-grow">
+                <div class="flex items-center gap-2 mb-2.5">
+                  ${airlineLogos[flight.airline] || ''}
+                  <span class="text-[10px] font-extrabold uppercase tracking-wide bg-white px-2 py-0.5 rounded border border-slate-100 shadow-sm">${flight.class}</span>
+                </div>
+                <div class="text-base font-extrabold text-slate-900">${flight.details}</div>
+                <div class="text-xs font-mono text-slate-500 mt-1 flex items-center gap-1.5">
+                  ⏱️ ${flight.schedule}
+                </div>
+                <p class="text-xs text-slate-500 mt-2">${flight.description}</p>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-slate-400 block font-semibold">Costo</span>
+                <span class="text-base font-black text-slate-900">${formatMXN(flight.price)}</span>
+              </div>
+            </div>
+            <!-- Beneficios -->
+            <div class="flex items-center gap-4 mt-4 pt-3 border-t border-slate-100 text-xs font-medium text-slate-500">
+              <span class="flex items-center gap-1 ${flight.bag ? 'text-emerald-600' : 'text-rose-500'}">
+                ${flight.bag ? '✓ 🧳 Maleta' : '✗ Sin Maleta'}
+              </span>
+              <span class="flex items-center gap-1 ${flight.carry ? 'text-emerald-600' : 'text-rose-500'}">
+                ${flight.carry ? '✓ 🎒 Carry-on' : '✗ Sin Carry-on'}
+              </span>
+              <span class="flex items-center gap-1 ${flight.seat ? 'text-emerald-600' : 'text-rose-500'}">
+                ${flight.seat ? '✓ 💺 Asiento' : '✗ Sin Asiento'}
+              </span>
+            </div>
+          </div>
+        `;
+      };
 
-      // Clases activas Yesica (Vuelo 1)
-      const yesicaSpc16 = document.getElementById('card-yesica-spc-16');
-      const yesicaSpc17 = document.getElementById('card-yesica-spc-17');
-      yesicaSpc16.className = `ticket-card border ${state.yesicaSpc === '16' ? 'border-pink-500 bg-pink-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
-      yesicaSpc17.className = `ticket-card border ${state.yesicaSpc === '17' ? 'border-pink-500 bg-pink-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
-
-      // Clases activas Yesica (Vuelo 2)
-      const yesicaTransEscala = document.getElementById('card-yesica-trans-escala');
-      const yesicaTransDirecto = document.getElementById('card-yesica-trans-directo');
-      const yesicaTransEco = document.getElementById('card-yesica-trans-eco');
-      yesicaTransEscala.className = `ticket-card border ${state.yesicaTrans === 'escala' ? 'border-pink-500 bg-pink-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
-      yesicaTransDirecto.className = `ticket-card border ${state.yesicaTrans === 'directo' ? 'border-pink-500 bg-pink-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
-      yesicaTransEco.className = `ticket-card border ${state.yesicaTrans === 'eco' ? 'border-pink-500 bg-pink-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
+      renderBrick('brick-marioTrans', marioTransObj, true);
+      renderBrick('brick-marioBcn', marioBcnObj, true);
+      renderBrick('brick-yesicaSpc', yesicaSpcObj, false);
+      renderBrick('brick-yesicaTrans', yesicaTransObj, false);
 
       // 4. DETECCION DE CONFLICTOS Y ALERTAS
       const warnings = [];
@@ -527,7 +597,7 @@
       }
 
       // C. Alerta: Escala Muy Corta (Binter)
-      if (state.yesicaSpc === '17') {
+      if (state.yesicaSpc.startsWith('17')) {
         warnings.push({
           title: "Escala Corta en Tenerife (Binter)",
           text: "El vuelo de Yesica el sábado 17 tiene una escala de solo 1 hora y 5 minutos en Tenerife Norte (TFN). Hay riesgo elevado de pérdida de conexión ante cualquier retraso."
@@ -541,10 +611,10 @@
       }
 
       // D. Alerta: Visa de transito para Mario
-      if (state.marioTrans === 'escala') {
+      if (state.marioTrans === 'escala' || state.marioTrans === 'united') {
         warnings.push({
           title: "Visa / Permiso Requerido para Mario",
-          text: "Tu vuelo con escala transatlántica pasa por EE.UU. o Canadá. Necesitarás visa americana vigente (B1/B2 o C-1) o eTA canadiense para abordar."
+          text: `Tu vuelo con escala transatlántica pasa por ${state.marioTrans === 'escala' ? 'Canadá' : 'EE.UU.'}. Necesitarás ${state.marioTrans === 'escala' ? 'eTA canadiense' : 'visa estadounidense (C-1 o B1/B2)'} para abordar.`
         });
       }
 
@@ -594,6 +664,7 @@
     }
 
     // Inicializar
+    initDropdowns();
     render();
   </script>
 </body>
