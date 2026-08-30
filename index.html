@@ -9,14 +9,6 @@
     .ticket-card {
       transition: all 0.2s ease-in-out;
     }
-    .ticket-card.active-mario {
-      border-color: #3b82f6;
-      background-color: rgba(59, 130, 246, 0.04);
-    }
-    .ticket-card.active-yesica {
-      border-color: #ec4899;
-      background-color: rgba(236, 72, 153, 0.04);
-    }
   </style>
 </head>
 <body class="bg-[#f8fafc] text-slate-800 antialiased p-6">
@@ -25,7 +17,7 @@
   <div class="max-w-6xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-6">
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-6">
       <div>
-        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+        <h1 class="text-2xl font-black tracking-tight text-slate-900 flex items-center gap-2">
           ✈️ Configuración de Vuelos
         </h1>
         <p class="text-slate-500 text-sm mt-1">Compara tarifas, equipajes y horarios en paralelo para armar la mejor combinación.</p>
@@ -50,7 +42,7 @@
       <div id="budget-progress-bar" class="h-full bg-emerald-500 transition-all duration-500" style="width: 0%"></div>
     </div>
 
-    <div class="flex justify-between items-center text-xs font-semibold text-slate-500">
+    <div class="flex justify-between items-center text-sm font-semibold text-slate-500">
       <div id="budget-status" class="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 font-extrabold uppercase">
         ¡Dentro del Presupuesto!
       </div>
@@ -68,6 +60,13 @@
       <button class="py-2 px-4 text-xs font-bold uppercase tracking-wider text-slate-400 rounded-lg hover:bg-slate-50 transition cursor-not-allowed" disabled>
         🗺️ Resumen Completo (Paso 3)
       </button>
+    </div>
+  </div>
+
+  <!-- PANEL DE ALERTAS Y CONFLICTOS (Dinamico) -->
+  <div class="max-w-6xl mx-auto mb-6">
+    <div id="alerts-panel" class="rounded-2xl p-5 border transition-all duration-300">
+      <!-- Se llena con Javascript -->
     </div>
   </div>
 
@@ -133,7 +132,7 @@
                   <span class="text-xs text-slate-400 font-normal">y</span>
                   BOG <span class="text-slate-400 font-normal">➔</span> MEX
                 </div>
-                <p class="text-xs text-slate-500 mt-1.5">Escalas prolongadas de 3 a 6 horas. Requiere visados de tránsito americanos.</p>
+                <p class="text-xs text-slate-500 mt-1.5">Escalas de conexión en EE.UU. o Canadá (se requiere visa/permiso de tránsito).</p>
               </div>
               <div class="text-right">
                 <span class="text-xs text-slate-400 block font-semibold">Costo</span>
@@ -166,7 +165,7 @@
                   <span class="text-[10px] font-bold text-slate-400">Avianca</span>
                 </div>
                 <div class="text-base font-extrabold text-slate-900">BCN ➔ BOG (Vuelo AV19)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Vuelo transatlántico sin escalas de 10.5 horas. Viajan juntos al lado de Yesica.</p>
+                <p class="text-xs text-slate-500 mt-1.5">Vuelo transatlántico sin escalas de 10.5 horas. Sincronizado para viajar juntos.</p>
               </div>
               <div class="text-right">
                 <span class="text-xs text-slate-400 block font-semibold">Costo</span>
@@ -190,7 +189,7 @@
                   <span class="text-[10px] font-bold text-slate-400">Iberia</span>
                 </div>
                 <div class="text-base font-extrabold text-slate-900">BCN ➔ MAD ➔ BOG</div>
-                <p class="text-xs text-slate-500 mt-1.5">Salida de Barcelona con escala rápida de conexión en Madrid (MAD). Mismo vuelo de Yesica.</p>
+                <p class="text-xs text-slate-500 mt-1.5">Salida de Barcelona con escala de conexión en Madrid (MAD). Sincronizado para viajar juntos.</p>
               </div>
               <div class="text-right">
                 <span class="text-xs text-slate-400 block font-semibold">Costo</span>
@@ -214,7 +213,7 @@
                   <span class="text-[10px] font-bold text-slate-400">Low Cost</span>
                 </div>
                 <div class="text-base font-extrabold text-slate-900">BCN ➔ BOG (Diferente Vuelo)</div>
-                <p class="text-xs text-slate-500 mt-1.5">Vuelan en aerolíneas u horarios separados. Sin equipaje de bodega incluido.</p>
+                <p class="text-xs text-slate-500 mt-1.5">Vuelan en aerolíneas u horarios separados. Rompe el viaje en conjunto.</p>
               </div>
               <div class="text-right">
                 <span class="text-xs text-slate-400 block font-semibold">Costo</span>
@@ -307,7 +306,7 @@
         </div>
         
         <div class="flex flex-col gap-4">
-          <!-- Opción A: Iberia Escala de Ida, Directo Vuelta -->
+          <!-- Opción A: Iberia Escala de Ida, Vuelta Directa -->
           <div id="card-yesica-trans-escala" onclick="setOption('yesicaTrans', 'escala')" class="ticket-card border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer">
             <div class="flex justify-between items-start gap-4">
               <div class="flex-grow">
@@ -412,6 +411,22 @@
     // Actualizar opción de vuelo
     function setOption(key, val) {
       state[key] = val;
+
+      // SINCRONIZACIÓN DE VUELO DE CONEXIÓN ESPAÑA -> COLOMBIA (JUNTOS)
+      if (key === 'marioBcn') {
+        if (val === 'directo') {
+          state.yesicaTrans = 'directo';
+        } else if (val === 'escala') {
+          state.yesicaTrans = 'escala';
+        }
+      } else if (key === 'yesicaTrans') {
+        if (val === 'directo') {
+          state.marioBcn = 'directo';
+        } else if (val === 'escala') {
+          state.marioBcn = 'escala';
+        }
+      }
+
       localStorage.setItem('travel_planner_state', JSON.stringify(state));
       render();
     }
@@ -430,7 +445,7 @@
                              (state.yesicaTrans === 'directo' ? pricing.yesica_trans_directo : pricing.yesica_trans_eco);
       const yesicaTotal = yesicaSpcCost + yesicaTransCost;
 
-      // 3. Totales y Barra de Presupuesto
+      // 3. Totales
       const grandTotal = marioTotal + yesicaTotal;
       const budgetLimit = 58000;
       const progressPercent = Math.min((grandTotal / budgetLimit) * 100, 100);
@@ -490,6 +505,98 @@
       yesicaTransEscala.className = `ticket-card border ${state.yesicaTrans === 'escala' ? 'border-pink-500 bg-pink-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
       yesicaTransDirecto.className = `ticket-card border ${state.yesicaTrans === 'directo' ? 'border-pink-500 bg-pink-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
       yesicaTransEco.className = `ticket-card border ${state.yesicaTrans === 'eco' ? 'border-pink-500 bg-pink-50/30' : 'border-slate-200'} rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 cursor-pointer`;
+
+      // 4. DETECCION DE CONFLICTOS Y ALERTAS
+      const warnings = [];
+      const infos = [];
+
+      // A. Conflicto: Presupuesto Excedido
+      if (grandTotal > budgetLimit) {
+        warnings.push({
+          title: "Presupuesto Excedido",
+          text: `El total de vuelos supera el límite establecido por ${formatMXN(grandTotal - budgetLimit)}. Considera cambiar a vuelos con escalas o tarifas básicas.`
+        });
+      }
+
+      // B. Conflicto: Viajan por separado España -> Colombia
+      if (state.marioBcn === 'separado' || state.yesicaTrans === 'eco') {
+        warnings.push({
+          title: "No viajan juntos de España a Colombia",
+          text: "Han seleccionado vuelos separados para el trayecto Barcelona ➔ Bogotá. Esto rompe la regla de viajar juntos en este tramo."
+        });
+      }
+
+      // C. Alerta: Escala Muy Corta (Binter)
+      if (state.yesicaSpc === '17') {
+        warnings.push({
+          title: "Escala Corta en Tenerife (Binter)",
+          text: "El vuelo de Yesica el sábado 17 tiene una escala de solo 1 hora y 5 minutos en Tenerife Norte (TFN). Hay riesgo elevado de pérdida de conexión ante cualquier retraso."
+        });
+        
+        // Llegada asíncrona a Madrid
+        infos.push({
+          title: "Llegadas Asíncronas a Madrid",
+          text: "Mario llega a Madrid el viernes 16 y Yesica el sábado 17. Mario pasará la primera noche solo en Madrid."
+        });
+      }
+
+      // D. Alerta: Visa de transito para Mario
+      if (state.marioTrans === 'escala') {
+        warnings.push({
+          title: "Visa / Permiso Requerido para Mario",
+          text: "Tu vuelo con escala transatlántica pasa por EE.UU. o Canadá. Necesitarás visa americana vigente (B1/B2 o C-1) o eTA canadiense para abordar."
+        });
+      }
+
+      // E. Advertencia General de Pasaporte
+      infos.push({
+        title: "Vigencia de Pasaporte (Yesica)",
+        text: "Yesica necesita su pasaporte venezolano vigente para abordar el vuelo de regreso BOG-MAD con Iberia/Avianca. A pesar de que Colombia acepte pasaporte vencido por decreto, las aerolíneas transatlánticas para volver a la Unión Europea suelen denegar el embarque si el pasaporte no está vigente."
+      });
+
+      // Renderizar Alertas
+      const alertsPanel = document.getElementById('alerts-panel');
+      if (warnings.length === 0 && infos.length === 0) {
+        alertsPanel.className = "rounded-2xl p-5 border border-emerald-200 bg-emerald-50/50 text-emerald-800 text-xs font-medium flex items-center gap-3";
+        alertsPanel.innerHTML = `
+          <span class="text-base">✓</span>
+          <div>
+            <strong class="font-bold block">¡Logística en orden!</strong>
+            No hay conflictos de horarios, escalas cortas ni presupuesto excedido con esta combinación de vuelos.
+          </div>
+        `;
+      } else {
+        alertsPanel.className = "rounded-2xl p-5 border border-slate-200 bg-white text-xs space-y-4 shadow-sm";
+        alertsPanel.innerHTML = "";
+
+        if (warnings.length > 0) {
+          const warnContainer = document.createElement('div');
+          warnContainer.className = "space-y-2.5";
+          warnContainer.innerHTML = `<h4 class="font-black text-rose-600 uppercase tracking-wider text-[10px] flex items-center gap-1.5">⚠️ Conflictos Críticos (${warnings.length})</h4>`;
+          
+          warnings.forEach(w => {
+            const el = document.createElement('div');
+            el.className = "pl-3 border-l-2 border-rose-500";
+            el.innerHTML = `<strong class="font-bold text-rose-800 block">${w.title}</strong><p class="text-slate-600 mt-0.5">${w.text}</p>`;
+            warnContainer.appendChild(el);
+          });
+          alertsPanel.appendChild(warnContainer);
+        }
+
+        if (infos.length > 0) {
+          const infoContainer = document.createElement('div');
+          infoContainer.className = "space-y-2.5 pt-3 border-t border-slate-100";
+          infoContainer.innerHTML = `<h4 class="font-black text-blue-600 uppercase tracking-wider text-[10px] flex items-center gap-1.5">ℹ️ Avisos e Información (${infos.length})</h4>`;
+          
+          infos.forEach(i => {
+            const el = document.createElement('div');
+            el.className = "pl-3 border-l-2 border-blue-500";
+            el.innerHTML = `<strong class="font-bold text-blue-800 block">${i.title}</strong><p class="text-slate-600 mt-0.5">${i.text}</p>`;
+            infoContainer.appendChild(el);
+          });
+          alertsPanel.appendChild(infoContainer);
+        }
+      }
     }
 
     // Inicializar
