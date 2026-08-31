@@ -455,28 +455,27 @@
         <button onclick="closeTripConfigModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold p-1 leading-none">&times;</button>
       </div>
 
-      <!-- Pestañas del Modal -->
+      <!-- Pestañas del Modal: Pasajero 1 y Pasajero 2 -->
       <div class="flex border-b border-slate-200 text-xs font-bold">
-        <button type="button" id="tab-btn-passengers" onclick="switchConfigTab('passengers')" class="px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600">👥 Pasajeros (1 y 2)</button>
-        <button type="button" id="tab-btn-waypoints" onclick="switchConfigTab('waypoints')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700">📍 Puntos de Parada (Waypoints)</button>
+        <button type="button" id="tab-btn-p1" onclick="switchConfigTab('p1')" class="px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600">👤 Pasajero 1 (Mario)</button>
+        <button type="button" id="tab-btn-p2" onclick="switchConfigTab('p2')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700">👤 Pasajero 2 (Yesica)</button>
       </div>
 
       <form id="form-trip-config" onsubmit="saveTripConfig(event)" class="space-y-4">
         
-        <!-- PESTAÑA 1: PASAJEROS -->
-        <div id="config-tab-passengers" class="space-y-5">
-          <!-- Pasajero 1 -->
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+        <!-- PESTAÑA: PASAJERO 1 -->
+        <div id="config-tab-p1" class="space-y-4">
+          <div class="bg-blue-50/40 p-4 rounded-xl border border-blue-200/80 space-y-3">
             <div class="flex items-center gap-2 font-bold text-xs text-blue-700 uppercase tracking-wider">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Pasajero 1
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Perfil Migratorio & Origen Inicial
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <div>
                 <label class="block text-xs font-bold text-slate-500 mb-1">Nombre</label>
-                <input type="text" id="cfg-p1-name" value="Mario" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                <input type="text" id="cfg-p1-name" value="Mario" oninput="updateTabLabels()" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
               </div>
               <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Origen (Aeropuerto / Ciudad)</label>
+                <label class="block text-xs font-bold text-slate-500 mb-1">Origen Inicial</label>
                 <input type="text" id="cfg-p1-origin" value="MEX (Ciudad de México)" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
               </div>
               <div>
@@ -489,9 +488,9 @@
                 <label class="block text-xs font-bold text-slate-500 mb-1">Pasaporte / Nacionalidad</label>
                 <select id="cfg-p1-nat" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
                   <option value="MX" selected>🇲🇽 México (Requiere visa para USA/CAN)</option>
-                  <option value="ES">🇪🇸 España / UE (Libre tránsito Schengen/USA ESTA)</option>
-                  <option value="VE">🇻🇪 Venezuela (Restricciones estrictas de tránsito)</option>
-                  <option value="CO">🇨🇴 Colombia (Sin visa en Schengen/SUDAM)</option>
+                  <option value="ES">🇪🇸 España / UE (Libre tránsito)</option>
+                  <option value="VE">🇻🇪 Venezuela (Restricciones estrictas)</option>
+                  <option value="CO">🇨🇴 Colombia</option>
                 </select>
               </div>
               <div>
@@ -505,18 +504,31 @@
             </div>
           </div>
 
-          <!-- Pasajero 2 -->
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+          <!-- Waypoints de Pasajero 1 -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Puntos de Parada (Waypoints de Pasajero 1)</label>
+              <button type="button" onclick="addWaypoint('p1')" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                + Agregar Parada
+              </button>
+            </div>
+            <div id="p1-waypoints-container" class="space-y-2.5"></div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA: PASAJERO 2 -->
+        <div id="config-tab-p2" class="hidden space-y-4">
+          <div class="bg-pink-50/40 p-4 rounded-xl border border-pink-200/80 space-y-3">
             <div class="flex items-center gap-2 font-bold text-xs text-pink-700 uppercase tracking-wider">
-              <span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Pasajero 2
+              <span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Perfil Migratorio & Origen Inicial
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
               <div>
                 <label class="block text-xs font-bold text-slate-500 mb-1">Nombre</label>
-                <input type="text" id="cfg-p2-name" value="Yesica" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                <input type="text" id="cfg-p2-name" value="Yesica" oninput="updateTabLabels()" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
               </div>
               <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Origen (Aeropuerto / Ciudad)</label>
+                <label class="block text-xs font-bold text-slate-500 mb-1">Origen Inicial</label>
                 <input type="text" id="cfg-p2-origin" value="SPC (La Palma, Canarias)" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
               </div>
               <div>
@@ -544,56 +556,16 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- PESTAÑA 2: WAYPOINTS / PARADAS -->
-        <div id="config-tab-waypoints" class="hidden space-y-4">
-          <p class="text-xs text-slate-500">
-            Define las paradas del viaje. Para cada parada, indica si es un <strong>Punto de Encuentro</strong> con vuelos conjuntos y hasta 2 <strong>alternativas de origen</strong> para el siguiente salto.
-          </p>
-
-          <!-- Parada 1: Madrid -->
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
+          <!-- Waypoints de Pasajero 2 -->
+          <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Parada 1: España (Madrid / Barcelona)</span>
-              <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded">🤝 Punto de Encuentro</span>
+              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Puntos de Parada (Waypoints de Pasajero 2)</label>
+              <button type="button" onclick="addWaypoint('p2')" class="text-xs font-bold text-pink-600 hover:text-pink-800 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-200">
+                + Agregar Parada
+              </button>
             </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div>
-                <label class="block text-xs text-slate-400 font-bold mb-1">Llegada</label>
-                <input type="text" value="17 Octubre 2026" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 font-bold mb-1">Salida / Conexión</label>
-                <input type="text" value="24 Octubre 2026" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              </div>
-              <div class="sm:col-span-2">
-                <label class="block text-xs text-slate-400 font-bold mb-1">Orígenes Alternativos para siguiente tramo (hasta 2)</label>
-                <input type="text" value="Barcelona (BCN) / Madrid (MAD)" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              </div>
-            </div>
-          </div>
-
-          <!-- Parada 2: Colombia -->
-          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2.5">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Parada 2: Colombia (Bogotá)</span>
-              <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded">🤝 Estancia Conjunta</span>
-            </div>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div>
-                <label class="block text-xs text-slate-400 font-bold mb-1">Llegada</label>
-                <input type="text" value="24 Octubre 2026" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 font-bold mb-1">Retorno Final</label>
-                <input type="text" value="27 Noviembre 2026" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              </div>
-              <div class="sm:col-span-2">
-                <label class="block text-xs text-slate-400 font-bold mb-1">Origen de Retorno</label>
-                <input type="text" value="Bogotá (BOG)" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              </div>
-            </div>
+            <div id="p2-waypoints-container" class="space-y-2.5"></div>
           </div>
         </div>
 
@@ -749,47 +721,7 @@ const formatEUR = v => new Intl.NumberFormat('es-ES', {
 }).format(v / MXN_EUR_RATE);
 
 // ══════════════════════════════════════════════════
-// ESTADO DINÁMICO DE VIAJE (Multi-Pasajero & Waypoints)
-// ══════════════════════════════════════════════════
-let tripConfig = {
-  p1: {
-    name: "Mario",
-    origin: "MEX (Ciudad de México)",
-    startDate: "2026-10-16",
-    nationality: "MX",
-    visas: ["USA"],
-    services: { bag: true, carry: true, seat: true }
-  },
-  p2: {
-    name: "Yesica",
-    origin: "SPC (La Palma, Canarias)",
-    startDate: "2026-10-16",
-    nationality: "VE",
-    visas: ["ES_RESIDENCY"],
-    services: { bag: true, carry: true, seat: true }
-  },
-  waypoints: [
-    {
-      id: "wp_mad",
-      name: "España (Madrid / Barcelona)",
-      arrivalDate: "2026-10-17",
-      departureDate: "2026-10-24",
-      isShared: true,
-      departureOrigins: ["BCN", "MAD"],
-      notes: "Madrid 18-20 obligatorio, AVE a BCN el 21"
-    },
-    {
-      id: "wp_bog",
-      name: "Colombia (Bogotá)",
-      arrivalDate: "2026-10-24",
-      departureDate: "2026-11-27",
-      isShared: true,
-      departureOrigins: ["BOG"],
-      notes: "Retorno transatlántico"
-    }
-  ]
-};
-
+// CATÁLOGO DE VUELOS Y TRENES (Base + Actualizaciones)
 // ══════════════════════════════════════════════════
 // CATÁLOGO DE VUELOS Y TRENES (Base + Actualizaciones)
 // ══════════════════════════════════════════════════
@@ -1022,6 +954,38 @@ let flightsCatalog = {
 };
 
 // ══════════════════════════════════════════════════
+// ESTADO DINÁMICO DE VIAJE (Multi-Pasajero & Waypoints)
+// ══════════════════════════════════════════════════
+let tripConfig = {
+  p1: {
+    name: "Mario",
+    origin: "MEX (Ciudad de México)",
+    startDate: "2026-10-16",
+    nationality: "MX",
+    visas: ["USA"],
+    services: { bag: true, carry: true, seat: true },
+    waypoints: [
+      { id: "wp_p1_1", name: "Madrid (MAD)", arrivalDate: "2026-10-17", departureDate: "2026-10-21", meetsWith: "p2", departureOrigins: "MAD, BCN", notes: "Madrid 18-20 obligatorio, AVE a BCN el 21" },
+      { id: "wp_p1_2", name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", meetsWith: "p2", departureOrigins: "BCN, MAD", notes: "Salto transatlántico conjunto el 24 Oct" },
+      { id: "wp_p1_3", name: "Bogotá (BOG)", arrivalDate: "2026-10-24", departureDate: "2026-11-27", meetsWith: "p2", departureOrigins: "BOG", notes: "Retorno a CDMX" }
+    ]
+  },
+  p2: {
+    name: "Yesica",
+    origin: "SPC (La Palma, Canarias)",
+    startDate: "2026-10-16",
+    nationality: "VE",
+    visas: ["ES_RESIDENCY"],
+    services: { bag: true, carry: true, seat: true },
+    waypoints: [
+      { id: "wp_p2_1", name: "Madrid (MAD)", arrivalDate: "2026-10-16", departureDate: "2026-10-21", meetsWith: "p1", departureOrigins: "MAD, BCN", notes: "Llegada viernes noche, descanso y encuentro con Mario el sábado 17" },
+      { id: "wp_p2_2", name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", meetsWith: "p1", departureOrigins: "BCN, MAD", notes: "Salto conjunto a Colombia" },
+      { id: "wp_p2_3", name: "Bogotá (BOG)", arrivalDate: "2026-10-24", departureDate: "2026-11-27", meetsWith: "p1", departureOrigins: "BOG", notes: "Retorno transatlántico a Madrid y conexión a La Palma" }
+    ]
+  }
+};
+
+// ══════════════════════════════════════════════════
 // ESTADO DE SELECCIÓN DE VUELOS (Lego Slots)
 // ══════════════════════════════════════════════════
 let state = {
@@ -1043,7 +1007,7 @@ function loadPersistedState() {
   try {
     const saved = localStorage.getItem('trip_planner_state_v3');
     if (saved) state = JSON.parse(saved);
-    const savedCfg = localStorage.getItem('trip_config_v1');
+    const savedCfg = localStorage.getItem('trip_config_v2');
     if (savedCfg) tripConfig = JSON.parse(savedCfg);
   } catch (e) {
     console.warn('Error leyendo localStorage:', e);
@@ -1053,14 +1017,14 @@ function loadPersistedState() {
 function saveState() {
   try {
     localStorage.setItem('trip_planner_state_v3', JSON.stringify(state));
-    localStorage.setItem('trip_config_v1', JSON.stringify(tripConfig));
+    localStorage.setItem('trip_config_v2', JSON.stringify(tripConfig));
   } catch (e) {
     console.warn('Error guardando en localStorage:', e);
   }
 }
 
 // ══════════════════════════════════════════════════
-// MODAL DE CONFIGURACIÓN DE VIAJE (Tab switching & Save)
+// MODAL DE CONFIGURACIÓN DE VIAJE (Tab switching & Waypoint Editor)
 // ══════════════════════════════════════════════════
 function openTripConfigModal() {
   document.getElementById('cfg-p1-name').value = tripConfig.p1.name;
@@ -1079,6 +1043,10 @@ function openTripConfigModal() {
   document.getElementById('cfg-p2-visa-usa').checked = tripConfig.p2.visas.includes('USA');
   document.getElementById('cfg-p2-visa-can').checked = tripConfig.p2.visas.includes('CAN');
 
+  updateTabLabels();
+  renderWaypointsEditor('p1');
+  renderWaypointsEditor('p2');
+
   document.getElementById('trip-config-modal').classList.remove('hidden');
   document.getElementById('trip-config-modal').classList.add('flex');
 }
@@ -1088,18 +1056,102 @@ function closeTripConfigModal() {
   document.getElementById('trip-config-modal').classList.add('hidden');
 }
 
+function updateTabLabels() {
+  const n1 = document.getElementById('cfg-p1-name').value.trim() || 'Pasajero 1';
+  const n2 = document.getElementById('cfg-p2-name').value.trim() || 'Pasajero 2';
+  document.getElementById('tab-btn-p1').innerText = `👤 Pasajero 1 (${n1})`;
+  document.getElementById('tab-btn-p2').innerText = `👤 Pasajero 2 (${n2})`;
+}
+
 function switchConfigTab(tab) {
-  const isPass = tab === 'passengers';
-  document.getElementById('config-tab-passengers').classList.toggle('hidden', !isPass);
-  document.getElementById('config-tab-waypoints').classList.toggle('hidden', isPass);
+  const isP1 = tab === 'p1';
+  document.getElementById('config-tab-p1').classList.toggle('hidden', !isP1);
+  document.getElementById('config-tab-p2').classList.toggle('hidden', isP1);
 
-  document.getElementById('tab-btn-passengers').className = isPass
+  document.getElementById('tab-btn-p1').className = isP1
     ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold'
     : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold';
 
-  document.getElementById('tab-btn-waypoints').className = !isPass
+  document.getElementById('tab-btn-p2').className = !isP1
     ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold'
     : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold';
+}
+
+function renderWaypointsEditor(pKey) {
+  const container = document.getElementById(`${pKey}-waypoints-container`);
+  if (!container) return;
+  const wps = tripConfig[pKey].waypoints || [];
+  const otherName = pKey === 'p1' ? tripConfig.p2.name : tripConfig.p1.name;
+  const otherKey = pKey === 'p1' ? 'p2' : 'p1';
+
+  let html = '';
+  wps.forEach((wp, idx) => {
+    html += `
+      <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="text-xs font-bold text-slate-700">📍 Parada ${idx + 1}</span>
+          <button type="button" onclick="removeWaypoint('${pKey}', ${idx})" class="text-xs text-rose-600 hover:text-rose-800 font-bold px-2 py-0.5 rounded hover:bg-rose-50 transition">
+            ✕ Eliminar
+          </button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Ciudad / Parada</label>
+            <input type="text" id="wp-${pKey}-${idx}-name" value="${wp.name || ''}" placeholder="Ej. Madrid (MAD)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Llegada</label>
+            <input type="text" id="wp-${pKey}-${idx}-arr" value="${wp.arrivalDate || ''}" placeholder="17 Oct" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Salida</label>
+            <input type="text" id="wp-${pKey}-${idx}-dep" value="${wp.departureDate || ''}" placeholder="24 Oct" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-slate-100">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">🤝 ¿Se reúne con otro pasajero aquí?</label>
+            <select id="wp-${pKey}-${idx}-meets" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+              <option value="none" ${!wp.meetsWith || wp.meetsWith === 'none' ? 'selected' : ''}>❌ No (Estancia individual / solo)</option>
+              <option value="${otherKey}" ${wp.meetsWith === otherKey ? 'selected' : ''}>🤝 Sí, se reúne con ${otherName}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Orígenes Alternativos de Salida</label>
+            <input type="text" id="wp-${pKey}-${idx}-origs" value="${wp.departureOrigins || ''}" placeholder="Ej. BCN, MAD" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  if (wps.length === 0) {
+    html = `<div class="text-xs text-slate-400 italic p-3 text-center bg-white rounded-xl border border-dashed border-slate-200">Sin paradas intermedias configuradas. Haz clic en "+ Agregar Parada".</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function addWaypoint(pKey) {
+  if (!tripConfig[pKey].waypoints) tripConfig[pKey].waypoints = [];
+  const otherKey = pKey === 'p1' ? 'p2' : 'p1';
+  tripConfig[pKey].waypoints.push({
+    id: `wp_${pKey}_${Date.now()}`,
+    name: 'Nueva Parada',
+    arrivalDate: '',
+    departureDate: '',
+    meetsWith: otherKey,
+    departureOrigins: '',
+    notes: ''
+  });
+  renderWaypointsEditor(pKey);
+}
+
+function removeWaypoint(pKey, idx) {
+  if (tripConfig[pKey].waypoints) {
+    tripConfig[pKey].waypoints.splice(idx, 1);
+    renderWaypointsEditor(pKey);
+  }
 }
 
 function saveTripConfig(e) {
