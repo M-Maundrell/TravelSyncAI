@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-08-31T03:12:07Z",
+  "lastUpdated": "2026-08-31T04:45:03Z",
   "apiMetadata": {
     "provider": "Aviationstack Live Flight API",
     "httpStatus": "200 OK",
-    "quotaRemaining": "95",
+    "quotaRemaining": "94",
     "quotaLimit": "100",
-    "lastChecked": "2026-08-31T03:12:07.640682+00:00"
+    "lastChecked": "2026-08-31T04:45:03.366305+00:00"
   },
   "currencyRate": {
     "EUR_TO_MXN": 19.73
@@ -54,10 +54,10 @@
       "id": "mex_mad_directo",
       "traveler": "mario",
       "segment": "transatlantico-inicio",
-      "title": "Aeroméxico / Iberia (Directo)",
+      "title": "Aeroméxico / Iberia AM1 (Directo 12:00)",
       "airline": "aeromexico-iberia",
       "price": 20000,
-      "description": "Vuelo directo sin escalas. La opción más rápida y cómoda.",
+      "description": "Vuelo directo diurno AM1 saliendo a las 12:00 de CDMX y llegando a las 06:00 (+1) a Madrid.",
       "outbound": {
         "route": "CDMX (MEX) ➔ Madrid (MAD)",
         "schedule": "12:00 → 06:00 (+1)",
@@ -77,6 +77,35 @@
       "train": false,
       "usTransit": false,
       "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20MEX%20on%202026-10-16",
+      "bookingUrl": "https://www.iberia.com"
+    },
+    "mex_mad_iberia_152": {
+      "id": "mex_mad_iberia_152",
+      "traveler": "mario",
+      "segment": "transatlantico-inicio",
+      "title": "Iberia IB0152 (Directo Nocturno 20:05) ⭐ Recomendado",
+      "airline": "iberia",
+      "price": 20000,
+      "description": "Vuelo directo vespertino/nocturno IB0152 saliendo a las 20:05 de CDMX. Permite aprovechar todo el viernes y llegar a Madrid a las 14:00 del sábado 17.",
+      "outbound": {
+        "route": "CDMX (MEX) ➔ Madrid (MAD)",
+        "schedule": "20:05 → 14:00 (+1)",
+        "flightNumber": "IB0152",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ CDMX (MEX)",
+        "schedule": "23:00 → 05:00 (+1)",
+        "flightNumber": "IB6586",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Óptima (Directo)",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false,
+      "usTransit": false,
+      "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB152%20to%20MAD%20from%20MEX%20on%202026-10-16",
       "bookingUrl": "https://www.iberia.com"
     },
     "mex_mad_united": {
@@ -343,10 +372,38 @@
       "id": "yes_spc_mad_16",
       "traveler": "yesica",
       "segment": "transatlantico-inicio",
-      "title": "Iberia Express (Directo Vie 16 Oct) ⭐ Recomendado",
+      "title": "Iberia Express (Retorno Tarde 18:15) ⭐ Conexión Perfecta",
       "airline": "iberia-express",
       "price": 3646,
-      "description": "Vuelo directo SPC → MAD. Permite descansar en Madrid y empezar juntos el sábado 17.",
+      "description": "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de margen perfecto tras aterrizar de Bogotá a las 14:30.",
+      "outbound": {
+        "route": "La Palma (SPC) ➔ Madrid (MAD)",
+        "schedule": "19:30 → 23:15",
+        "flightNumber": "I23841",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Madrid (MAD) ➔ La Palma (SPC)",
+        "schedule": "18:15 → 22:00",
+        "flightNumber": "I23842",
+        "date": "Sábado 28 Nov 2026"
+      },
+      "class": "Tarifa Óptima",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false,
+      "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
+      "bookingUrl": "https://www.iberiaexpress.com"
+    },
+    "yes_spc_mad_16_mediodia": {
+      "id": "yes_spc_mad_16_mediodia",
+      "traveler": "yesica",
+      "segment": "transatlantico-inicio",
+      "title": "Iberia Express (Retorno Mediodía 12:00) ⚠️ Solo vuelos tempranos",
+      "airline": "iberia-express",
+      "price": 3646,
+      "description": "Retorno a las 12:00 de Madrid. Requiere llegar a Madrid antes de las 10:30 para no perder el vuelo.",
       "outbound": {
         "route": "La Palma (SPC) ➔ Madrid (MAD)",
         "schedule": "19:30 → 23:15",

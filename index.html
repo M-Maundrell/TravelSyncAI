@@ -569,13 +569,24 @@ let flightsCatalog = {
   // ─── MARIO: SALIDA DE ORIGEN (CDMX) ───
   "mex_mad_directo": {
     id: "mex_mad_directo", traveler: "mario", segment: "transatlantico-inicio",
-    title: "Aeroméxico / Iberia (Directo)",
+    title: "Aeroméxico / Iberia AM1 (Directo 12:00)",
     airline: "aeromexico-iberia", price: 20000,
-    description: "Vuelo directo sin escalas. La opción más rápida y cómoda.",
+    description: "Vuelo directo diurno AM1 saliendo a las 12:00 de CDMX y llegando a las 06:00 (+1) a Madrid.",
     outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "12:00 → 06:00 (+1)", flightNumber: "AM1", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Clásica (Turista)", bag: true, carry: true, seat: true, train: false, usTransit: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.iberia.com"
+  },
+  "mex_mad_iberia_152": {
+    id: "mex_mad_iberia_152", traveler: "mario", segment: "transatlantico-inicio",
+    title: "Iberia IB0152 (Directo Nocturno 20:05) ⭐ Recomendado",
+    airline: "iberia", price: 20000,
+    description: "Vuelo directo vespertino/nocturno IB0152 saliendo a las 20:05 de CDMX. Permite aprovechar todo el viernes y llegar descansado a Madrid a las 14:00 del sábado 17.",
+    outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "20:05 → 14:00 (+1)", flightNumber: "IB0152", date: "Viernes 16 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Óptima (Directo)", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB152%20to%20MAD%20from%20MEX%20on%202026-10-16",
     bookingUrl: "https://www.iberia.com"
   },
   "mex_mad_united": {
@@ -689,12 +700,22 @@ let flightsCatalog = {
     bookingUrl: "https://www.iberia.com"
   },
 
-  // ─── YESICA: CONEXIÓN NACIONAL (SPC ↔ MAD) ───
   "yes_spc_mad_16": {
     id: "yes_spc_mad_16", traveler: "yesica", segment: "transatlantico-inicio",
-    title: "Iberia Express (Directo Vie 16 Oct) ⭐ Recomendado",
+    title: "Iberia Express (Retorno Tarde 18:15) ⭐ Conexión Perfecta",
     airline: "iberia-express", price: 3646,
-    description: "Vuelo directo SPC → MAD. Permite descansar en Madrid y empezar juntos el sábado 17.",
+    description: "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de margen perfecto tras aterrizar de Bogotá a las 14:30.",
+    outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
+    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "18:15 → 22:00", flightNumber: "I23842", date: "Sábado 28 Nov 2026" },
+    class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
+    bookingUrl: "https://www.iberiaexpress.com"
+  },
+  "yes_spc_mad_16_mediodia": {
+    id: "yes_spc_mad_16_mediodia", traveler: "yesica", segment: "transatlantico-inicio",
+    title: "Iberia Express (Retorno Mediodía 12:00) ⚠️ Requiere vuelo temprano",
+    airline: "iberia-express", price: 3646,
+    description: "Retorno a las 12:00 de Madrid (I23840). Conflicto si el vuelo de Colombia llega a las 14:30 (IB6586).",
     outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
     return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "12:00 → 15:45", flightNumber: "I23840", date: "Sábado 28 Nov 2026" },
     class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
@@ -969,6 +990,15 @@ function alignJointFlights(targetFlightId) {
   broadcastState();
 }
 
+// 1-Click corrección de escala en Madrid para Yesica
+function fixYesicaConnection() {
+  state.yesica.salida = 'yes_spc_mad_16';
+  saveState();
+  render();
+  broadcastState();
+  showToast('✓ Conexión en Madrid corregida: Iberia Express I23842 (Salida 18:15 · 3h 45m de escala)', 'success');
+}
+
 // ══════════════════════════════════════════════════
 // RENDERIZADO PRINCIPAL
 // ══════════════════════════════════════════════════
@@ -1200,7 +1230,7 @@ function buildLocalCard(traveler, seg, allSegments, connectorClass) {
         </div>
         <div class="mt-2.5 text-xs text-slate-600 space-y-1">
           <p>🚄 Tren de alta velocidad AVE / Ouigo / Iryo (Madrid Puerta de Atocha ➔ Barcelona Sants, ~2h 45min).</p>
-          <p class="text-slate-500">📅 Viernes 23 Octubre · Costo aprox: €30 - €50 por persona.</p>
+          <p class="text-slate-500">📅 Miércoles 21 Octubre · Costo aprox: €30 - €50 por persona.</p>
         </div>
         ${trainNote}
       </div>
@@ -1329,6 +1359,36 @@ function renderAlerts(grand) {
           </div>
         `
       });
+    }
+  }
+
+  // ─── VERIFICACIÓN DE CONEXIÓN DE RETORNO PARA YESICA (Madrid Barajas) ───
+  const yTrans = getCatalogBrick(state.yesica.trans);
+  const ySalida = getCatalogBrick(state.yesica.salida);
+  if (yTrans && yTrans.return && ySalida && ySalida.return) {
+    const arrTimeStr = yTrans.return.schedule.split('→')[1]?.trim() || '';
+    const depTimeStr = ySalida.return.schedule.split('→')[0]?.trim() || '';
+    const arrMatch = arrTimeStr.match(/(\d{1,2}):(\d{2})/);
+    const depMatch = depTimeStr.match(/(\d{1,2}):(\d{2})/);
+
+    if (arrMatch && depMatch) {
+      const arrMinutes = parseInt(arrMatch[1], 10) * 60 + parseInt(arrMatch[2], 10);
+      const depMinutes = parseInt(depMatch[1], 10) * 60 + parseInt(depMatch[2], 10);
+      const marginMinutes = depMinutes - arrMinutes;
+
+      if (marginMinutes < 90) {
+        warnings.unshift({
+          title: '🚨 ¡Conflicto de Horario en Conexión de Retorno (Madrid ➔ Canarias)!',
+          text: `El vuelo transatlántico de Bogotá (${yTrans.return.flightNumber}) aterriza en Madrid a las <strong>${arrMatch[1]}:${arrMatch[2]}</strong>, pero la conexión a La Palma (${ySalida.return.flightNumber}) despega a las <strong>${depMatch[1]}:${depMatch[2]}</strong> ${marginMinutes < 0 ? '(¡despega antes de aterrizar!)' : '(escala inviable de solo ' + marginMinutes + ' min)'}. Yesica no alcanzaría a abordar.`,
+          action: `
+            <div class="mt-2.5">
+              <button onclick="fixYesicaConnection()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center gap-1.5">
+                ✨ Corregir en 1 Clic: Cambiar a Iberia Express I23842 (Salida 18:15 ➔ 3h 45m de escala perfecta)
+              </button>
+            </div>
+          `
+        });
+      }
     }
   }
 
