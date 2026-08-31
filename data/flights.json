@@ -1,5 +1,12 @@
 {
-  "lastUpdated": "2026-08-31T03:09:05Z",
+  "lastUpdated": "2026-08-31T03:12:07Z",
+  "apiMetadata": {
+    "provider": "Aviationstack Live Flight API",
+    "httpStatus": "200 OK",
+    "quotaRemaining": "95",
+    "quotaLimit": "100",
+    "lastChecked": "2026-08-31T03:12:07.640682+00:00"
+  },
   "currencyRate": {
     "EUR_TO_MXN": 19.73
   },

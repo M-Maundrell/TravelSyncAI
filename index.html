@@ -1425,7 +1425,7 @@ async function loadDynamicFlights() {
       // Combinar / actualizar catálogo en memoria
       flightsCatalog = { ...flightsCatalog, ...data.flights };
       
-      // Mostrar fecha de actualización
+      // Mostrar fecha de actualización y estado de API
       if (data.lastUpdated) {
         const badge = document.getElementById('last-updated-badge');
         const text = document.getElementById('last-updated-text');
@@ -1433,7 +1433,13 @@ async function loadDynamicFlights() {
           const dateObj = new Date(data.lastUpdated);
           const dateStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
           const timeStr = dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-          text.innerText = `Tarifas: ${dateStr} ${timeStr}`;
+          
+          let quotaStr = '';
+          if (data.apiMetadata && data.apiMetadata.quotaRemaining) {
+            quotaStr = ` · API: ${data.apiMetadata.quotaRemaining}/${data.apiMetadata.quotaLimit || 100} reqs`;
+          }
+          
+          text.innerText = `Tarifas: ${dateStr} ${timeStr}${quotaStr}`;
           badge.classList.remove('hidden');
           badge.classList.add('inline-flex');
         }

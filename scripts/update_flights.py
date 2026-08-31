@@ -123,37 +123,57 @@ load_dotenv()
 def fetch_live_flights_aviationstack(api_key):
     """
     Consulta Aviationstack para verificar números de vuelo, aerolíneas y horarios en vivo.
+    Imprime el HTTP Status Code y la cuota de requests restantes.
     """
     import urllib.request
     import urllib.parse
     
     print("🔑 Conectando a Aviationstack API...")
     verified_flights = {}
+    quota_info = {"status": None, "remaining": None, "limit": None}
     
-    flight_numbers = ["AM761", "AM762", "AV19", "AV26", "AV73", "IB6585", "IB6586", "I23841", "UX21", "UX22"]
+    # Realizamos 1 sola consulta precisa para conservar la cuota mensual (100 req/mes)
+    target_flight = "AM761"
     
-    for fn in flight_numbers[:3]: # Consulta rápida de muestra
-        try:
-            url = f"http://api.aviationstack.com/v1/flights?access_key={api_key}&flight_iata={fn}&limit=1"
-            req = urllib.request.Request(url, headers={'User-Agent': 'TravelPlannerBot/1.0'})
-            with urllib.request.urlopen(req, timeout=5) as response:
-                if response.status == 200:
-                    payload = json.loads(response.read().decode('utf-8'))
-                    data_list = payload.get('data', [])
-                    if data_list:
-                        item = data_list[0]
-                        dep = item.get('departure', {})
-                        arr = item.get('arrival', {})
-                        print(f"✓ Vuelo {fn} verificado en vivo ({dep.get('iata', '')} ➔ {arr.get('iata', '')})")
-                        verified_flights[fn] = {
-                            "status": item.get('flight_status', 'scheduled'),
-                            "departure_airport": dep.get('airport', ''),
-                            "arrival_airport": arr.get('airport', '')
-                        }
-        except Exception as e:
-            print(f"ℹ️ Verificación de {fn}: {e}")
+    try:
+        url = f"http://api.aviationstack.com/v1/flights?access_key={api_key}&flight_iata={target_flight}&limit=1"
+        req = urllib.request.Request(url, headers={'User-Agent': 'TravelPlannerBot/1.0'})
+        with urllib.request.urlopen(req, timeout=8) as response:
+            status_code = response.status
+            reason = response.reason
+            headers = dict(response.headers)
             
-    return verified_flights
+            quota_limit = headers.get('x-quota-limit', '100')
+            quota_remaining = headers.get('x-quota-remaining', 'N/A')
+            
+            quota_info = {
+                "http_status": f"{status_code} {reason}",
+                "quota_remaining": quota_remaining,
+                "quota_limit": quota_limit
+            }
+            
+            print(f"📡 [HTTP RESPONSE]: {status_code} {reason}")
+            print(f"📊 [CUOTA MENSUAL]: {quota_remaining} de {quota_limit} requests disponibles este mes")
+            
+            if status_code == 200:
+                payload = json.loads(response.read().decode('utf-8'))
+                data_list = payload.get('data', [])
+                if data_list:
+                    item = data_list[0]
+                    dep = item.get('departure', {})
+                    arr = item.get('arrival', {})
+                    print(f"✓ Vuelo {target_flight} verificado en vivo ({dep.get('airport', 'MEX')} ➔ {arr.get('airport', 'BOG')})")
+                    verified_flights[target_flight] = {
+                        "status": item.get('flight_status', 'scheduled'),
+                        "departure_airport": dep.get('airport', ''),
+                        "arrival_airport": arr.get('airport', '')
+                    }
+    except urllib.error.HTTPError as e:
+        print(f"❌ [HTTP ERROR]: {e.code} {e.reason}")
+    except Exception as e:
+        print(f"ℹ️ Error de conexión: {e}")
+        
+    return verified_flights, quota_info
 
 
 def update_catalog():
@@ -172,10 +192,17 @@ def update_catalog():
     client_id = os.getenv("AMADEUS_CLIENT_ID")
     client_secret = os.getenv("AMADEUS_CLIENT_SECRET")
 
+    api_meta = None
     if aviation_key:
         print("🔑 Credenciales de Aviationstack detectadas. Validando rutas y estados en vivo...")
-        verified = fetch_live_flights_aviationstack(aviation_key)
-        print(f"✓ {len(verified)} rutas verificadas exitosamente con Aviationstack.")
+        verified, quota = fetch_live_flights_aviationstack(aviation_key)
+        api_meta = {
+            "provider": "Aviationstack Live Flight API",
+            "httpStatus": quota.get("http_status"),
+            "quotaRemaining": quota.get("quota_remaining"),
+            "quotaLimit": quota.get("quota_limit"),
+            "lastChecked": datetime.datetime.now(datetime.timezone.utc).isoformat()
+        }
 
     if client_id and client_secret:
         print("🔑 Credenciales de Amadeus detectadas. Consultando tarifas en vivo...")
@@ -199,6 +226,7 @@ def update_catalog():
     now_iso = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     output = {
         "lastUpdated": now_iso,
+        "apiMetadata": api_meta,
         "currencyRate": {
             "EUR_TO_MXN": 19.73
         },
