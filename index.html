@@ -455,10 +455,11 @@
         <button onclick="closeTripConfigModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold p-1 leading-none">&times;</button>
       </div>
 
-      <!-- Pestañas del Modal: Pasajero 1 y Pasajero 2 -->
+      <!-- Pestañas del Modal -->
       <div class="flex border-b border-slate-200 text-xs font-bold">
         <button type="button" id="tab-btn-p1" onclick="switchConfigTab('p1')" class="px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600">👤 Pasajero 1 (Mario)</button>
         <button type="button" id="tab-btn-p2" onclick="switchConfigTab('p2')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700">👤 Pasajero 2 (Yesica)</button>
+        <button type="button" id="tab-btn-joint" onclick="switchConfigTab('joint')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700">🤝 Tramos de Vuelo Conjunto</button>
       </div>
 
       <form id="form-trip-config" onsubmit="saveTripConfig(event)" class="space-y-4">
@@ -507,7 +508,7 @@
           <!-- Waypoints de Pasajero 1 -->
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Puntos de Parada (Waypoints de Pasajero 1)</label>
+              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Estancias & Paradas (Mario)</label>
               <button type="button" onclick="addWaypoint('p1')" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
                 + Agregar Parada
               </button>
@@ -560,12 +561,51 @@
           <!-- Waypoints de Pasajero 2 -->
           <div class="space-y-2">
             <div class="flex justify-between items-center">
-              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Puntos de Parada (Waypoints de Pasajero 2)</label>
+              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Estancias & Paradas (Yesica)</label>
               <button type="button" onclick="addWaypoint('p2')" class="text-xs font-bold text-pink-600 hover:text-pink-800 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-200">
                 + Agregar Parada
               </button>
             </div>
             <div id="p2-waypoints-container" class="space-y-2.5"></div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA: TRAMOS DE VUELO CONJUNTO -->
+        <div id="config-tab-joint" class="hidden space-y-4">
+          <p class="text-xs text-slate-500">
+            Los <strong>Tramos de Vuelo Conjunto</strong> obligan a que el motor busque y sincronice exactamente el <strong>mismo avión, mismo horario y misma aerolínea</strong> para ambos pasajeros en ese traslado entre ciudades.
+          </p>
+
+          <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-200 space-y-3">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-extrabold text-indigo-900 uppercase tracking-wider">🤝 Tramo 3: Salto Transatlántico (España ➔ Colombia)</span>
+                <div class="text-xs text-slate-600 mt-0.5">Traslado conjunto desde España hacia Bogotá.</div>
+              </div>
+              <span class="text-xs bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-lg shadow-2xs">Obligatorio Mismo Vuelo</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Fecha de Vuelo Conjunto</label>
+                <input type="text" id="cfg-joint-date" value="Sábado 24 Octubre 2026" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Orígenes de Salida Permitidos</label>
+                <input type="text" id="cfg-joint-origs" value="Barcelona (BCN) / Madrid (MAD)" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Destino de Llegada</label>
+                <input type="text" id="cfg-joint-dest" value="Bogotá (BOG)" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2 border-t border-indigo-100">
+              <input type="checkbox" id="cfg-joint-required" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+              <label for="cfg-joint-required" class="text-xs font-bold text-indigo-900 cursor-pointer">
+                Requerir mismo vuelo para ambos pasajeros (AV19 / IB6585) y alertar si hay desincronización
+              </label>
+            </div>
           </div>
         </div>
 
@@ -1064,15 +1104,19 @@ function updateTabLabels() {
 }
 
 function switchConfigTab(tab) {
-  const isP1 = tab === 'p1';
-  document.getElementById('config-tab-p1').classList.toggle('hidden', !isP1);
-  document.getElementById('config-tab-p2').classList.toggle('hidden', isP1);
+  document.getElementById('config-tab-p1').classList.toggle('hidden', tab !== 'p1');
+  document.getElementById('config-tab-p2').classList.toggle('hidden', tab !== 'p2');
+  document.getElementById('config-tab-joint').classList.toggle('hidden', tab !== 'joint');
 
-  document.getElementById('tab-btn-p1').className = isP1
+  document.getElementById('tab-btn-p1').className = tab === 'p1'
     ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold'
     : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold';
 
-  document.getElementById('tab-btn-p2').className = !isP1
+  document.getElementById('tab-btn-p2').className = tab === 'p2'
+    ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold'
+    : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold';
+
+  document.getElementById('tab-btn-joint').className = tab === 'joint'
     ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold'
     : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold';
 }
@@ -1089,35 +1133,35 @@ function renderWaypointsEditor(pKey) {
     html += `
       <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs space-y-2">
         <div class="flex justify-between items-center">
-          <span class="text-xs font-bold text-slate-700">📍 Parada ${idx + 1}</span>
+          <span class="text-xs font-bold text-slate-700">📍 Estancia ${idx + 1}</span>
           <button type="button" onclick="removeWaypoint('${pKey}', ${idx})" class="text-xs text-rose-600 hover:text-rose-800 font-bold px-2 py-0.5 rounded hover:bg-rose-50 transition">
             ✕ Eliminar
           </button>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Ciudad / Parada</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Ciudad / Estancia</label>
             <input type="text" id="wp-${pKey}-${idx}-name" value="${wp.name || ''}" placeholder="Ej. Madrid (MAD)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Llegada</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Llegada a Ciudad</label>
             <input type="text" id="wp-${pKey}-${idx}-arr" value="${wp.arrivalDate || ''}" placeholder="17 Oct" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Salida</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Salida de Ciudad</label>
             <input type="text" id="wp-${pKey}-${idx}-dep" value="${wp.departureDate || ''}" placeholder="24 Oct" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
           </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-slate-100">
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">🤝 ¿Se reúne con otro pasajero aquí?</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">🤝 ¿Estancia compartida con otro pasajero?</label>
             <select id="wp-${pKey}-${idx}-meets" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
               <option value="none" ${!wp.meetsWith || wp.meetsWith === 'none' ? 'selected' : ''}>❌ No (Estancia individual / solo)</option>
-              <option value="${otherKey}" ${wp.meetsWith === otherKey ? 'selected' : ''}>🤝 Sí, se reúne con ${otherName}</option>
+              <option value="${otherKey}" ${wp.meetsWith === otherKey ? 'selected' : ''}>🤝 Sí, estancia con ${otherName}</option>
             </select>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Orígenes Alternativos de Salida</label>
+            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Orígenes Alternativos para siguiente tramo</label>
             <input type="text" id="wp-${pKey}-${idx}-origs" value="${wp.departureOrigins || ''}" placeholder="Ej. BCN, MAD" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
           </div>
         </div>
@@ -1126,7 +1170,7 @@ function renderWaypointsEditor(pKey) {
   });
 
   if (wps.length === 0) {
-    html = `<div class="text-xs text-slate-400 italic p-3 text-center bg-white rounded-xl border border-dashed border-slate-200">Sin paradas intermedias configuradas. Haz clic en "+ Agregar Parada".</div>`;
+    html = `<div class="text-xs text-slate-400 italic p-3 text-center bg-white rounded-xl border border-dashed border-slate-200">Sin estancias intermedias configuradas. Haz clic en "+ Agregar Parada".</div>`;
   }
 
   container.innerHTML = html;
@@ -1137,7 +1181,7 @@ function addWaypoint(pKey) {
   const otherKey = pKey === 'p1' ? 'p2' : 'p1';
   tripConfig[pKey].waypoints.push({
     id: `wp_${pKey}_${Date.now()}`,
-    name: 'Nueva Parada',
+    name: 'Nueva Estancia',
     arrivalDate: '',
     departureDate: '',
     meetsWith: otherKey,
@@ -1157,6 +1201,7 @@ function removeWaypoint(pKey, idx) {
 function saveTripConfig(e) {
   e.preventDefault();
 
+  // Guardar Pasajero 1
   tripConfig.p1.name = document.getElementById('cfg-p1-name').value.trim() || 'Pasajero 1';
   tripConfig.p1.origin = document.getElementById('cfg-p1-origin').value.trim() || 'MEX';
   tripConfig.p1.startDate = document.getElementById('cfg-p1-date').value || '2026-10-16';
@@ -1166,6 +1211,22 @@ function saveTripConfig(e) {
   if (document.getElementById('cfg-p1-visa-es').checked) tripConfig.p1.visas.push('ES_RESIDENCY');
   if (document.getElementById('cfg-p1-visa-can').checked) tripConfig.p1.visas.push('CAN');
 
+  if (tripConfig.p1.waypoints) {
+    tripConfig.p1.waypoints.forEach((wp, idx) => {
+      const nameEl = document.getElementById(`wp-p1-${idx}-name`);
+      const arrEl = document.getElementById(`wp-p1-${idx}-arr`);
+      const depEl = document.getElementById(`wp-p1-${idx}-dep`);
+      const meetsEl = document.getElementById(`wp-p1-${idx}-meets`);
+      const origsEl = document.getElementById(`wp-p1-${idx}-origs`);
+      if (nameEl) wp.name = nameEl.value.trim();
+      if (arrEl) wp.arrivalDate = arrEl.value.trim();
+      if (depEl) wp.departureDate = depEl.value.trim();
+      if (meetsEl) wp.meetsWith = meetsEl.value;
+      if (origsEl) wp.departureOrigins = origsEl.value.trim();
+    });
+  }
+
+  // Guardar Pasajero 2
   tripConfig.p2.name = document.getElementById('cfg-p2-name').value.trim() || 'Pasajero 2';
   tripConfig.p2.origin = document.getElementById('cfg-p2-origin').value.trim() || 'SPC';
   tripConfig.p2.startDate = document.getElementById('cfg-p2-date').value || '2026-10-16';
@@ -1174,6 +1235,28 @@ function saveTripConfig(e) {
   if (document.getElementById('cfg-p2-visa-es').checked) tripConfig.p2.visas.push('ES_RESIDENCY');
   if (document.getElementById('cfg-p2-visa-usa').checked) tripConfig.p2.visas.push('USA');
   if (document.getElementById('cfg-p2-visa-can').checked) tripConfig.p2.visas.push('CAN');
+
+  if (tripConfig.p2.waypoints) {
+    tripConfig.p2.waypoints.forEach((wp, idx) => {
+      const nameEl = document.getElementById(`wp-p2-${idx}-name`);
+      const arrEl = document.getElementById(`wp-p2-${idx}-arr`);
+      const depEl = document.getElementById(`wp-p2-${idx}-dep`);
+      const meetsEl = document.getElementById(`wp-p2-${idx}-meets`);
+      const origsEl = document.getElementById(`wp-p2-${idx}-origs`);
+      if (nameEl) wp.name = nameEl.value.trim();
+      if (arrEl) wp.arrivalDate = arrEl.value.trim();
+      if (depEl) wp.departureDate = depEl.value.trim();
+      if (meetsEl) wp.meetsWith = meetsEl.value;
+      if (origsEl) wp.departureOrigins = origsEl.value.trim();
+    });
+  }
+
+  // Guardar Configuración de Tramo Conjunto
+  if (!tripConfig.jointFlight) tripConfig.jointFlight = {};
+  tripConfig.jointFlight.date = document.getElementById('cfg-joint-date')?.value.trim() || '2026-10-24';
+  tripConfig.jointFlight.allowedOrigins = document.getElementById('cfg-joint-origs')?.value.trim() || 'BCN, MAD';
+  tripConfig.jointFlight.dest = document.getElementById('cfg-joint-dest')?.value.trim() || 'BOG';
+  tripConfig.jointFlight.required = document.getElementById('cfg-joint-required')?.checked ?? true;
 
   saveState();
   closeTripConfigModal();
