@@ -652,7 +652,7 @@
               <div class="flex items-center gap-2 pt-2 border-t border-indigo-100">
                 <input type="checkbox" id="cfg-joint-required" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
                 <label for="cfg-joint-required" class="text-xs font-bold text-indigo-900 cursor-pointer">
-                  Requerir mismo vuelo para ambos pasajeros (AV19 / IB6585) y alertar si hay desincronización
+                  Requerir que ambos pasajeros viajen exactamente en el mismo vuelo y aerolínea en este tramo inter-ciudades (sincronización automática de itinerario)
                 </label>
               </div>
             </div>
@@ -817,39 +817,82 @@ const formatEUR = v => new Intl.NumberFormat('es-ES', {
 }).format(v / MXN_EUR_RATE);
 
 // ══════════════════════════════════════════════════
-// CATÁLOGO DE VUELOS Y TRENES (Base + Actualizaciones)
 // ══════════════════════════════════════════════════
-// CATÁLOGO DE VUELOS Y TRENES (Base + Actualizaciones)
+// CATÁLOGO DE VUELOS Y TRENES (Base + Actualizaciones Exhaustivas)
 // ══════════════════════════════════════════════════
 let flightsCatalog = {
-  // ─── MARIO: SALIDA DE ORIGEN (CDMX) ───
+  // ─── MARIO: SALIDA DE ORIGEN (CDMX / AMÉRICA ➔ EUROPA) ───
   "mex_mad_iberia_152": {
     id: "mex_mad_iberia_152", traveler: "mario", segment: "transatlantico-inicio",
     title: "Iberia IB0152 (Directo Nocturno 20:05) ⭐ Recomendado",
     airline: "iberia", price: 20000,
-    description: "Vuelo directo vespertino/nocturno IB0152 saliendo a las 20:05 de CDMX. Permite aprovechar todo el viernes y llegar descansado a Madrid a las 14:00 del sábado 17.",
+    description: "Vuelo directo vespertino/nocturno IB0152 saliendo a las 20:05 de CDMX. Permite aprovechar todo el viernes laboral y llegar descansado a Madrid a las 14:00 del sábado 17.",
     outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "20:05 → 14:00 (+1)", flightNumber: "IB0152", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Óptima (Directo)", bag: true, carry: true, seat: true, train: false, usTransit: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB152%20to%20MAD%20from%20MEX%20on%202026-10-16",
     bookingUrl: "https://www.iberia.com"
   },
-  "mex_mad_directo": {
-    id: "mex_mad_directo", traveler: "mario", segment: "transatlantico-inicio",
-    title: "Aeroméxico / Iberia AM1 (Directo Diurno 12:00)",
-    airline: "aeromexico-iberia", price: 20000,
-    description: "Vuelo directo diurno AM1 saliendo a las 12:00 de CDMX y llegando a las 06:00 (+1) a Madrid.",
+  "mex_mad_aeromexico_am1": {
+    id: "mex_mad_aeromexico_am1", traveler: "mario", segment: "transatlantico-inicio",
+    title: "Aeroméxico AM1 (Directo Diurno 12:00)",
+    airline: "aeromexico-iberia", price: 20500,
+    description: "Vuelo directo diurno AM1 de Aeroméxico (Boeing 787 Dreamliner). Aterriza a las 06:00 (+1) del sábado en Madrid Barajas T4S.",
     outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "12:00 → 06:00 (+1)", flightNumber: "AM1", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Clásica (Turista)", bag: true, carry: true, seat: true, train: false, usTransit: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20MEX%20on%202026-10-16",
-    bookingUrl: "https://www.iberia.com"
+    bookingUrl: "https://www.aeromexico.com"
+  },
+  "mex_mad_aeromexico_am21": {
+    id: "mex_mad_aeromexico_am21", traveler: "mario", segment: "transatlantico-inicio",
+    title: "Aeroméxico AM21 (Directo Vespertino 18:15)",
+    airline: "aeromexico-iberia", price: 20000,
+    description: "Vuelo directo vespertino AM21 saliendo a las 18:15 de CDMX y llegando a las 12:15 (+1) del sábado a Madrid.",
+    outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "18:15 → 12:15 (+1)", flightNumber: "AM21", date: "Viernes 16 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Clásica", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20AM21%20to%20MAD%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.aeromexico.com"
+  },
+  "mex_mad_aeromexico_am3": {
+    id: "mex_mad_aeromexico_am3", traveler: "mario", segment: "transatlantico-inicio",
+    title: "Aeroméxico AM3 (Directo Nocturno 23:30)",
+    airline: "aeromexico-iberia", price: 19800,
+    description: "Vuelo directo nocturno AM3 saliendo a las 23:30 de CDMX y llegando a las 17:30 (+1) a Madrid.",
+    outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "23:30 → 17:30 (+1)", flightNumber: "AM3", date: "Viernes 16 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Clásica", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20AM3%20to%20MAD%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.aeromexico.com"
+  },
+  "mex_mad_airfrance": {
+    id: "mex_mad_airfrance", traveler: "mario", segment: "transatlantico-inicio",
+    title: "Air France (Escala París CDG, Conexión Rápida)",
+    airline: "air-europa", price: 18500,
+    description: "Vuelo transatlántico nocturno MEX ➔ CDG en Boeing 777 con enlace rápido a Madrid Barajas.",
+    outbound: { route: "CDMX (MEX) ➔ París (CDG) ➔ Madrid (MAD)", schedule: "19:55 → 16:30 (+1)", flightNumber: "AF179/AF1400", date: "Viernes 16 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ París (CDG) ➔ CDMX (MEX)", schedule: "18:00 → 04:30 (+1)", flightNumber: "AF423", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Standard", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20France%20to%20MAD%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.airfrance.com"
+  },
+  "mex_mad_klm": {
+    id: "mex_mad_klm", traveler: "mario", segment: "transatlantico-inicio",
+    title: "KLM Royal Dutch (Escala Ámsterdam Schiphol)",
+    airline: "air-europa", price: 18900,
+    description: "Vuelo nocturno MEX ➔ AMS en Boeing 787 Dreamliner con conexión cómoda a Madrid.",
+    outbound: { route: "CDMX (MEX) ➔ Ámsterdam (AMS) ➔ Madrid (MAD)", schedule: "21:05 → 18:40 (+1)", flightNumber: "KL686/KL1701", date: "Viernes 16 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Ámsterdam (AMS) ➔ CDMX (MEX)", schedule: "19:15 → 05:40 (+1)", flightNumber: "KL745", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Standard", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20KLM%20to%20MAD%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.klm.com"
   },
   "mex_mad_united": {
     id: "mex_mad_united", traveler: "mario", segment: "transatlantico-inicio",
-    title: "United Airlines (Escala Newark, -32% Ahorro)",
+    title: "United Airlines (Escala Newark, -32% Gran Ahorro)",
     airline: "united", price: 13500,
-    description: "Escala en Newark (EWR). Requiere visa USA (disponible). Ahorro significativo de $6,500 MXN.",
+    description: "Escala en Newark (EWR). Requiere visa USA (disponible). Ahorro de $6,500 MXN.",
     outbound: { route: "CDMX (MEX) ➔ Newark (EWR) ➔ Madrid (MAD)", schedule: "08:30 → 07:30 (+1)", flightNumber: "UA321/UA120", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Newark (EWR) ➔ CDMX (MEX)", schedule: "16:00 → 22:30", flightNumber: "UA240", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Clásica (vía USA)", bag: true, carry: true, seat: true, train: false, usTransit: true,
@@ -858,9 +901,9 @@ let flightsCatalog = {
   },
   "mex_mad_copa": {
     id: "mex_mad_copa", traveler: "mario", segment: "transatlantico-inicio",
-    title: "Copa / Air Europa (Escala Panamá, sin visa extra)",
+    title: "Copa / Air Europa (Escala Panamá PTY, sin visa extra)",
     airline: "air-europa", price: 16800,
-    description: "Conexión en Panamá (PTY). No requiere visado de tránsito para mexicanos.",
+    description: "Conexión en Panamá (PTY). No requiere visado de tránsito.",
     outbound: { route: "CDMX (MEX) ➔ Panamá (PTY) ➔ Madrid (MAD)", schedule: "09:00 → 06:00 (+1)", flightNumber: "CM120/UX64", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Panamá (PTY) ➔ CDMX (MEX)", schedule: "15:00 → 21:30", flightNumber: "CM440/CM121", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Turista (vía PTY)", bag: true, carry: true, seat: true, train: false, usTransit: false,
@@ -871,7 +914,7 @@ let flightsCatalog = {
     id: "mex_bog_aeromexico", traveler: "mario", segment: "transatlantico-inicio",
     title: "🔄 RUTA ALTERNATIVA: Aeroméxico (Directo AM761/AM762) ⭐ $7,100 MXN",
     airline: "aeromexico-iberia", price: 7100,
-    description: "Vuelo redondo directo CDMX-Bogotá con Aeroméxico. Llega a las 14:40 a Bogotá con 6h perfectas de conexión nocturna hacia Madrid.",
+    description: "Vuelo redondo directo CDMX-Bogotá con Aeroméxico. Conecta con el segundo boleto Bogotá-Europa.",
     outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG)", schedule: "08:50 → 14:40", flightNumber: "AM761", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "15:55 → 20:00", flightNumber: "AM762", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Clásica (Directo)", bag: true, carry: true, seat: true, train: false, usTransit: false,
@@ -890,12 +933,12 @@ let flightsCatalog = {
     bookingUrl: "https://www.avianca.com"
   },
 
-  // ─── MARIO: ESPAÑA → COLOMBIA (SÁBADO 24 OCT) ───
+  // ─── MARIO: ESPAÑA ➔ COLOMBIA (SÁBADO 24 OCTUBRE) ───
   "esp_col_avianca_bcn": {
     id: "esp_col_avianca_bcn", traveler: "mario", segment: "espana-colombia",
-    title: "Avianca Directo BCN ➔ BOG (Vuelo Conjunto)",
+    title: "Avianca Directo BCN ➔ BOG (AV19, Vuelo Conjunto)",
     airline: "avianca", price: 14000,
-    description: "Vuelo transatlántico directo de 10.5h desde Barcelona el Sábado 24 Octubre. Ideal para coincidir con Yesica.",
+    description: "Vuelo transatlántico directo de 10.5h desde Barcelona el Sábado 24 Octubre (14:30 → 18:30). Excelente sincronización con Yesica.",
     outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
     class: "Tarifa Classic (Directo)", bag: true, carry: true, seat: true, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24",
@@ -903,23 +946,93 @@ let flightsCatalog = {
   },
   "esp_col_iberia_bcn": {
     id: "esp_col_iberia_bcn", traveler: "mario", segment: "espana-colombia",
-    title: "Iberia (BCN ➔ MAD ➔ BOG, Escala Madrid)",
+    title: "Iberia (BCN ➔ MAD ➔ BOG, Puente Aéreo + IB6585)",
     airline: "iberia", price: 13000,
-    description: "Salida de Barcelona con enlace aéreo rápido en Madrid Barajas hacia Bogotá el 24 de Octubre.",
+    description: "Salida de Barcelona con enlace rápido en Madrid Barajas T4 hacia Bogotá el 24 de Octubre en el Airbus A350 de Iberia.",
     outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
     class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24",
+    bookingUrl: "https://www.iberia.com"
+  },
+  "esp_col_iberia_mad_direct": {
+    id: "esp_col_iberia_mad_direct", traveler: "mario", segment: "espana-colombia",
+    title: "Iberia Directo MAD ➔ BOG (IB6585, Directo Barajas)",
+    airline: "iberia", price: 12500,
+    description: "Vuelo transatlántico directo de Iberia saliendo a las 14:30 de Madrid Barajas T4S hacia Bogotá El Dorado.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "IB6585", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB6585%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.iberia.com"
+  },
+  "esp_col_iberia_mad_night": {
+    id: "esp_col_iberia_mad_night", traveler: "mario", segment: "espana-colombia",
+    title: "Iberia Directo Nocturno MAD ➔ BOG (IB6587)",
+    airline: "iberia", price: 12800,
+    description: "Vuelo nocturno directo de Iberia saliendo a las 00:20 y llegando a las 04:30 a Bogotá.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "00:20 → 04:30", flightNumber: "IB6587", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB6587%20to%20BOG%20from%20MAD%20on%202026-10-24",
     bookingUrl: "https://www.iberia.com"
   },
   "esp_col_avianca_mad": {
     id: "esp_col_avianca_mad", traveler: "mario", segment: "espana-colombia",
     title: "Avianca (desde MAD) + Tren AVE BCN ➔ MAD Incluido",
     airline: "avianca", price: 13000,
-    description: "Vuelo directo MAD-BOG el 24 Oct. Incluye tren AVE de alta velocidad Barcelona → Madrid.",
-    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/AV27", date: "Sábado 24 Oct 2026" },
+    description: "Vuelo directo MAD-BOG el 24 Oct (AV27). Incluye billete de tren AVE de alta velocidad Barcelona → Madrid.",
+    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h (15:45 → 19:45)", flightNumber: "AVE/AV27", date: "Sábado 24 Oct 2026" },
     class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20MAD%20on%202026-10-24",
     bookingUrl: "https://www.avianca.com"
+  },
+  "esp_col_avianca_mad_direct": {
+    id: "esp_col_avianca_mad_direct", traveler: "mario", segment: "espana-colombia",
+    title: "Avianca Directo MAD ➔ BOG (AV11 Mediodía 12:45)",
+    airline: "avianca", price: 13200,
+    description: "Vuelo directo diurno AV11 de Avianca saliendo a las 12:45 de Madrid y llegando a las 16:45 a Bogotá.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:45 → 16:45", flightNumber: "AV11", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20AV11%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.avianca.com"
+  },
+  "esp_col_aireuropa_bcn": {
+    id: "esp_col_aireuropa_bcn", traveler: "mario", segment: "espana-colombia",
+    title: "Air Europa (BCN ➔ MAD ➔ BOG, Escala en Barajas)",
+    airline: "air-europa", price: 11800,
+    description: "Enlace aéreo de Air Europa saliendo a las 11:30 de Barcelona con conexión en Madrid hacia Bogotá (15:35 → 19:35).",
+    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "11:30 → 19:35", flightNumber: "UX7701/UX193", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Economy", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20BOG%20from%20BCN%20on%202026-10-24",
+    bookingUrl: "https://www.aireuropa.com"
+  },
+  "esp_col_aireuropa_mad": {
+    id: "esp_col_aireuropa_mad", traveler: "mario", segment: "espana-colombia",
+    title: "Air Europa Directo MAD ➔ BOG (UX193, Boeing 787)",
+    airline: "air-europa", price: 11200,
+    description: "Vuelo directo de Air Europa en Dreamliner 787 saliendo a las 15:35 de Madrid Barajas hacia Bogotá El Dorado.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "15:35 → 19:35", flightNumber: "UX193", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Economy", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20UX193%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.aireuropa.com"
+  },
+  "esp_col_latam_mad": {
+    id: "esp_col_latam_mad", traveler: "mario", segment: "espana-colombia",
+    title: "LATAM Airlines Directo MAD ➔ BOG (LA710)",
+    airline: "avianca", price: 12900,
+    description: "Vuelo directo de LATAM saliendo a las 16:15 de Madrid Barajas y aterrizando a las 20:45 en Bogotá.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:15 → 20:45", flightNumber: "LA710", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Light/Plus", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20LATAM%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.latamairlines.com"
+  },
+  "esp_col_plusultra_mad": {
+    id: "esp_col_plusultra_mad", traveler: "mario", segment: "espana-colombia",
+    title: "Plus Ultra Directo MAD ➔ BOG (PU301)",
+    airline: "air-europa", price: 10900,
+    description: "Opción económica de vuelo directo saliendo a las 13:00 de Madrid y llegando a las 17:30 a Bogotá.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "13:00 → 17:30", flightNumber: "PU301", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Económica", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Plus%20Ultra%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.plusultra.com"
   },
   "esp_col_europa_mad": {
     id: "esp_col_europa_mad", traveler: "mario", segment: "espana-colombia",
@@ -956,7 +1069,7 @@ let flightsCatalog = {
     bookingUrl: "https://www.iberia.com"
   },
 
-  // ─── YESICA: CONEXIÓN NACIONAL (SPC ↔ MAD) ───
+  // ─── YESICA: CONEXIÓN NACIONAL / REGIONAL (SPC ↔ MAD) ───
   "yes_spc_mad_16": {
     id: "yes_spc_mad_16", traveler: "yesica", segment: "transatlantico-inicio",
     title: "Iberia Express (Retorno 16:45) ⭐ Escala Óptima 2h 15m",
@@ -979,46 +1092,46 @@ let flightsCatalog = {
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
     bookingUrl: "https://www.iberiaexpress.com"
   },
-  "yes_spc_mad_16_mediodia": {
-    id: "yes_spc_mad_16_mediodia", traveler: "yesica", segment: "transatlantico-inicio",
-    title: "Iberia Express (Retorno Mediodía 12:00) ⚠️ Solo vuelos tempranos",
-    airline: "iberia-express", price: 3646,
-    description: "Retorno a las 12:00 de Madrid (I23840). Conflicto si el vuelo de Colombia llega a las 14:30 (IB6586).",
-    outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
-    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "12:00 → 15:45", flightNumber: "I23840", date: "Sábado 28 Nov 2026" },
-    class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
-    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
-    bookingUrl: "https://www.iberiaexpress.com"
-  },
   "yes_spc_mad_17": {
     id: "yes_spc_mad_17", traveler: "yesica", segment: "transatlantico-inicio",
-    title: "Binter Canarias (Sáb 17 Oct, Escala Tenerife)",
+    title: "Binter Canarias (Sáb 17 Oct, Escala Tenerife TFN)",
     airline: "binter", price: 5000,
     description: "Con escala en Tenerife Norte (TFN). Más de 5 horas de viaje.",
-    outbound: { route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)", schedule: "08:30 → 13:30", flightNumber: "NT342", date: "Sábado 17 Oct 2026" },
+    outbound: { route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)", schedule: "08:30 → 13:30", flightNumber: "NT342/NT201", date: "Sábado 17 Oct 2026" },
     return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "12:00 → 15:45", flightNumber: "NT5120", date: "Sábado 28 Nov 2026" },
     class: "Tarifa Básica", bag: false, carry: true, seat: false, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-17",
     bookingUrl: "https://www.bintercanarias.com"
   },
 
-  // ─── YESICA: ESPAÑA ➔ COLOMBIA (MULTIDESTINO, SÁBADO 24 OCT) ───
+  // ─── YESICA: ESPAÑA ➔ COLOMBIA (MULTIDESTINO, SÁBADO 24 OCTUBRE) ───
   "yes_trans_iberia": {
     id: "yes_trans_iberia", traveler: "yesica", segment: "espana-colombia",
     title: "Iberia (BCN ➔ MAD ➔ BOG / Retorno BOG ➔ MAD directo)",
     airline: "iberia", price: 22881,
-    description: "Ida con escala en Madrid el 24 Oct. Regreso directo Bogotá → Madrid el 27 Nov.",
+    description: "Ida con escala rápida en Madrid el 24 Oct (IB3001/IB6585). Regreso directo nocturno Bogotá → Madrid el 27 Nov (IB6586).",
     outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24%20through%202026-11-27%20from%20BOG%20to%20MAD",
     bookingUrl: "https://www.iberia.com"
   },
+  "yes_trans_iberia_mad": {
+    id: "yes_trans_iberia_mad", traveler: "yesica", segment: "espana-colombia",
+    title: "Iberia Directo MAD ➔ BOG (IB6585 / Retorno IB6586)",
+    airline: "iberia", price: 21900,
+    description: "Ida directa desde Madrid Barajas T4 el 24 Oct a las 14:30. Regreso directo Bogotá → Madrid el 27 Nov.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "IB6585", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB6585%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.iberia.com"
+  },
   "yes_trans_avianca": {
     id: "yes_trans_avianca", traveler: "yesica", segment: "espana-colombia",
     title: "Avianca (BCN ➔ BOG directo / Retorno BOG ➔ MAD directo)",
     airline: "avianca", price: 25000,
-    description: "Vuelo directo BCN-BOG el 24 Oct (coincide con Mario AV19). Regreso directo BOG-MAD el 27 Nov.",
+    description: "Vuelo directo BCN-BOG el 24 Oct (AV19, coincide con Mario). Regreso directo BOG-MAD el 27 Nov en AV10.",
     outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
@@ -1027,20 +1140,31 @@ let flightsCatalog = {
   },
   "yes_trans_avianca_mad": {
     id: "yes_trans_avianca_mad", traveler: "yesica", segment: "espana-colombia",
-    title: "Avianca (desde MAD) + Tren AVE BCN ➔ MAD Incluido",
-    airline: "avianca", price: 21000,
-    description: "Ida el 24 Oct con tren AVE BCN→MAD + Vuelo MAD→BOG. Regreso directo BOG→MAD el 27 Nov.",
-    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/AV27", date: "Sábado 24 Oct 2026" },
+    title: "Avianca Directo MAD ➔ BOG (AV11 / Retorno AV10)",
+    airline: "avianca", price: 22500,
+    description: "Ida directa desde Madrid a las 12:45 en AV11. Regreso directo nocturno BOG-MAD en AV10.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:45 → 16:45", flightNumber: "AV11", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true,
-    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20AV11%20to%20BOG%20from%20MAD%20on%202026-10-24",
     bookingUrl: "https://www.avianca.com"
+  },
+  "yes_trans_aireuropa": {
+    id: "yes_trans_aireuropa", traveler: "yesica", segment: "espana-colombia",
+    title: "Air Europa (BCN ➔ MAD ➔ BOG / Retorno UX22 BOG ➔ MAD)",
+    airline: "air-europa", price: 20500,
+    description: "Ida de Barcelona con escala rápida en Madrid Barajas (UX7701/UX193). Regreso directo BOG ➔ MAD en UX22.",
+    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "11:30 → 19:35", flightNumber: "UX7701/UX193", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:30 → 13:45 (+1)", flightNumber: "UX22", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Economy Multidestino", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20BOG%20from%20BCN%20on%202026-10-24",
+    bookingUrl: "https://www.aireuropa.com"
   },
   "yes_trans_europa_mad": {
     id: "yes_trans_europa_mad", traveler: "yesica", segment: "espana-colombia",
     title: "Air Europa (desde MAD) + Tren AVE BCN ➔ MAD Incluido ⭐ $19,800 MXN",
     airline: "air-europa", price: 19800,
-    description: "Ida el 24 Oct con tren AVE BCN→MAD + Vuelo directo UX21 MAD→BOG. Regreso directo UX22 BOG→MAD el 27 Nov. Opción más económica para Yesica.",
+    description: "Ida el 24 Oct con tren AVE BCN→MAD + Vuelo directo UX21 MAD→BOG. Regreso directo UX22 BOG→MAD el 27 Nov.",
     outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/UX21", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:30 → 13:45 (+1)", flightNumber: "UX22", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true,
@@ -1120,40 +1244,120 @@ function saveState() {
 }
 
 // ══════════════════════════════════════════════════
-// CATÁLOGO DE AEROPUERTOS Y CIUDADES
+// CATÁLOGO MUNDIAL DE AEROPUERTOS Y CIUDADES (Escalable & Multirregión)
 // ══════════════════════════════════════════════════
-const AIRPORTS_LIST = [
-  { code: 'BCN', label: '🇪🇸 Barcelona (BCN) · El Prat' },
-  { code: 'MAD', label: '🇪🇸 Madrid (MAD) · Barajas (T4)' },
-  { code: 'SPC', label: '🇪🇸 La Palma (SPC) · Canarias' },
-  { code: 'TFN', label: '🇪🇸 Tenerife Norte (TFN) · Canarias' },
-  { code: 'TFS', label: '🇪🇸 Tenerife Sur (TFS) · Canarias' },
-  { code: 'LPA', label: '🇪🇸 Gran Canaria (LPA) · Canarias' },
-  { code: 'BOG', label: '🇨🇴 Bogotá (BOG) · El Dorado' },
-  { code: 'MDE', label: '🇨🇴 Medellín (MDE) · J.M. Córdova' },
-  { code: 'CTG', label: '🇨🇴 Cartagena (CTG) · Rafael Núñez' },
-  { code: 'CLO', label: '🇨🇴 Cali (CLO) · Alfonso Bonilla' },
-  { code: 'MEX', label: '🇲🇽 Ciudad de México (MEX) · AICM' },
-  { code: 'NLU', label: '🇲🇽 Ciudad de México (NLU) · AIFA' },
-  { code: 'GDL', label: '🇲🇽 Guadalajara (GDL)' },
-  { code: 'MTY', label: '🇲🇽 Monterrey (MTY)' },
-  { code: 'CUN', label: '🇲🇽 Cancún (CUN)' },
-  { code: 'PTY', label: '🇵🇦 Panamá (PTY) · Tocumen' },
-  { code: 'EWR', label: '🇺🇸 Nueva York (EWR) · Newark' },
-  { code: 'MIA', label: '🇺🇸 Miami (MIA) · Florida' },
-  { code: 'CDG', label: '🇫🇷 París (CDG) · Charles de Gaulle' },
-  { code: 'FCO', label: '🇮🇹 Roma (FCO) · Fiumicino' },
-  { code: 'LIS', label: '🇵🇹 Lisboa (LIS) · Humberto Delgado' }
+const AIRPORTS_CATALOG = [
+  {
+    region: "🇪🇸 España e Islas (Canarias / Baleares / Península)",
+    airports: [
+      { code: 'MAD', city: 'Madrid', label: '🇪🇸 Madrid (MAD) · Adolfo Suárez Barajas' },
+      { code: 'BCN', city: 'Barcelona', label: '🇪🇸 Barcelona (BCN) · Josep Tarradellas El Prat' },
+      { code: 'SPC', city: 'La Palma', label: '🇪🇸 La Palma (SPC) · Islas Canarias' },
+      { code: 'TFN', city: 'Tenerife Norte', label: '🇪🇸 Tenerife Norte (TFN) · Los Rodeos' },
+      { code: 'TFS', city: 'Tenerife Sur', label: '🇪🇸 Tenerife Sur (TFS) · Reina Sofía' },
+      { code: 'LPA', city: 'Gran Canaria', label: '🇪🇸 Gran Canaria (LPA) · Las Palmas' },
+      { code: 'PMI', city: 'Palma de Mallorca', label: '🇪🇸 Palma de Mallorca (PMI) · Son Sant Joan' },
+      { code: 'AGP', city: 'Málaga', label: '🇪🇸 Málaga (AGP) · Costa del Sol' },
+      { code: 'VLC', city: 'Valencia', label: '🇪🇸 Valencia (VLC) · Manises' },
+      { code: 'SVQ', city: 'Sevilla', label: '🇪🇸 Sevilla (SVQ) · San Pablo' },
+      { code: 'BIO', city: 'Bilbao', label: '🇪🇸 Bilbao (BIO) · Loiu' }
+    ]
+  },
+  {
+    region: "🇨🇴 Colombia & Sudamérica",
+    airports: [
+      { code: 'BOG', city: 'Bogotá', label: '🇨🇴 Bogotá (BOG) · Aeropuerto El Dorado' },
+      { code: 'MDE', city: 'Medellín', label: '🇨🇴 Medellín (MDE) · José María Córdova' },
+      { code: 'CTG', city: 'Cartagena', label: '🇨🇴 Cartagena (CTG) · Rafael Núñez' },
+      { code: 'CLO', city: 'Cali', label: '🇨🇴 Cali (CLO) · Alfonso Bonilla Aragón' },
+      { code: 'BAQ', city: 'Barranquilla', label: '🇨🇴 Barranquilla (BAQ) · Ernesto Cortissoz' },
+      { code: 'CCS', city: 'Caracas', label: '🇻🇪 Caracas (CCS) · Simón Bolívar' },
+      { code: 'EZE', city: 'Buenos Aires', label: '🇦🇷 Buenos Aires (EZE) · Ministro Pistarini' },
+      { code: 'SCL', city: 'Santiago', label: '🇨🇱 Santiago de Chile (SCL) · Arturo Merino' },
+      { code: 'LIM', city: 'Lima', label: '🇵🇪 Lima (LIM) · Jorge Chávez' },
+      { code: 'UIO', city: 'Quito', label: '🇪🇨 Quito (UIO) · Mariscal Sucre' },
+      { code: 'GRU', city: 'Sao Paulo', label: '🇧🇷 Sao Paulo (GRU) · Guarulhos' }
+    ]
+  },
+  {
+    region: "🇲🇽 México, Centroamérica & Caribe",
+    airports: [
+      { code: 'MEX', city: 'Ciudad de México', label: '🇲🇽 Ciudad de México (MEX) · AICM' },
+      { code: 'NLU', city: 'Ciudad de México (AIFA)', label: '🇲🇽 Ciudad de México (NLU) · AIFA' },
+      { code: 'GDL', city: 'Guadalajara', label: '🇲🇽 Guadalajara (GDL) · Miguel Hidalgo' },
+      { code: 'MTY', city: 'Monterrey', label: '🇲🇽 Monterrey (MTY) · General Mariano Escobedo' },
+      { code: 'CUN', city: 'Cancún', label: '🇲🇽 Cancún (CUN) · Riviera Maya' },
+      { code: 'TIJ', city: 'Tijuana', label: '🇲🇽 Tijuana (TIJ) · Cross Border Xpress' },
+      { code: 'PTY', city: 'Panamá', label: '🇵🇦 Ciudad de Panamá (PTY) · Tocumen' },
+      { code: 'SJO', city: 'San José', label: '🇨🇷 San José (SJO) · Juan Santamaría' },
+      { code: 'SDQ', city: 'Santo Domingo', label: '🇩🇴 Santo Domingo (SDQ) · Las Américas' },
+      { code: 'SJU', city: 'San Juan', label: '🇵🇷 San Juan (SJU) · Luis Muñoz Marín' }
+    ]
+  },
+  {
+    region: "🇺🇸 Estados Unidos & Canadá (Norteamérica)",
+    airports: [
+      { code: 'EWR', city: 'Nueva York / Newark', label: '🇺🇸 Nueva York (EWR) · Newark Liberty' },
+      { code: 'JFK', city: 'Nueva York / JFK', label: '🇺🇸 Nueva York (JFK) · John F. Kennedy' },
+      { code: 'MIA', city: 'Miami', label: '🇺🇸 Miami (MIA) · Florida International' },
+      { code: 'LAX', city: 'Los Ángeles', label: '🇺🇸 Los Ángeles (LAX) · California' },
+      { code: 'ORD', city: 'Chicago', label: '🇺🇸 Chicago (ORD) · O\'Hare' },
+      { code: 'IAH', city: 'Houston', label: '🇺🇸 Houston (IAH) · George Bush' },
+      { code: 'DFW', city: 'Dallas', label: '🇺🇸 Dallas / Fort Worth (DFW)' },
+      { code: 'ATL', city: 'Atlanta', label: '🇺🇸 Atlanta (ATL) · Hartsfield-Jackson' },
+      { code: 'YYZ', city: 'Toronto', label: '🇨🇦 Toronto (YYZ) · Pearson' },
+      { code: 'YUL', city: 'Montreal', label: '🇨🇦 Montreal (YUL) · Trudeau' }
+    ]
+  },
+  {
+    region: "🇪🇺 Resto de Europa",
+    airports: [
+      { code: 'CDG', city: 'París', label: '🇫🇷 París (CDG) · Charles de Gaulle' },
+      { code: 'ORY', city: 'París Orly', label: '🇫🇷 París (ORY) · Orly' },
+      { code: 'LHR', city: 'Londres', label: '🇬🇧 Londres (LHR) · Heathrow' },
+      { code: 'LGW', city: 'Londres Gatwick', label: '🇬🇧 Londres (LGW) · Gatwick' },
+      { code: 'FRA', city: 'Frankfurt', label: '🇩🇪 Frankfurt (FRA) · Main' },
+      { code: 'MUC', city: 'Múnich', label: '🇩🇪 Múnich (MUC) · Franz Josef' },
+      { code: 'AMS', city: 'Ámsterdam', label: '🇳🇱 Ámsterdam (AMS) · Schiphol' },
+      { code: 'FCO', city: 'Roma', label: '🇮🇹 Roma (FCO) · Fiumicino' },
+      { code: 'MXP', city: 'Milán', label: '🇮🇹 Milán (MXP) · Malpensa' },
+      { code: 'LIS', city: 'Lisboa', label: '🇵🇹 Lisboa (LIS) · Humberto Delgado' },
+      { code: 'OPO', city: 'Oporto', label: '🇵🇹 Oporto (OPO) · Francisco Sá Carneiro' },
+      { code: 'ZRH', city: 'Zúrich', label: '🇨🇭 Zúrich (ZRH)' },
+      { code: 'VIE', city: 'Viena', label: '🇦🇹 Viena (VIE)' },
+      { code: 'BRU', city: 'Bruselas', label: '🇧🇪 Bruselas (BRU)' }
+    ]
+  },
+  {
+    region: "🌏 Asia, Medio Oriente & Otros",
+    airports: [
+      { code: 'HND', city: 'Tokio', label: '🇯🇵 Tokio (HND) · Haneda' },
+      { code: 'NRT', city: 'Tokio Narita', label: '🇯🇵 Tokio (NRT) · Narita' },
+      { code: 'ICN', city: 'Seúl', label: '🇰🇷 Seúl (ICN) · Incheon' },
+      { code: 'SIN', city: 'Singapur', label: '🇸🇬 Singapur (SIN) · Changi' },
+      { code: 'BKK', city: 'Bangkok', label: '🇹🇭 Bangkok (BKK) · Suvarnabhumi' },
+      { code: 'DXB', city: 'Dubái', label: '🇦🇪 Dubái (DXB) · International' },
+      { code: 'DOH', city: 'Doha', label: '🇶🇦 Doha (DOH) · Hamad' },
+      { code: 'IST', city: 'Estambul', label: '🇹🇷 Estambul (IST)' }
+    ]
+  }
 ];
+
+const AIRPORTS_FLAT = AIRPORTS_CATALOG.flatMap(r => r.airports);
+const AIRPORTS_LIST = AIRPORTS_FLAT;
 
 function buildAirportSelectOptions(selectedCode, includeNone = false) {
   let html = '';
   if (includeNone) {
     html += `<option value="" ${!selectedCode ? 'selected' : ''}>❌ Ninguno (Solo 1 origen)</option>`;
   }
-  AIRPORTS_LIST.forEach(a => {
-    const isSel = selectedCode && (selectedCode.toUpperCase() === a.code || selectedCode.toUpperCase().includes(a.code));
-    html += `<option value="${a.code}" ${isSel ? 'selected' : ''}>${a.label}</option>`;
+  AIRPORTS_CATALOG.forEach(grp => {
+    html += `<optgroup label="${grp.region}">`;
+    grp.airports.forEach(a => {
+      const isSel = selectedCode && (selectedCode.toUpperCase() === a.code || selectedCode.toUpperCase().includes(a.code));
+      html += `<option value="${a.code}" ${isSel ? 'selected' : ''}>${a.label}</option>`;
+    });
+    html += `</optgroup>`;
   });
   return html;
 }
@@ -1481,23 +1685,27 @@ function applyPreset(type) {
   broadcastState();
 }
 
-function alignJointFlights(targetFlightId) {
-  if (targetFlightId === 'avianca') {
+function alignJointFlights(targetCarrier) {
+  if (targetCarrier === 'avianca') {
     if (isMarioAlt()) {
       state.mario.bog_esp = 'bog_esp_avianca';
     } else {
       state.mario.trans = 'esp_col_avianca_bcn';
     }
     state.yesica.trans = 'yes_trans_avianca';
-    showToast('✨ Vuelos alineados: Ambos viajarán en Avianca AV19 directo (BCN ➔ BOG)', 'success');
-  } else if (targetFlightId === 'iberia') {
+    showToast('✨ Vuelos sincronizados: Ambos viajarán en Avianca AV19 directo (BCN ➔ BOG)', 'success');
+  } else if (targetCarrier === 'iberia') {
     if (isMarioAlt()) {
       state.mario.bog_esp = 'bog_esp_iberia';
     } else {
       state.mario.trans = 'esp_col_iberia_bcn';
     }
     state.yesica.trans = 'yes_trans_iberia';
-    showToast('✨ Vuelos alineados: Ambos viajarán en Iberia (BCN ➔ MAD ➔ BOG)', 'success');
+    showToast('✨ Vuelos sincronizados: Ambos viajarán en Iberia (BCN ➔ MAD ➔ BOG)', 'success');
+  } else if (targetCarrier === 'aireuropa') {
+    state.mario.trans = 'esp_col_aireuropa_bcn';
+    state.yesica.trans = 'yes_trans_aireuropa';
+    showToast('✨ Vuelos sincronizados: Ambos viajarán en Air Europa (UX7701/UX193)', 'success');
   }
   saveState();
   render();
@@ -1804,13 +2012,13 @@ function getTransFlightInfo(traveler) {
   if (traveler === 'mario') {
     if (isMarioAlt()) {
       const b = getCatalogBrick(state.mario.bog_esp);
-      return b && b.return ? { fn: b.return.flightNumber, airline: b.airline, carrier: 'avianca' } : null;
+      return b && b.return ? { fn: b.return.flightNumber, airline: b.airline, title: b.title } : null;
     }
     const b = getCatalogBrick(state.mario.trans);
-    return b && b.outbound ? { fn: b.outbound.flightNumber, airline: b.airline, carrier: b.airline.includes('avianca') ? 'avianca' : 'iberia' } : null;
+    return b && b.outbound ? { fn: b.outbound.flightNumber, airline: b.airline, title: b.title } : null;
   }
   const b = getCatalogBrick(state.yesica.trans);
-  return b && b.outbound ? { fn: b.outbound.flightNumber, airline: b.airline, carrier: b.airline.includes('avianca') ? 'avianca' : 'iberia' } : null;
+  return b && b.outbound ? { fn: b.outbound.flightNumber, airline: b.airline, title: b.title } : null;
 }
 
 function renderAlerts(grand) {
@@ -1823,23 +2031,26 @@ function renderAlerts(grand) {
   const yInfo = getTransFlightInfo('yesica');
 
   if (mInfo && yInfo) {
-    if (mInfo.fn === yInfo.fn) {
+    if (mInfo.fn === yInfo.fn || (mInfo.airline === yInfo.airline && mInfo.fn.includes(yInfo.fn))) {
       infos.push({
         title: '✈️ ¡Vuelo Conjunto Confirmado para el 24 de Octubre!',
-        text: `Tanto ${tripConfig.p1.name} como ${tripConfig.p2.name} viajarán en el vuelo <strong>${mInfo.fn}</strong> (${mInfo.carrier === 'avianca' ? 'Avianca directo BCN ➔ BOG' : 'Iberia'}) para llegar juntos a Colombia.`,
+        text: `Tanto ${tripConfig.p1.name} como ${tripConfig.p2.name} viajarán sincronizados en el vuelo <strong>${mInfo.fn}</strong> para llegar juntos a Colombia.`,
         type: 'success'
       });
     } else {
       warnings.push({
-        title: '⚠️ Descoordinación en el Salto Conjunto (24 Oct)',
-        text: `${tripConfig.p1.name} tiene asignado <strong>${mInfo.fn}</strong> mientras que ${tripConfig.p2.name} tiene <strong>${yInfo.fn}</strong>. Pueden alinearse en 1 clic para viajar juntos.`,
+        title: '⚠️ Desincronización en el Salto Conjunto (24 Octubre)',
+        text: `${tripConfig.p1.name} está asignado a <strong>${mInfo.fn || 'Vuelo pendiente'}</strong> mientras que ${tripConfig.p2.name} está en <strong>${yInfo.fn || 'Vuelo pendiente'}</strong>. Puedes alinearlos en 1 clic:`,
         action: `
           <div class="mt-2.5 flex flex-wrap gap-2">
             <button onclick="alignJointFlights('avianca')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow-sm transition">
-              ✨ Alinear ambos en Avianca AV19 (Directo)
+              ✨ Sincronizar en Avianca AV19 (Directo)
             </button>
-            <button onclick="alignJointFlights('iberia')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-lg shadow-sm transition">
-              ✨ Alinear ambos en Iberia (Escala MAD)
+            <button onclick="alignJointFlights('iberia')" class="px-3 py-1.5 bg-rose-700 hover:bg-rose-800 text-white font-bold text-xs rounded-lg shadow-sm transition">
+              ✨ Sincronizar en Iberia IB6585 (Airbus A350)
+            </button>
+            <button onclick="alignJointFlights('aireuropa')" class="px-3 py-1.5 bg-sky-700 hover:bg-sky-800 text-white font-bold text-xs rounded-lg shadow-sm transition">
+              ✨ Sincronizar en Air Europa UX193 (Boeing 787)
             </button>
           </div>
         `
