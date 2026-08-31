@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-08-31T03:02:09Z",
+  "lastUpdated": "2026-08-31T03:06:54Z",
   "currencyRate": {
     "EUR_TO_MXN": 19.73
   },
@@ -69,7 +69,7 @@
       "seat": true,
       "train": false,
       "usTransit": false,
-      "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20MEX%20on%202026-10-16%20through%202026-11-27%20from%20BOG%20to%20MEX",
+      "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20MEX%20on%202026-10-16",
       "bookingUrl": "https://www.iberia.com"
     },
     "mex_mad_united": {
@@ -130,14 +130,43 @@
       "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20MEX%20on%202026-10-16",
       "bookingUrl": "https://www.aireuropa.com"
     },
+    "mex_bog_aeromexico": {
+      "id": "mex_bog_aeromexico",
+      "traveler": "mario",
+      "segment": "transatlantico-inicio",
+      "title": "🔄 RUTA ALTERNATIVA: Aeroméxico (Directo AM761/AM762) ⭐ $7,100 MXN",
+      "airline": "aeromexico-iberia",
+      "price": 7100,
+      "description": "Vuelo redondo directo CDMX-Bogotá con Aeroméxico. Llega a las 14:40 a Bogotá con 6h perfectas de conexión nocturna hacia Madrid.",
+      "outbound": {
+        "route": "CDMX (MEX) ➔ Bogotá (BOG)",
+        "schedule": "08:50 → 14:40",
+        "flightNumber": "AM761",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ CDMX (MEX)",
+        "schedule": "15:55 → 20:00",
+        "flightNumber": "AM762",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Clásica (Directo)",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false,
+      "usTransit": false,
+      "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20to%20BOG%20from%20MEX%20on%202026-10-16%20through%202026-11-27",
+      "bookingUrl": "https://www.aeromexico.com"
+    },
     "mex_bog_avianca": {
       "id": "mex_bog_avianca",
       "traveler": "mario",
       "segment": "transatlantico-inicio",
-      "title": "🔄 RUTA ALTERNATIVA: CDMX ↔ Bogotá (Avianca)",
+      "title": "🔄 RUTA ALTERNATIVA: Avianca (Directo AV73/AV72) $9,800 MXN",
       "airline": "avianca",
       "price": 9800,
-      "description": "Primer tramo de la ruta alternativa. Vuelo redondo CDMX-Bogotá. El sistema añadirá en automático el salto a Europa.",
+      "description": "Opción de vuelo redondo CDMX-Bogotá con Avianca. Salida por la tarde de CDMX.",
       "outbound": {
         "route": "CDMX (MEX) ➔ Bogotá (BOG)",
         "schedule": "13:00 → 17:30",
@@ -442,6 +471,34 @@
       "train": true,
       "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20MAD%20on%202026-10-24",
       "bookingUrl": "https://www.avianca.com"
+    },
+    "yes_trans_europa_mad": {
+      "id": "yes_trans_europa_mad",
+      "traveler": "yesica",
+      "segment": "espana-colombia",
+      "title": "Air Europa (desde MAD) + Tren AVE BCN ➔ MAD Incluido ⭐ $19,800 MXN",
+      "airline": "air-europa",
+      "price": 19800,
+      "description": "Ida el 24 Oct con tren AVE BCN→MAD + Vuelo directo UX21 MAD→BOG. Regreso directo UX22 BOG→MAD el 27 Nov. Opción más económica para Yesica.",
+      "outbound": {
+        "route": "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
+        "schedule": "Tren: 3h | Vuelo: 10h",
+        "flightNumber": "AVE/UX21",
+        "date": "Sábado 24 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ Madrid (MAD)",
+        "schedule": "21:30 → 13:45 (+1)",
+        "flightNumber": "UX22",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Classic + AVE",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": true,
+      "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20BOG%20from%20MAD%20on%202026-10-24",
+      "bookingUrl": "https://www.aireuropa.com"
     }
   }
 }
