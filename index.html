@@ -507,7 +507,17 @@
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-slate-500 mb-1">Origen Inicial</label>
-                  <input type="text" id="cfg-p1-origin" value="MEX (Ciudad de México)" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                  <select id="cfg-p1-origin" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                    <option value="MEX" selected>🇲🇽 Ciudad de México (MEX) · AICM</option>
+                    <option value="NLU">🇲🇽 Ciudad de México (NLU) · AIFA</option>
+                    <option value="GDL">🇲🇽 Guadalajara (GDL)</option>
+                    <option value="MTY">🇲🇽 Monterrey (MTY)</option>
+                    <option value="CUN">🇲🇽 Cancún (CUN)</option>
+                    <option value="MAD">🇪🇸 Madrid (MAD) · Barajas</option>
+                    <option value="BCN">🇪🇸 Barcelona (BCN) · El Prat</option>
+                    <option value="SPC">🇪🇸 La Palma (SPC) · Canarias</option>
+                    <option value="BOG">🇨🇴 Bogotá (BOG) · El Dorado</option>
+                  </select>
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-slate-500 mb-1">Fecha de Salida</label>
@@ -560,7 +570,16 @@
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-slate-500 mb-1">Origen Inicial</label>
-                  <input type="text" id="cfg-p2-origin" value="SPC (La Palma, Canarias)" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                  <select id="cfg-p2-origin" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                    <option value="SPC" selected>🇪🇸 La Palma (SPC) · Canarias</option>
+                    <option value="TFN">🇪🇸 Tenerife Norte (TFN)</option>
+                    <option value="LPA">🇪🇸 Gran Canaria (LPA)</option>
+                    <option value="MAD">🇪🇸 Madrid (MAD) · Barajas</option>
+                    <option value="BCN">🇪🇸 Barcelona (BCN) · El Prat</option>
+                    <option value="BOG">🇨🇴 Bogotá (BOG) · El Dorado</option>
+                    <option value="CCS">🇻🇪 Caracas (CCS) · Simón Bolívar</option>
+                    <option value="MEX">🇲🇽 Ciudad de México (MEX)</option>
+                  </select>
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-slate-500 mb-1">Fecha de Salida</label>
@@ -1101,11 +1120,47 @@ function saveState() {
 }
 
 // ══════════════════════════════════════════════════
-// MODAL DE CONFIGURACIÓN DE VIAJE (Tab switching & Waypoint Editor)
+// CATÁLOGO DE AEROPUERTOS Y CIUDADES
 // ══════════════════════════════════════════════════
+const AIRPORTS_LIST = [
+  { code: 'BCN', label: '🇪🇸 Barcelona (BCN) · El Prat' },
+  { code: 'MAD', label: '🇪🇸 Madrid (MAD) · Barajas (T4)' },
+  { code: 'SPC', label: '🇪🇸 La Palma (SPC) · Canarias' },
+  { code: 'TFN', label: '🇪🇸 Tenerife Norte (TFN) · Canarias' },
+  { code: 'TFS', label: '🇪🇸 Tenerife Sur (TFS) · Canarias' },
+  { code: 'LPA', label: '🇪🇸 Gran Canaria (LPA) · Canarias' },
+  { code: 'BOG', label: '🇨🇴 Bogotá (BOG) · El Dorado' },
+  { code: 'MDE', label: '🇨🇴 Medellín (MDE) · J.M. Córdova' },
+  { code: 'CTG', label: '🇨🇴 Cartagena (CTG) · Rafael Núñez' },
+  { code: 'CLO', label: '🇨🇴 Cali (CLO) · Alfonso Bonilla' },
+  { code: 'MEX', label: '🇲🇽 Ciudad de México (MEX) · AICM' },
+  { code: 'NLU', label: '🇲🇽 Ciudad de México (NLU) · AIFA' },
+  { code: 'GDL', label: '🇲🇽 Guadalajara (GDL)' },
+  { code: 'MTY', label: '🇲🇽 Monterrey (MTY)' },
+  { code: 'CUN', label: '🇲🇽 Cancún (CUN)' },
+  { code: 'PTY', label: '🇵🇦 Panamá (PTY) · Tocumen' },
+  { code: 'EWR', label: '🇺🇸 Nueva York (EWR) · Newark' },
+  { code: 'MIA', label: '🇺🇸 Miami (MIA) · Florida' },
+  { code: 'CDG', label: '🇫🇷 París (CDG) · Charles de Gaulle' },
+  { code: 'FCO', label: '🇮🇹 Roma (FCO) · Fiumicino' },
+  { code: 'LIS', label: '🇵🇹 Lisboa (LIS) · Humberto Delgado' }
+];
+
+function buildAirportSelectOptions(selectedCode, includeNone = false) {
+  let html = '';
+  if (includeNone) {
+    html += `<option value="" ${!selectedCode ? 'selected' : ''}>❌ Ninguno (Solo 1 origen)</option>`;
+  }
+  AIRPORTS_LIST.forEach(a => {
+    const isSel = selectedCode && (selectedCode.toUpperCase() === a.code || selectedCode.toUpperCase().includes(a.code));
+    html += `<option value="${a.code}" ${isSel ? 'selected' : ''}>${a.label}</option>`;
+  });
+  return html;
+}
+
 function openTripConfigModal() {
   document.getElementById('cfg-p1-name').value = tripConfig.p1.name;
-  document.getElementById('cfg-p1-origin').value = tripConfig.p1.origin;
+  document.getElementById('cfg-p1-origin').value = tripConfig.p1.origin.includes('MEX') ? 'MEX' : (tripConfig.p1.origin.includes('MAD') ? 'MAD' : tripConfig.p1.origin);
   document.getElementById('cfg-p1-date').value = tripConfig.p1.startDate;
   document.getElementById('cfg-p1-nat').value = tripConfig.p1.nationality;
   document.getElementById('cfg-p1-visa-usa').checked = tripConfig.p1.visas.includes('USA');
@@ -1113,7 +1168,7 @@ function openTripConfigModal() {
   document.getElementById('cfg-p1-visa-can').checked = tripConfig.p1.visas.includes('CAN');
 
   document.getElementById('cfg-p2-name').value = tripConfig.p2.name;
-  document.getElementById('cfg-p2-origin').value = tripConfig.p2.origin;
+  document.getElementById('cfg-p2-origin').value = tripConfig.p2.origin.includes('SPC') ? 'SPC' : (tripConfig.p2.origin.includes('MAD') ? 'MAD' : tripConfig.p2.origin);
   document.getElementById('cfg-p2-date').value = tripConfig.p2.startDate;
   document.getElementById('cfg-p2-nat').value = tripConfig.p2.nationality;
   document.getElementById('cfg-p2-visa-es').checked = tripConfig.p2.visas.includes('ES_RESIDENCY');
@@ -1146,16 +1201,16 @@ function switchConfigTab(tab) {
   document.getElementById('config-tab-joint').classList.toggle('hidden', tab !== 'joint');
 
   document.getElementById('tab-btn-p1').className = tab === 'p1'
-    ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold'
-    : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold';
+    ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold shrink-0'
+    : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold shrink-0';
 
   document.getElementById('tab-btn-p2').className = tab === 'p2'
-    ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold'
-    : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold';
+    ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold shrink-0'
+    : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold shrink-0';
 
   document.getElementById('tab-btn-joint').className = tab === 'joint'
-    ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold'
-    : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold';
+    ? 'px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold shrink-0'
+    : 'px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold shrink-0';
 }
 
 function renderWaypointsEditor(pKey) {
@@ -1167,39 +1222,52 @@ function renderWaypointsEditor(pKey) {
 
   let html = '';
   wps.forEach((wp, idx) => {
+    // Extraer códigos de origen
+    const origParts = (wp.departureOrigins || 'MAD, BCN').split(',').map(s => s.trim());
+    const orig1 = origParts[0] || 'MAD';
+    const orig2 = origParts[1] || '';
+
     html += `
-      <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs space-y-2">
+      <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs space-y-2.5">
         <div class="flex justify-between items-center">
-          <span class="text-xs font-bold text-slate-700">📍 Estancia ${idx + 1}</span>
+          <span class="text-xs font-extrabold text-slate-800">📍 Estancia / Parada ${idx + 1}</span>
           <button type="button" onclick="removeWaypoint('${pKey}', ${idx})" class="text-xs text-rose-600 hover:text-rose-800 font-bold px-2 py-0.5 rounded hover:bg-rose-50 transition">
             ✕ Eliminar
           </button>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Ciudad / Estancia</label>
-            <input type="text" id="wp-${pKey}-${idx}-name" value="${wp.name || ''}" placeholder="Ej. Madrid (MAD)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Ciudad / Estancia</label>
+            <input type="text" id="wp-${pKey}-${idx}-name" value="${wp.name || ''}" placeholder="Ej. Madrid (MAD)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Llegada a Ciudad</label>
-            <input type="text" id="wp-${pKey}-${idx}-arr" value="${wp.arrivalDate || ''}" placeholder="17 Oct" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Llegada a Ciudad</label>
+            <input type="text" id="wp-${pKey}-${idx}-arr" value="${wp.arrivalDate || ''}" placeholder="17 Octubre 2026" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Salida de Ciudad</label>
-            <input type="text" id="wp-${pKey}-${idx}-dep" value="${wp.departureDate || ''}" placeholder="24 Oct" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Salida de Ciudad</label>
+            <input type="text" id="wp-${pKey}-${idx}-dep" value="${wp.departureDate || ''}" placeholder="24 Octubre 2026" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-slate-100">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">🤝 ¿Estancia compartida con otro pasajero?</label>
-            <select id="wp-${pKey}-${idx}-meets" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 pt-2 border-t border-slate-100">
+          <div class="sm:col-span-5">
+            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">🤝 ¿Estancia compartida con otro pasajero?</label>
+            <select id="wp-${pKey}-${idx}-meets" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
               <option value="none" ${!wp.meetsWith || wp.meetsWith === 'none' ? 'selected' : ''}>❌ No (Estancia individual / solo)</option>
-              <option value="${otherKey}" ${wp.meetsWith === otherKey ? 'selected' : ''}>🤝 Sí, estancia con ${otherName}</option>
+              <option value="${otherKey}" ${wp.meetsWith === otherKey ? 'selected' : ''}>🤝 Sí, estancia conjunta con ${otherName}</option>
             </select>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-400 mb-0.5">Orígenes Alternativos para siguiente tramo</label>
-            <input type="text" id="wp-${pKey}-${idx}-origs" value="${wp.departureOrigins || ''}" placeholder="Ej. BCN, MAD" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-semibold">
+          <div class="sm:col-span-7">
+            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📍 Orígenes de Salida para siguiente tramo (Desplegable)</label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              <select id="wp-${pKey}-${idx}-orig1" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+                ${buildAirportSelectOptions(orig1, false)}
+              </select>
+              <select id="wp-${pKey}-${idx}-orig2" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+                ${buildAirportSelectOptions(orig2, true)}
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -1207,7 +1275,7 @@ function renderWaypointsEditor(pKey) {
   });
 
   if (wps.length === 0) {
-    html = `<div class="text-xs text-slate-400 italic p-3 text-center bg-white rounded-xl border border-dashed border-slate-200">Sin estancias intermedias configuradas. Haz clic en "+ Agregar Parada".</div>`;
+    html = `<div class="text-xs text-slate-400 italic p-4 text-center bg-white rounded-xl border border-dashed border-slate-200">Sin estancias intermedias configuradas. Haz clic en "+ Agregar Parada".</div>`;
   }
 
   container.innerHTML = html;
@@ -1222,7 +1290,7 @@ function addWaypoint(pKey) {
     arrivalDate: '',
     departureDate: '',
     meetsWith: otherKey,
-    departureOrigins: '',
+    departureOrigins: 'MAD, BCN',
     notes: ''
   });
   renderWaypointsEditor(pKey);
@@ -1240,7 +1308,9 @@ function saveTripConfig(e) {
 
   // Guardar Pasajero 1
   tripConfig.p1.name = document.getElementById('cfg-p1-name').value.trim() || 'Pasajero 1';
-  tripConfig.p1.origin = document.getElementById('cfg-p1-origin').value.trim() || 'MEX';
+  const p1OrigCode = document.getElementById('cfg-p1-origin').value;
+  const p1OrigObj = AIRPORTS_LIST.find(a => a.code === p1OrigCode);
+  tripConfig.p1.origin = p1OrigObj ? p1OrigObj.label.replace(/^[^\s]+\s*/, '') : p1OrigCode;
   tripConfig.p1.startDate = document.getElementById('cfg-p1-date').value || '2026-10-16';
   tripConfig.p1.nationality = document.getElementById('cfg-p1-nat').value;
   tripConfig.p1.visas = [];
@@ -1254,18 +1324,26 @@ function saveTripConfig(e) {
       const arrEl = document.getElementById(`wp-p1-${idx}-arr`);
       const depEl = document.getElementById(`wp-p1-${idx}-dep`);
       const meetsEl = document.getElementById(`wp-p1-${idx}-meets`);
-      const origsEl = document.getElementById(`wp-p1-${idx}-origs`);
+      const orig1El = document.getElementById(`wp-p1-${idx}-orig1`);
+      const orig2El = document.getElementById(`wp-p1-${idx}-orig2`);
+
       if (nameEl) wp.name = nameEl.value.trim();
       if (arrEl) wp.arrivalDate = arrEl.value.trim();
       if (depEl) wp.departureDate = depEl.value.trim();
       if (meetsEl) wp.meetsWith = meetsEl.value;
-      if (origsEl) wp.departureOrigins = origsEl.value.trim();
+      if (orig1El) {
+        const o1 = orig1El.value;
+        const o2 = orig2El ? orig2El.value : '';
+        wp.departureOrigins = (o2 && o2 !== o1) ? `${o1}, ${o2}` : o1;
+      }
     });
   }
 
   // Guardar Pasajero 2
   tripConfig.p2.name = document.getElementById('cfg-p2-name').value.trim() || 'Pasajero 2';
-  tripConfig.p2.origin = document.getElementById('cfg-p2-origin').value.trim() || 'SPC';
+  const p2OrigCode = document.getElementById('cfg-p2-origin').value;
+  const p2OrigObj = AIRPORTS_LIST.find(a => a.code === p2OrigCode);
+  tripConfig.p2.origin = p2OrigObj ? p2OrigObj.label.replace(/^[^\s]+\s*/, '') : p2OrigCode;
   tripConfig.p2.startDate = document.getElementById('cfg-p2-date').value || '2026-10-16';
   tripConfig.p2.nationality = document.getElementById('cfg-p2-nat').value;
   tripConfig.p2.visas = [];
@@ -1279,12 +1357,18 @@ function saveTripConfig(e) {
       const arrEl = document.getElementById(`wp-p2-${idx}-arr`);
       const depEl = document.getElementById(`wp-p2-${idx}-dep`);
       const meetsEl = document.getElementById(`wp-p2-${idx}-meets`);
-      const origsEl = document.getElementById(`wp-p2-${idx}-origs`);
+      const orig1El = document.getElementById(`wp-p2-${idx}-orig1`);
+      const orig2El = document.getElementById(`wp-p2-${idx}-orig2`);
+
       if (nameEl) wp.name = nameEl.value.trim();
       if (arrEl) wp.arrivalDate = arrEl.value.trim();
       if (depEl) wp.departureDate = depEl.value.trim();
       if (meetsEl) wp.meetsWith = meetsEl.value;
-      if (origsEl) wp.departureOrigins = origsEl.value.trim();
+      if (orig1El) {
+        const o1 = orig1El.value;
+        const o2 = orig2El ? orig2El.value : '';
+        wp.departureOrigins = (o2 && o2 !== o1) ? `${o1}, ${o2}` : o1;
+      }
     });
   }
 
