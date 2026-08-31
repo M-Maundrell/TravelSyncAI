@@ -38,11 +38,12 @@ RULES = {
     }
 }
 
-# Tramos de búsqueda clave
+# Tramos de búsqueda clave (España: 1 semana total, salida a Colombia el 24 Oct)
 FLIGHT_DATES = {
     "outbound_madrid": "2026-10-16",
     "outbound_canarias": "2026-10-16",
-    "transatlantic_colombia": "2026-10-30",
+    "train_mad_bcn": "2026-10-21",
+    "transatlantic_colombia": "2026-10-24",
     "return_mexico": "2026-11-27",
     "return_canarias": "2026-11-28"
 }

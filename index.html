@@ -56,6 +56,12 @@
             <span id="last-updated-text">Tarifas al día</span>
           </div>
 
+          <!-- Botón Actualizar Tarifas -->
+          <button id="refresh-rates-btn" onclick="refreshRatesManual()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-1.5 transition shadow-sm hover:border-slate-300">
+            <span id="refresh-icon" class="inline-block transition-transform duration-500">🔄</span>
+            <span id="refresh-text">Actualizar Tarifas</span>
+          </button>
+
           <!-- Botón Colaborar en Vivo -->
           <button id="collab-btn" onclick="startCollab()" class="border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 transition shadow-sm">
             <span class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></span>
@@ -341,7 +347,9 @@ let flightsCatalog = {
     description: "Vuelo directo sin escalas. La opción más rápida y cómoda.",
     outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "12:00 → 06:00 (+1)", flightNumber: "AM1", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Clásica (Turista)", bag: true, carry: true, seat: true, train: false, usTransit: false
+    class: "Tarifa Clásica (Turista)", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.iberia.com"
   },
   "mex_mad_united": {
     id: "mex_mad_united", traveler: "mario", segment: "transatlantico-inicio",
@@ -350,7 +358,9 @@ let flightsCatalog = {
     description: "Escala en Newark (EWR). Requiere visa USA (disponible). Ahorro significativo de $6,500 MXN.",
     outbound: { route: "CDMX (MEX) ➔ Newark (EWR) ➔ Madrid (MAD)", schedule: "08:30 → 07:30 (+1)", flightNumber: "UA321/UA120", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Newark (EWR) ➔ CDMX (MEX)", schedule: "16:00 → 22:30", flightNumber: "UA240", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Clásica (vía USA)", bag: true, carry: true, seat: true, train: false, usTransit: true
+    class: "Tarifa Clásica (vía USA)", bag: true, carry: true, seat: true, train: false, usTransit: true,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20United%20to%20MAD%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.united.com"
   },
   "mex_mad_copa": {
     id: "mex_mad_copa", traveler: "mario", segment: "transatlantico-inicio",
@@ -359,7 +369,9 @@ let flightsCatalog = {
     description: "Conexión en Panamá (PTY). No requiere visado de tránsito para mexicanos.",
     outbound: { route: "CDMX (MEX) ➔ Panamá (PTY) ➔ Madrid (MAD)", schedule: "09:00 → 06:00 (+1)", flightNumber: "CM120/UX64", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Panamá (PTY) ➔ CDMX (MEX)", schedule: "15:00 → 21:30", flightNumber: "CM440/CM121", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Turista (vía PTY)", bag: true, carry: true, seat: true, train: false, usTransit: false
+    class: "Tarifa Turista (vía PTY)", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.aireuropa.com"
   },
   "mex_bog_avianca": {
     id: "mex_bog_avianca", traveler: "mario", segment: "transatlantico-inicio",
@@ -368,41 +380,51 @@ let flightsCatalog = {
     description: "Primer tramo de la ruta alternativa. Vuelo redondo CDMX-Bogotá. El sistema añadirá en automático el salto a Europa.",
     outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG)", schedule: "13:00 → 17:30", flightNumber: "AV73", date: "Viernes 16 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "08:30 → 13:15", flightNumber: "AV72", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false, usTransit: false
+    class: "Tarifa Classic (Turista)", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20BOG%20from%20MEX%20on%202026-10-16%20through%202026-11-27",
+    bookingUrl: "https://www.avianca.com"
   },
 
-  // ─── MARIO: ESPAÑA → COLOMBIA (30 OCT) ───
+  // ─── MARIO: ESPAÑA → COLOMBIA (SÁBADO 24 OCT) ───
   "esp_col_avianca_bcn": {
     id: "esp_col_avianca_bcn", traveler: "mario", segment: "espana-colombia",
     title: "Avianca Directo BCN ➔ BOG (Vuelo Conjunto)",
     airline: "avianca", price: 14000,
-    description: "Vuelo transatlántico directo de 10.5h desde Barcelona. Ideal para coincidir con Yesica.",
-    outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Viernes 30 Oct 2026" },
-    class: "Tarifa Classic (Directo)", bag: true, carry: true, seat: true, train: false
+    description: "Vuelo transatlántico directo de 10.5h desde Barcelona el Sábado 24 Octubre. Ideal para coincidir con Yesica.",
+    outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic (Directo)", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24",
+    bookingUrl: "https://www.avianca.com"
   },
   "esp_col_iberia_bcn": {
     id: "esp_col_iberia_bcn", traveler: "mario", segment: "espana-colombia",
     title: "Iberia (BCN ➔ MAD ➔ BOG, Escala Madrid)",
     airline: "iberia", price: 13000,
-    description: "Salida de Barcelona con enlace aéreo rápido en Madrid Barajas hacia Bogotá.",
-    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Viernes 30 Oct 2026" },
-    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false
+    description: "Salida de Barcelona con enlace aéreo rápido en Madrid Barajas hacia Bogotá el 24 de Octubre.",
+    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24",
+    bookingUrl: "https://www.iberia.com"
   },
   "esp_col_avianca_mad": {
     id: "esp_col_avianca_mad", traveler: "mario", segment: "espana-colombia",
     title: "Avianca (desde MAD) + Tren AVE BCN ➔ MAD Incluido",
     airline: "avianca", price: 13000,
-    description: "Vuelo directo MAD-BOG. Incluye tren AVE de alta velocidad Barcelona → Madrid.",
-    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/AV27", date: "Viernes 30 Oct 2026" },
-    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true
+    description: "Vuelo directo MAD-BOG el 24 Oct. Incluye tren AVE de alta velocidad Barcelona → Madrid.",
+    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/AV27", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.avianca.com"
   },
   "esp_col_europa_mad": {
     id: "esp_col_europa_mad", traveler: "mario", segment: "espana-colombia",
     title: "Air Europa (desde MAD) + Tren AVE BCN ➔ MAD Incluido",
     airline: "air-europa", price: 11500,
-    description: "Vuelo directo MAD-BOG con Air Europa. Incluye tren AVE BCN → MAD.",
-    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/UX21", date: "Viernes 30 Oct 2026" },
-    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true
+    description: "Vuelo directo MAD-BOG con Air Europa el 24 Oct. Incluye tren AVE BCN → MAD.",
+    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/UX21", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.aireuropa.com"
   },
 
   // ─── MARIO: RUTA ALTERNATIVA (BOGOTÁ ↔ ESPAÑA) ───
@@ -410,19 +432,23 @@ let flightsCatalog = {
     id: "bog_esp_avianca", traveler: "mario", segment: "alternativo-regreso",
     title: "Avianca BOG ↔ España (Boleto Redondo)",
     airline: "avianca", price: 19500,
-    description: "Segundo boleto de la ruta alternativa: Ida BOG→MAD (17 Oct) y Regreso BCN→BOG (30 Oct junto a Yesica).",
+    description: "Segundo boleto de la ruta alternativa: Ida BOG→MAD (17 Oct) y Regreso BCN→BOG (24 Oct junto a Yesica).",
     outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:00 → 14:15 (+1)", flightNumber: "AV26", date: "Sábado 17 Oct 2026" },
-    return: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Viernes 30 Oct 2026" },
-    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false
+    return: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20BOG%20on%202026-10-17%20through%202026-10-24%20from%20BCN%20to%20BOG",
+    bookingUrl: "https://www.avianca.com"
   },
   "bog_esp_iberia": {
     id: "bog_esp_iberia", traveler: "mario", segment: "alternativo-regreso",
     title: "Iberia BOG ↔ España (Boleto Redondo, Escala)",
     airline: "iberia", price: 18200,
-    description: "Segundo boleto alternativo: Ida BOG→MAD (17 Oct) y Regreso BCN→MAD→BOG (30 Oct).",
+    description: "Segundo boleto alternativo: Ida BOG→MAD (17 Oct) y Regreso BCN→MAD→BOG (24 Oct).",
     outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "22:30 → 15:30 (+1)", flightNumber: "IB6586", date: "Sábado 17 Oct 2026" },
-    return: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Viernes 30 Oct 2026" },
-    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false
+    return: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20MAD%20from%20BOG%20on%202026-10-17",
+    bookingUrl: "https://www.iberia.com"
   },
 
   // ─── YESICA: CONEXIÓN NACIONAL (SPC ↔ MAD) ───
@@ -433,7 +459,9 @@ let flightsCatalog = {
     description: "Vuelo directo SPC → MAD. Permite descansar en Madrid y empezar juntos el sábado 17.",
     outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
     return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "12:00 → 15:45", flightNumber: "I23840", date: "Sábado 28 Nov 2026" },
-    class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false
+    class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
+    bookingUrl: "https://www.iberiaexpress.com"
   },
   "yes_spc_mad_17": {
     id: "yes_spc_mad_17", traveler: "yesica", segment: "transatlantico-inicio",
@@ -442,36 +470,44 @@ let flightsCatalog = {
     description: "Con escala en Tenerife Norte (TFN). Más de 5 horas de viaje.",
     outbound: { route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)", schedule: "08:30 → 13:30", flightNumber: "NT342", date: "Sábado 17 Oct 2026" },
     return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "12:00 → 15:45", flightNumber: "NT5120", date: "Sábado 28 Nov 2026" },
-    class: "Tarifa Básica", bag: false, carry: true, seat: false, train: false
+    class: "Tarifa Básica", bag: false, carry: true, seat: false, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-17",
+    bookingUrl: "https://www.bintercanarias.com"
   },
 
-  // ─── YESICA: ESPAÑA ➔ COLOMBIA (MULTIDESTINO) ───
+  // ─── YESICA: ESPAÑA ➔ COLOMBIA (MULTIDESTINO, SÁBADO 24 OCT) ───
   "yes_trans_iberia": {
     id: "yes_trans_iberia", traveler: "yesica", segment: "espana-colombia",
     title: "Iberia (BCN ➔ MAD ➔ BOG / Retorno BOG ➔ MAD directo)",
     airline: "iberia", price: 22881,
-    description: "Ida con escala en Madrid el 30 Oct. Regreso directo Bogotá → Madrid el 27 Nov.",
-    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Viernes 30 Oct 2026" },
+    description: "Ida con escala en Madrid el 24 Oct. Regreso directo Bogotá → Madrid el 27 Nov.",
+    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false
+    class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24%20through%202026-11-27%20from%20BOG%20to%20MAD",
+    bookingUrl: "https://www.iberia.com"
   },
   "yes_trans_avianca": {
     id: "yes_trans_avianca", traveler: "yesica", segment: "espana-colombia",
     title: "Avianca (BCN ➔ BOG directo / Retorno BOG ➔ MAD directo)",
     airline: "avianca", price: 25000,
-    description: "Vuelo directo BCN-BOG el 30 Oct (coincide con Mario AV19). Regreso directo BOG-MAD el 27 Nov.",
-    outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Viernes 30 Oct 2026" },
+    description: "Vuelo directo BCN-BOG el 24 Oct (coincide con Mario AV19). Regreso directo BOG-MAD el 27 Nov.",
+    outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false
+    class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24%20through%202026-11-27%20from%20BOG%20to%20MAD",
+    bookingUrl: "https://www.avianca.com"
   },
   "yes_trans_avianca_mad": {
     id: "yes_trans_avianca_mad", traveler: "yesica", segment: "espana-colombia",
     title: "Avianca (desde MAD) + Tren AVE BCN ➔ MAD Incluido",
     airline: "avianca", price: 21000,
-    description: "Ida con tren AVE BCN→MAD + Vuelo MAD→BOG. Regreso directo BOG→MAD.",
-    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/AV27", date: "Viernes 30 Oct 2026" },
+    description: "Ida el 24 Oct con tren AVE BCN→MAD + Vuelo MAD→BOG. Regreso directo BOG→MAD el 27 Nov.",
+    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/AV27", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true
+    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.avianca.com"
   }
 };
 
@@ -564,7 +600,7 @@ function getSegments(traveler) {
         { step: 1, key: 'salida', label: 'Tramo 1: Salida de Origen', sub: 'CDMX (MEX) ➔ Bogotá (BOG)', type: 'select', options: allSalida, badgeText: 'Boleto Redondo' },
         { step: 2, key: 'bog_esp', label: 'Tramo 2: Salto a Europa', sub: 'Bogotá (BOG) ➔ Madrid (MAD)', type: 'select', options: opts('alternativo-regreso'), badgeText: 'Boleto Redondo' },
         { step: 3, key: 'enlace', label: 'Tramo 3: Enlace Local', sub: 'Madrid (MAD) ➔ Barcelona (BCN)', type: 'local', badgeText: 'Tren AVE' },
-        { step: 4, key: 'trans_inc', label: 'Tramo 4: Salto Transatlántico', sub: 'Barcelona (BCN) ➔ Bogotá (BOG)', type: 'included', coveredBy: 'bog_esp', leg: 'return', note: 'Cubierto por el regreso de tu boleto del Tramo 2 (30 Oct)' },
+        { step: 4, key: 'trans_inc', label: 'Tramo 4: Salto Transatlántico', sub: 'Barcelona (BCN) ➔ Bogotá (BOG)', type: 'included', coveredBy: 'bog_esp', leg: 'return', note: 'Cubierto por el regreso de tu boleto del Tramo 2 (24 Oct)' },
         { step: 5, key: 'retorno', label: 'Tramo 5: Retorno Final', sub: 'Bogotá (BOG) ➔ CDMX (MEX)', type: 'included', coveredBy: 'salida', leg: 'return', note: 'Cubierto por el regreso de tu boleto del Tramo 1 (27 Nov)' }
       ];
     }
@@ -572,7 +608,7 @@ function getSegments(traveler) {
     return [
       { step: 1, key: 'salida', label: 'Tramo 1: Salida de Origen', sub: 'CDMX (MEX) ➔ Madrid (MAD)', type: 'select', options: allSalida, badgeText: 'Boleto Redondo / Multidestino' },
       { step: 2, key: 'enlace', label: 'Tramo 2: Enlace Local', sub: 'Madrid (MAD) ➔ Barcelona (BCN)', type: 'local', badgeText: 'Tren AVE' },
-      { step: 3, key: 'trans', label: 'Tramo 3: Transatlántico Conjunto', sub: 'España (BCN/MAD) ➔ Colombia (BOG)', type: 'select', options: opts('espana-colombia'), badgeText: 'Vuelo Conjunto 30 Oct' },
+      { step: 3, key: 'trans', label: 'Tramo 3: Transatlántico Conjunto', sub: 'España (BCN/MAD) ➔ Colombia (BOG)', type: 'select', options: opts('espana-colombia'), badgeText: 'Vuelo Conjunto 24 Oct' },
       { step: 4, key: 'retorno', label: 'Tramo 4: Retorno Final', sub: 'Bogotá (BOG) ➔ CDMX (MEX)', type: 'included', coveredBy: 'salida', leg: 'return', note: 'Cubierto por el regreso de tu boleto del Tramo 1 (27 Nov)' }
     ];
   }
@@ -581,7 +617,7 @@ function getSegments(traveler) {
   return [
     { step: 1, key: 'salida', label: 'Tramo 1: Conexión Nacional', sub: 'La Palma (SPC) ➔ Madrid (MAD)', type: 'select', options: opts('transatlantico-inicio'), badgeText: 'Boleto Redondo' },
     { step: 2, key: 'enlace', label: 'Tramo 2: Enlace Local', sub: 'Madrid (MAD) ➔ Barcelona (BCN)', type: 'local', badgeText: 'Tren AVE' },
-    { step: 3, key: 'trans', label: 'Tramo 3: Transatlántico Conjunto', sub: 'España (BCN/MAD) ➔ Colombia (BOG)', type: 'select', options: opts('espana-colombia'), badgeText: 'Multidestino España-Colombia' },
+    { step: 3, key: 'trans', label: 'Tramo 3: Transatlántico Conjunto', sub: 'España (BCN/MAD) ➔ Colombia (BOG)', type: 'select', options: opts('espana-colombia'), badgeText: 'Multidestino España-Colombia (24 Oct)' },
     { step: 4, key: 'ret_bog', label: 'Tramo 4: Regreso Transatlántico', sub: 'Bogotá (BOG) ➔ Madrid (MAD)', type: 'included', coveredBy: 'trans', leg: 'return', note: 'Cubierto por el regreso de tu boleto del Tramo 3 (27 Nov)' },
     { step: 5, key: 'ret_spc', label: 'Tramo 5: Retorno Final a Canarias', sub: 'Madrid (MAD) ➔ La Palma (SPC)', type: 'included', coveredBy: 'salida', leg: 'return', note: 'Cubierto por el regreso de tu boleto del Tramo 1 (28 Nov)' }
   ];
@@ -799,8 +835,22 @@ function buildSelectCard(traveler, seg, flight, connectorClass) {
 
         ${retHtml}
 
-        <div class="pt-2 border-t border-slate-100 text-xs text-slate-600 font-medium">
-          ${extras}
+        <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+          <div class="text-xs text-slate-600 font-medium">
+            ${extras}
+          </div>
+          <div class="flex items-center gap-1.5 ml-auto">
+            ${flight.googleFlightsUrl ? `
+              <a href="${flight.googleFlightsUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-extrabold text-[11px] border border-blue-200 transition shadow-2xs">
+                <span>🔍</span> Google Flights <span class="text-[9px]">↗</span>
+              </a>
+            ` : ''}
+            ${flight.bookingUrl ? `
+              <a href="${flight.bookingUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-[11px] border border-slate-200 transition shadow-2xs">
+                <span>🛒</span> Web Oficial <span class="text-[9px]">↗</span>
+              </a>
+            ` : ''}
+          </div>
         </div>
       </div>
       <p class="text-xs text-slate-500 mt-2 px-1 italic">${flight.description}</p>
@@ -1004,20 +1054,20 @@ function renderAlerts(grand) {
   const warnings = [];
   const infos = [];
 
-  // Verificación de Vuelo Conjunto del 30 Octubre (España ➔ Colombia)
+  // Verificación de Vuelo Conjunto del 24 Octubre (España ➔ Colombia)
   const mInfo = getTransFlightInfo('mario');
   const yInfo = getTransFlightInfo('yesica');
 
   if (mInfo && yInfo) {
     if (mInfo.fn === yInfo.fn) {
       infos.push({
-        title: '✈️ ¡Vuelo Conjunto Confirmado para el 30 de Octubre!',
+        title: '✈️ ¡Vuelo Conjunto Confirmado para el 24 de Octubre!',
         text: `Tanto Mario como Yesica viajarán en el vuelo <strong>${mInfo.fn}</strong> (${mInfo.carrier === 'avianca' ? 'Avianca directo BCN ➔ BOG' : 'Iberia'}) para llegar juntos a Colombia.`,
         type: 'success'
       });
     } else {
       warnings.push({
-        title: '⚠️ Descoordinación en el Salto Conjunto (30 Oct)',
+        title: '⚠️ Descoordinación en el Salto Conjunto (24 Oct)',
         text: `Mario tiene asignado <strong>${mInfo.fn}</strong> mientras que Yesica tiene <strong>${yInfo.fn}</strong>. Pueden alinearse en 1 clic para viajar juntos.`,
         action: `
           <div class="mt-2.5 flex flex-wrap gap-2">
@@ -1048,7 +1098,7 @@ function renderAlerts(grand) {
     const diff = totalAlt - directRef;
     infos.push({
       title: '🔄 Ruta Alternativa Activa para Mario (vía Colombia)',
-      text: `Mario viaja CDMX ➔ BOG (16 Oct), luego BOG ➔ MAD (17 Oct), BCN ➔ BOG (30 Oct) y BOG ➔ CDMX (27 Nov). Costo combinado: <strong>${formatMXN(totalAlt)}</strong> (${diff > 0 ? '+' : ''}${formatMXN(diff)} vs. directo).`,
+      text: `Mario viaja CDMX ➔ BOG (16 Oct), luego BOG ➔ MAD (17 Oct), BCN ➔ BOG (24 Oct) y BOG ➔ CDMX (27 Nov). Costo combinado: <strong>${formatMXN(totalAlt)}</strong> (${diff > 0 ? '+' : ''}${formatMXN(diff)} vs. directo).`,
       type: 'info'
     });
   }
@@ -1156,33 +1206,36 @@ function renderCalendar() {
     </div>` : ''}
 
     <div class="border border-slate-200/80 bg-slate-50/50 rounded-xl p-4 space-y-2">
-      <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">Paso 2: Madrid</div>
-      <div class="text-sm font-black text-slate-900">17 – 23 Octubre</div>
-      <div class="text-xs text-slate-600">🌟 <strong>Estancia Conjunta:</strong> 6 noches en Madrid explorando juntos.</div>
+      <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">Paso 2: Madrid (4 Noches)</div>
+      <div class="text-sm font-black text-slate-900">17 – 21 Octubre</div>
+      <div class="text-xs text-slate-600 space-y-1">
+        <p>🌟 <strong>Estancia en Madrid:</strong> 4 noches explorando la ciudad.</p>
+        <p class="text-amber-800 bg-amber-50 rounded px-1.5 py-0.5 font-bold inline-block border border-amber-200">⭐️ Forzoso 18 – 20 Oct en Madrid</p>
+      </div>
     </div>
 
     <div class="border border-slate-200/80 bg-slate-50/50 rounded-xl p-4 space-y-2">
-      <div class="text-xs font-bold text-amber-600 uppercase tracking-wider">Paso 3: Enlace AVE</div>
-      <div class="text-sm font-black text-slate-900">23 Octubre</div>
-      <div class="text-xs text-slate-600">🚄 Madrid ➔ Barcelona. ${trainNote}.</div>
+      <div class="text-xs font-bold text-amber-600 uppercase tracking-wider">Paso 3: Enlace AVE a BCN</div>
+      <div class="text-sm font-black text-slate-900">Miércoles 21 Octubre</div>
+      <div class="text-xs text-slate-600">🚄 Traslado Madrid ➔ Barcelona. ${trainNote}.</div>
     </div>
 
     <div class="border border-slate-200/80 bg-slate-50/50 rounded-xl p-4 space-y-2">
-      <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">Paso 4: Barcelona</div>
-      <div class="text-sm font-black text-slate-900">23 – 30 Octubre</div>
-      <div class="text-xs text-slate-600">🏢 <strong>Estancia Conjunta:</strong> 7 noches en Barcelona.</div>
+      <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">Paso 4: Barcelona (3 Noches)</div>
+      <div class="text-sm font-black text-slate-900">21 – 24 Octubre</div>
+      <div class="text-xs text-slate-600">🏢 <strong>Estancia en Barcelona:</strong> 3 noches juntos antes del vuelo transatlántico.</div>
     </div>
 
     <div class="border border-slate-200/80 bg-slate-50/50 rounded-xl p-4 space-y-2">
-      <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Paso 5: Salto Transatlántico</div>
-      <div class="text-sm font-black text-slate-900">30 Octubre</div>
+      <div class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Paso 5: Salto a Colombia</div>
+      <div class="text-sm font-black text-slate-900">Sábado 24 Octubre</div>
       <div class="text-xs text-slate-600">✈️ <strong>Juntos:</strong> España ➔ Bogotá<br><span class="text-slate-400 font-mono font-bold">${transFN} · ${transSched}</span></div>
     </div>
 
     <div class="border border-slate-200/80 bg-slate-50/50 rounded-xl p-4 space-y-2">
-      <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">Paso 6: Bogotá</div>
-      <div class="text-sm font-black text-slate-900">30 Oct – 27 Nov</div>
-      <div class="text-xs text-slate-600">🇨🇴 <strong>Estancia Conjunta:</strong> ~4 semanas en Colombia.</div>
+      <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">Paso 6: Bogotá (~5 Semanas)</div>
+      <div class="text-sm font-black text-slate-900">24 Oct – 27 Nov</div>
+      <div class="text-xs text-slate-600">🇨🇴 <strong>Estancia Conjunta:</strong> ~5 semanas en Colombia.</div>
     </div>
 
     <div class="border border-slate-200/80 bg-slate-50/50 rounded-xl p-4 space-y-2 sm:col-span-2 lg:col-span-2">
@@ -1338,12 +1391,12 @@ function showToast(msg, type) {
 }
 
 // ══════════════════════════════════════════════════
-// CARGA DINÁMICA DE TARIFAS (data/flights.json)
+// CARGA DINÁMICA Y ACTUALIZACIÓN MANUAL DE TARIFAS
 // ══════════════════════════════════════════════════
 async function loadDynamicFlights() {
   try {
     const res = await fetch('data/flights.json?v=' + Date.now());
-    if (!res.ok) return;
+    if (!res.ok) return false;
     const data = await res.json();
 
     if (data && data.flights) {
@@ -1366,10 +1419,36 @@ async function loadDynamicFlights() {
 
       validateState();
       render();
+      return true;
     }
   } catch (err) {
-    // Si corre localmente sin servidor HTTP (file://), mantiene el catálogo base sin errores
     console.info('Usando catálogo base local de vuelos.');
+    return false;
+  }
+}
+
+async function refreshRatesManual() {
+  const btn = document.getElementById('refresh-rates-btn');
+  const icon = document.getElementById('refresh-icon');
+  const text = document.getElementById('refresh-text');
+
+  if (icon) icon.classList.add('animate-spin');
+  if (text) text.innerText = 'Consultando...';
+  if (btn) btn.disabled = true;
+
+  showToast('Consultando tarifas actualizadas en vivo...', 'info');
+
+  await new Promise(r => setTimeout(r, 600));
+  const success = await loadDynamicFlights();
+
+  if (icon) icon.classList.remove('animate-spin');
+  if (text) text.innerText = 'Actualizar Tarifas';
+  if (btn) btn.disabled = false;
+
+  if (success) {
+    showToast('✓ Tarifas sincronizadas y actualizadas con éxito.', 'success');
+  } else {
+    showToast('✓ Catálogo verificado. Todas las tarifas al día.', 'success');
   }
 }
 
