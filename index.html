@@ -240,10 +240,37 @@
     .left-0 { left: 0; }
     .overflow-hidden { overflow: hidden; }
     .overflow-y-auto { overflow-y: auto; }
+    .shrink-0 { flex-shrink: 0; }
+    .flex-1 { flex: 1 1 0%; }
+    .min-h-0 { min-height: 0; }
+    .max-h-\[88vh\] { max-height: 88vh; }
+    .max-h-\[95vh\] { max-height: 95vh; }
     .cursor-pointer { cursor: pointer; }
     .transition { transition: all 0.15s ease-in-out; }
     .transition-all { transition: all 0.3s ease-in-out; }
     .duration-500 { transition-duration: 500ms; }
+
+    /* Scrollbar visible y estilizada para los modales */
+    .custom-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: #94a3b8 #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #94a3b8;
+      border-radius: 8px;
+      border: 2px solid #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: #64748b;
+    }
 
     .step-connector { position: relative; }
     .step-connector::after {
@@ -445,172 +472,177 @@
   <!-- ══════════════════════════════════════════════════
        MODAL: CONFIGURADOR ESCALABLE DE VIAJE & PASAJEROS
        ══════════════════════════════════════════════════ -->
-  <div id="trip-config-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50 transition-all">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 space-y-4 max-h-[95vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+  <div id="trip-config-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 md:p-6 z-50 transition-all">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden">
+      <!-- HEADER FIJO -->
+      <div class="flex justify-between items-center border-b border-slate-100 p-5 pb-3 shrink-0">
         <div>
           <h3 class="text-base font-extrabold text-slate-900">⚙️ Configuración Dinámica del Viaje</h3>
-          <p class="text-xs text-slate-500">Define los pasajeros, políticas migratorias y puntos de parada / encuentro.</p>
+          <p class="text-xs text-slate-500">Define los pasajeros, políticas migratorias, estancias y tramos conjuntos.</p>
         </div>
         <button onclick="closeTripConfigModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold p-1 leading-none">&times;</button>
       </div>
 
-      <!-- Pestañas del Modal -->
-      <div class="flex border-b border-slate-200 text-xs font-bold">
-        <button type="button" id="tab-btn-p1" onclick="switchConfigTab('p1')" class="px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600">👤 Pasajero 1 (Mario)</button>
-        <button type="button" id="tab-btn-p2" onclick="switchConfigTab('p2')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700">👤 Pasajero 2 (Yesica)</button>
-        <button type="button" id="tab-btn-joint" onclick="switchConfigTab('joint')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700">🤝 Tramos de Vuelo Conjunto</button>
+      <!-- PESTAÑAS FIJAS -->
+      <div class="flex border-b border-slate-200 text-xs font-bold px-5 shrink-0 bg-slate-50/50 overflow-x-auto">
+        <button type="button" id="tab-btn-p1" onclick="switchConfigTab('p1')" class="px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 shrink-0">👤 Pasajero 1 (Mario)</button>
+        <button type="button" id="tab-btn-p2" onclick="switchConfigTab('p2')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 shrink-0">👤 Pasajero 2 (Yesica)</button>
+        <button type="button" id="tab-btn-joint" onclick="switchConfigTab('joint')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 shrink-0">🤝 Tramos de Vuelo Conjunto</button>
       </div>
 
-      <form id="form-trip-config" onsubmit="saveTripConfig(event)" class="space-y-4">
+      <form id="form-trip-config" onsubmit="saveTripConfig(event)" class="flex flex-col flex-1 overflow-hidden min-h-0">
         
-        <!-- PESTAÑA: PASAJERO 1 -->
-        <div id="config-tab-p1" class="space-y-4">
-          <div class="bg-blue-50/40 p-4 rounded-xl border border-blue-200/80 space-y-3">
-            <div class="flex items-center gap-2 font-bold text-xs text-blue-700 uppercase tracking-wider">
-              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Perfil Migratorio & Origen Inicial
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Nombre</label>
-                <input type="text" id="cfg-p1-name" value="Mario" oninput="updateTabLabels()" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+        <!-- CONTENEDOR CON SCROLLBAR VISIBLE -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4">
+          <!-- PESTAÑA: PASAJERO 1 -->
+          <div id="config-tab-p1" class="space-y-4">
+            <div class="bg-blue-50/40 p-4 rounded-xl border border-blue-200/80 space-y-3">
+              <div class="flex items-center gap-2 font-bold text-xs text-blue-700 uppercase tracking-wider">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Perfil Migratorio & Origen Inicial
               </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Origen Inicial</label>
-                <input type="text" id="cfg-p1-origin" value="MEX (Ciudad de México)" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Nombre</label>
+                  <input type="text" id="cfg-p1-name" value="Mario" oninput="updateTabLabels()" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Origen Inicial</label>
+                  <input type="text" id="cfg-p1-origin" value="MEX (Ciudad de México)" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Fecha de Salida</label>
+                  <input type="date" id="cfg-p1-date" value="2026-10-16" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                </div>
               </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Fecha de Salida</label>
-                <input type="date" id="cfg-p1-date" value="2026-10-16" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Pasaporte / Nacionalidad</label>
-                <select id="cfg-p1-nat" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-                  <option value="MX" selected>🇲🇽 México (Requiere visa para USA/CAN)</option>
-                  <option value="ES">🇪🇸 España / UE (Libre tránsito)</option>
-                  <option value="VE">🇻🇪 Venezuela (Restricciones estrictas)</option>
-                  <option value="CO">🇨🇴 Colombia</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Visas / Permisos Activos</label>
-                <div class="flex flex-wrap gap-2 text-xs font-semibold text-slate-700 bg-white p-2 rounded-xl border border-slate-200">
-                  <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p1-visa-usa" checked class="rounded text-blue-600"> 🇺🇸 Visa USA B1/B2</label>
-                  <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p1-visa-es" class="rounded text-blue-600"> 🇪🇸 Residencia ES</label>
-                  <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p1-visa-can" class="rounded text-blue-600"> 🇨🇦 Visa CAN</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Pasaporte / Nacionalidad</label>
+                  <select id="cfg-p1-nat" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                    <option value="MX" selected>🇲🇽 México (Requiere visa para USA/CAN)</option>
+                    <option value="ES">🇪🇸 España / UE (Libre tránsito)</option>
+                    <option value="VE">🇻🇪 Venezuela (Restricciones estrictas)</option>
+                    <option value="CO">🇨🇴 Colombia</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Visas / Permisos Activos</label>
+                  <div class="flex flex-wrap gap-2 text-xs font-semibold text-slate-700 bg-white p-2 rounded-xl border border-slate-200">
+                    <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p1-visa-usa" checked class="rounded text-blue-600"> 🇺🇸 Visa USA B1/B2</label>
+                    <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p1-visa-es" class="rounded text-blue-600"> 🇪🇸 Residencia ES</label>
+                    <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p1-visa-can" class="rounded text-blue-600"> 🇨🇦 Visa CAN</label>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <!-- Waypoints de Pasajero 1 -->
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Estancias & Paradas (Mario)</label>
+                <button type="button" onclick="addWaypoint('p1')" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+                  + Agregar Parada
+                </button>
+              </div>
+              <div id="p1-waypoints-container" class="space-y-2.5"></div>
+            </div>
           </div>
 
-          <!-- Waypoints de Pasajero 1 -->
-          <div class="space-y-2">
-            <div class="flex justify-between items-center">
-              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Estancias & Paradas (Mario)</label>
-              <button type="button" onclick="addWaypoint('p1')" class="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
-                + Agregar Parada
-              </button>
-            </div>
-            <div id="p1-waypoints-container" class="space-y-2.5"></div>
-          </div>
-        </div>
-
-        <!-- PESTAÑA: PASAJERO 2 -->
-        <div id="config-tab-p2" class="hidden space-y-4">
-          <div class="bg-pink-50/40 p-4 rounded-xl border border-pink-200/80 space-y-3">
-            <div class="flex items-center gap-2 font-bold text-xs text-pink-700 uppercase tracking-wider">
-              <span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Perfil Migratorio & Origen Inicial
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Nombre</label>
-                <input type="text" id="cfg-p2-name" value="Yesica" oninput="updateTabLabels()" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+          <!-- PESTAÑA: PASAJERO 2 -->
+          <div id="config-tab-p2" class="hidden space-y-4">
+            <div class="bg-pink-50/40 p-4 rounded-xl border border-pink-200/80 space-y-3">
+              <div class="flex items-center gap-2 font-bold text-xs text-pink-700 uppercase tracking-wider">
+                <span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Perfil Migratorio & Origen Inicial
               </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Origen Inicial</label>
-                <input type="text" id="cfg-p2-origin" value="SPC (La Palma, Canarias)" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Nombre</label>
+                  <input type="text" id="cfg-p2-name" value="Yesica" oninput="updateTabLabels()" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Origen Inicial</label>
+                  <input type="text" id="cfg-p2-origin" value="SPC (La Palma, Canarias)" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Fecha de Salida</label>
+                  <input type="date" id="cfg-p2-date" value="2026-10-16" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                </div>
               </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Fecha de Salida</label>
-                <input type="date" id="cfg-p2-date" value="2026-10-16" required class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              </div>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Pasaporte / Nacionalidad</label>
-                <select id="cfg-p2-nat" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
-                  <option value="VE" selected>🇻🇪 Venezuela (Restricciones estrictas)</option>
-                  <option value="ES">🇪🇸 España / UE</option>
-                  <option value="MX">🇲🇽 México</option>
-                  <option value="CO">🇨🇴 Colombia</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">Visas / Permisos Activos</label>
-                <div class="flex flex-wrap gap-2 text-xs font-semibold text-slate-700 bg-white p-2 rounded-xl border border-slate-200">
-                  <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p2-visa-es" checked class="rounded text-pink-600"> 🇪🇸 Residencia ES</label>
-                  <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p2-visa-usa" class="rounded text-pink-600"> 🇺🇸 Visa USA</label>
-                  <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p2-visa-can" class="rounded text-pink-600"> 🇨🇦 Visa CAN</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Pasaporte / Nacionalidad</label>
+                  <select id="cfg-p2-nat" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                    <option value="VE" selected>🇻🇪 Venezuela (Restricciones estrictas)</option>
+                    <option value="ES">🇪🇸 España / UE</option>
+                    <option value="MX">🇲🇽 México</option>
+                    <option value="CO">🇨🇴 Colombia</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">Visas / Permisos Activos</label>
+                  <div class="flex flex-wrap gap-2 text-xs font-semibold text-slate-700 bg-white p-2 rounded-xl border border-slate-200">
+                    <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p2-visa-es" checked class="rounded text-pink-600"> 🇪🇸 Residencia ES</label>
+                    <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p2-visa-usa" class="rounded text-pink-600"> 🇺🇸 Visa USA</label>
+                    <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="cfg-p2-visa-can" class="rounded text-pink-600"> 🇨🇦 Visa CAN</label>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <!-- Waypoints de Pasajero 2 -->
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Estancias & Paradas (Yesica)</label>
+                <button type="button" onclick="addWaypoint('p2')" class="text-xs font-bold text-pink-600 hover:text-pink-800 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-200">
+                  + Agregar Parada
+                </button>
+              </div>
+              <div id="p2-waypoints-container" class="space-y-2.5"></div>
+            </div>
           </div>
 
-          <!-- Waypoints de Pasajero 2 -->
-          <div class="space-y-2">
-            <div class="flex justify-between items-center">
-              <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider">📍 Estancias & Paradas (Yesica)</label>
-              <button type="button" onclick="addWaypoint('p2')" class="text-xs font-bold text-pink-600 hover:text-pink-800 bg-pink-50 px-2.5 py-1 rounded-lg border border-pink-200">
-                + Agregar Parada
-              </button>
+          <!-- PESTAÑA: TRAMOS DE VUELO CONJUNTO -->
+          <div id="config-tab-joint" class="hidden space-y-4">
+            <p class="text-xs text-slate-500">
+              Los <strong>Tramos de Vuelo Conjunto</strong> obligan a que el motor busque y sincronice exactamente el <strong>mismo avión, mismo horario y misma aerolínea</strong> para ambos pasajeros en ese traslado entre ciudades.
+            </p>
+
+            <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-200 space-y-3">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-xs font-extrabold text-indigo-900 uppercase tracking-wider">🤝 Tramo 3: Salto Transatlántico (España ➔ Colombia)</span>
+                  <div class="text-xs text-slate-600 mt-0.5">Traslado conjunto desde España hacia Bogotá.</div>
+                </div>
+                <span class="text-xs bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-lg shadow-2xs">Obligatorio Mismo Vuelo</span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Fecha de Vuelo Conjunto</label>
+                  <input type="text" id="cfg-joint-date" value="Sábado 24 Octubre 2026" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Orígenes de Salida Permitidos</label>
+                  <input type="text" id="cfg-joint-origs" value="Barcelona (BCN) / Madrid (MAD)" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Destino de Llegada</label>
+                  <input type="text" id="cfg-joint-dest" value="Bogotá (BOG)" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2 pt-2 border-t border-indigo-100">
+                <input type="checkbox" id="cfg-joint-required" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+                <label for="cfg-joint-required" class="text-xs font-bold text-indigo-900 cursor-pointer">
+                  Requerir mismo vuelo para ambos pasajeros (AV19 / IB6585) y alertar si hay desincronización
+                </label>
+              </div>
             </div>
-            <div id="p2-waypoints-container" class="space-y-2.5"></div>
           </div>
         </div>
 
-        <!-- PESTAÑA: TRAMOS DE VUELO CONJUNTO -->
-        <div id="config-tab-joint" class="hidden space-y-4">
-          <p class="text-xs text-slate-500">
-            Los <strong>Tramos de Vuelo Conjunto</strong> obligan a que el motor busque y sincronice exactamente el <strong>mismo avión, mismo horario y misma aerolínea</strong> para ambos pasajeros en ese traslado entre ciudades.
-          </p>
-
-          <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-200 space-y-3">
-            <div class="flex justify-between items-start">
-              <div>
-                <span class="text-xs font-extrabold text-indigo-900 uppercase tracking-wider">🤝 Tramo 3: Salto Transatlántico (España ➔ Colombia)</span>
-                <div class="text-xs text-slate-600 mt-0.5">Traslado conjunto desde España hacia Bogotá.</div>
-              </div>
-              <span class="text-xs bg-indigo-600 text-white font-bold px-2.5 py-1 rounded-lg shadow-2xs">Obligatorio Mismo Vuelo</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-              <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Fecha de Vuelo Conjunto</label>
-                <input type="text" id="cfg-joint-date" value="Sábado 24 Octubre 2026" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Orígenes de Salida Permitidos</label>
-                <input type="text" id="cfg-joint-origs" value="Barcelona (BCN) / Madrid (MAD)" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Destino de Llegada</label>
-                <input type="text" id="cfg-joint-dest" value="Bogotá (BOG)" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2 pt-2 border-t border-indigo-100">
-              <input type="checkbox" id="cfg-joint-required" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
-              <label for="cfg-joint-required" class="text-xs font-bold text-indigo-900 cursor-pointer">
-                Requerir mismo vuelo para ambos pasajeros (AV19 / IB6585) y alertar si hay desincronización
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeTripConfigModal()" class="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 rounded-xl text-sm font-bold text-slate-600 transition">Cancelar</button>
+        <!-- FOOTER FIJO PERSISTENTE -->
+        <div class="flex justify-end gap-2.5 p-4 border-t border-slate-100 bg-slate-50/80 shrink-0">
+          <button type="button" onclick="closeTripConfigModal()" class="px-4 py-2.5 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-600 transition">Cancelar</button>
           <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-sm transition">🚀 Guardar & Optimizar Rutas</button>
         </div>
       </form>
@@ -620,9 +652,10 @@
   <!-- ══════════════════════════════════════════════════
        MODAL: CREAR VUELO PERSONALIZADO
        ══════════════════════════════════════════════════ -->
-  <div id="modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50 transition-all">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 space-y-4 max-h-[95vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+  <div id="modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 md:p-6 z-50 transition-all">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[88vh] flex flex-col overflow-hidden">
+      <!-- HEADER FIJO -->
+      <div class="flex justify-between items-center border-b border-slate-100 p-5 pb-3 shrink-0">
         <div>
           <h3 class="text-base font-extrabold text-slate-900">✈️ Crear Vuelo / Tren Personalizado</h3>
           <p class="text-xs text-slate-500">Añade cualquier otra opción de vuelo o tren al catálogo.</p>
@@ -630,112 +663,116 @@
         <button onclick="closeModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold p-1 leading-none">&times;</button>
       </div>
 
-      <form id="form-flight" onsubmit="saveCustomFlight(event)" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Viajero</label>
-            <select id="form-traveler" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              <option value="mario">Mario (Pasajero 1)</option>
-              <option value="yesica">Yesica (Pasajero 2)</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Categoría de Tramo</label>
-            <select id="form-segment" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              <option value="transatlantico-inicio">Salida de Origen (Tramo 1)</option>
-              <option value="espana-colombia">Salto Transatlántico (Tramo 3)</option>
-              <option value="alternativo-regreso">Ruta Alternativa (Bogotá ↔ España)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Aerolínea / Proveedor</label>
-            <select id="form-airline" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              <option value="iberia">Iberia</option>
-              <option value="iberia-express">Iberia Express</option>
-              <option value="avianca">Avianca</option>
-              <option value="binter">Binter Canarias</option>
-              <option value="aeromexico-iberia">Aeroméxico / Iberia</option>
-              <option value="united">United Airlines</option>
-              <option value="vueling">Vueling</option>
-              <option value="air-europa">Air Europa</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Tipo de Tarifa</label>
-            <input type="text" id="form-class" placeholder="Ej. Tarifa Classic (Turista)" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
-          </div>
-        </div>
-
-        <div class="space-y-2 border-t border-slate-100 pt-3">
-          <h4 class="text-xs font-bold text-slate-600 uppercase tracking-wider">Detalles de Tramo de Ida</h4>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      <form id="form-flight" onsubmit="saveCustomFlight(event)" class="flex flex-col flex-1 overflow-hidden min-h-0">
+        <!-- CONTENEDOR CON SCROLLBAR VISIBLE -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-5 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">Nº Vuelo</label>
-              <input type="text" id="form-fn" placeholder="IB0152" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Viajero</label>
+              <select id="form-traveler" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="mario">Mario (Pasajero 1)</option>
+                <option value="yesica">Yesica (Pasajero 2)</option>
+              </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">Fecha</label>
-              <input type="text" id="form-date" placeholder="Vie 16 Oct" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">Ruta</label>
-              <input type="text" id="form-route" placeholder="MEX ➔ MAD" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-slate-400 mb-1">Horario</label>
-              <input type="text" id="form-sched" placeholder="20:05 → 14:00" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
-            </div>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2 pt-1">
-          <input type="checkbox" id="form-rt" onchange="document.getElementById('form-ret').classList.toggle('hidden',!this.checked)" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-          <label for="form-rt" class="text-sm font-bold text-slate-700 cursor-pointer">¿Incluye Regreso? (Boleto Redondo)</label>
-        </div>
-
-        <div id="form-ret" class="hidden space-y-2 border-t border-slate-100 pt-3">
-          <h4 class="text-xs font-bold text-slate-600 uppercase tracking-wider">Detalles de Tramo de Regreso</h4>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            <div><label class="block text-xs font-bold text-slate-400 mb-1">Nº Vuelo</label><input type="text" id="form-ret-fn" placeholder="IB6586" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
-            <div><label class="block text-xs font-bold text-slate-400 mb-1">Fecha</label><input type="text" id="form-ret-date" placeholder="Vie 27 Nov" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
-            <div><label class="block text-xs font-bold text-slate-400 mb-1">Ruta</label><input type="text" id="form-ret-route" placeholder="BOG ➔ MAD" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
-            <div><label class="block text-xs font-bold text-slate-400 mb-1">Horario</label><input type="text" id="form-ret-sched" placeholder="23:00 → 14:30" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-slate-100 pt-3">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Precio Total</label>
-            <div class="flex gap-1.5">
-              <input type="number" id="form-price" placeholder="20000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              <select id="form-cur" class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <option value="MXN">MXN</option>
-                <option value="EUR">EUR</option>
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Categoría de Tramo</label>
+              <select id="form-segment" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="transatlantico-inicio">Salida de Origen (Tramo 1)</option>
+                <option value="espana-colombia">Salto Transatlántico (Tramo 3)</option>
+                <option value="alternativo-regreso">Ruta Alternativa (Bogotá ↔ España)</option>
               </select>
             </div>
           </div>
-          <div class="sm:col-span-2">
-            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Descripción / Notas</label>
-            <input type="text" id="form-desc" placeholder="Ej. Vuelo directo nocturno con maleta documentada." required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Aerolínea / Proveedor</label>
+              <select id="form-airline" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="iberia">Iberia</option>
+                <option value="iberia-express">Iberia Express</option>
+                <option value="avianca">Avianca</option>
+                <option value="binter">Binter Canarias</option>
+                <option value="aeromexico-iberia">Aeroméxico / Iberia</option>
+                <option value="united">United Airlines</option>
+                <option value="vueling">Vueling</option>
+                <option value="air-europa">Air Europa</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Tipo de Tarifa</label>
+              <input type="text" id="form-class" placeholder="Ej. Tarifa Classic (Turista)" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div class="space-y-2 border-t border-slate-100 pt-3">
+            <h4 class="text-xs font-bold text-slate-600 uppercase tracking-wider">Detalles de Tramo de Ida</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1">Nº Vuelo</label>
+                <input type="text" id="form-fn" placeholder="IB0152" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1">Fecha</label>
+                <input type="text" id="form-date" placeholder="Vie 16 Oct" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1">Ruta</label>
+                <input type="text" id="form-route" placeholder="MEX ➔ MAD" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-400 mb-1">Horario</label>
+                <input type="text" id="form-sched" placeholder="20:05 → 14:00" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 pt-1">
+            <input type="checkbox" id="form-rt" onchange="document.getElementById('form-ret').classList.toggle('hidden',!this.checked)" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+            <label for="form-rt" class="text-sm font-bold text-slate-700 cursor-pointer">¿Incluye Regreso? (Boleto Redondo)</label>
+          </div>
+
+          <div id="form-ret" class="hidden space-y-2 border-t border-slate-100 pt-3">
+            <h4 class="text-xs font-bold text-slate-600 uppercase tracking-wider">Detalles de Tramo de Regreso</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div><label class="block text-xs font-bold text-slate-400 mb-1">Nº Vuelo</label><input type="text" id="form-ret-fn" placeholder="IB6586" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
+              <div><label class="block text-xs font-bold text-slate-400 mb-1">Fecha</label><input type="text" id="form-ret-date" placeholder="Vie 27 Nov" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
+              <div><label class="block text-xs font-bold text-slate-400 mb-1">Ruta</label><input type="text" id="form-ret-route" placeholder="BOG ➔ MAD" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
+              <div><label class="block text-xs font-bold text-slate-400 mb-1">Horario</label><input type="text" id="form-ret-sched" placeholder="23:00 → 14:30" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-slate-100 pt-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Precio Total</label>
+              <div class="flex gap-1.5">
+                <input type="number" id="form-price" placeholder="20000" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <select id="form-cur" class="bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  <option value="MXN">MXN</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </div>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Descripción / Notas</label>
+              <input type="text" id="form-desc" placeholder="Ej. Vuelo directo nocturno con maleta documentada." required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Servicios incluidos</label>
+            <div class="flex flex-wrap gap-3.5 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs font-bold text-slate-700">
+              <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="form-bag" checked class="rounded border-slate-300 text-blue-600"> 🧳 Maleta (23kg)</label>
+              <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="form-carry" checked class="rounded border-slate-300 text-blue-600"> 🎒 Mano</label>
+              <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="form-seat" checked class="rounded border-slate-300 text-blue-600"> 💺 Asiento</label>
+              <label class="flex items-center gap-1.5 cursor-pointer text-blue-600"><input type="checkbox" id="form-train" class="rounded border-slate-300 text-blue-600"> 🚄 Tren AVE</label>
+              <label class="flex items-center gap-1.5 cursor-pointer text-amber-600"><input type="checkbox" id="form-us" class="rounded border-slate-300 text-amber-600"> 🇺🇸 Tránsito USA</label>
+            </div>
           </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Servicios incluidos</label>
-          <div class="flex flex-wrap gap-3.5 bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs font-bold text-slate-700">
-            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="form-bag" checked class="rounded border-slate-300 text-blue-600"> 🧳 Maleta (23kg)</label>
-            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="form-carry" checked class="rounded border-slate-300 text-blue-600"> 🎒 Mano</label>
-            <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" id="form-seat" checked class="rounded border-slate-300 text-blue-600"> 💺 Asiento</label>
-            <label class="flex items-center gap-1.5 cursor-pointer text-blue-600"><input type="checkbox" id="form-train" class="rounded border-slate-300 text-blue-600"> 🚄 Tren AVE</label>
-            <label class="flex items-center gap-1.5 cursor-pointer text-amber-600"><input type="checkbox" id="form-us" class="rounded border-slate-300 text-amber-600"> 🇺🇸 Tránsito USA</label>
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-2.5 pt-3 border-t border-slate-100">
-          <button type="button" onclick="closeModal()" class="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 rounded-xl text-sm font-bold text-slate-600 transition">Cancelar</button>
+        <!-- FOOTER FIJO PERSISTENTE -->
+        <div class="flex justify-end gap-2.5 p-4 border-t border-slate-100 bg-slate-50/80 shrink-0">
+          <button type="button" onclick="closeModal()" class="px-4 py-2.5 border border-slate-200 hover:bg-white rounded-xl text-sm font-bold text-slate-600 transition">Cancelar</button>
           <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-sm transition">Guardar y Seleccionar</button>
         </div>
       </form>
