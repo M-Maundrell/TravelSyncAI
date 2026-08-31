@@ -702,18 +702,29 @@ let flightsCatalog = {
 
   "yes_spc_mad_16": {
     id: "yes_spc_mad_16", traveler: "yesica", segment: "transatlantico-inicio",
-    title: "Iberia Express (Retorno Tarde 18:15) ⭐ Conexión Perfecta",
+    title: "Iberia Express (Retorno 16:45) ⭐ Escala Óptima 2h 15m",
     airline: "iberia-express", price: 3646,
-    description: "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de margen perfecto tras aterrizar de Bogotá a las 14:30.",
+    description: "Vuelo directo SPC ➔ MAD el 16 Oct (19:30). Retorno el 28 Nov a las 16:45 (llegada 19:35 a La Palma) con 2h 15m de margen perfecto tras aterrizar de Bogotá a las 14:30.",
     outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
-    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "18:15 → 22:00", flightNumber: "I23842", date: "Sábado 28 Nov 2026" },
+    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "16:45 → 19:35", flightNumber: "IB3842", date: "Sábado 28 Nov 2026" },
+    class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
+    bookingUrl: "https://www.iberiaexpress.com"
+  },
+  "yes_spc_mad_16_1815": {
+    id: "yes_spc_mad_16_1815", traveler: "yesica", segment: "transatlantico-inicio",
+    title: "Iberia Express (Retorno Tarde 18:15) · Escala 3h 45m",
+    airline: "iberia-express", price: 3646,
+    description: "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de escala holgada en Madrid.",
+    outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
+    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "18:15 → 22:00", flightNumber: "I23844", date: "Sábado 28 Nov 2026" },
     class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
     bookingUrl: "https://www.iberiaexpress.com"
   },
   "yes_spc_mad_16_mediodia": {
     id: "yes_spc_mad_16_mediodia", traveler: "yesica", segment: "transatlantico-inicio",
-    title: "Iberia Express (Retorno Mediodía 12:00) ⚠️ Requiere vuelo temprano",
+    title: "Iberia Express (Retorno Mediodía 12:00) ⚠️ Solo vuelos tempranos",
     airline: "iberia-express", price: 3646,
     description: "Retorno a las 12:00 de Madrid (I23840). Conflicto si el vuelo de Colombia llega a las 14:30 (IB6586).",
     outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
@@ -996,7 +1007,7 @@ function fixYesicaConnection() {
   saveState();
   render();
   broadcastState();
-  showToast('✓ Conexión en Madrid corregida: Iberia Express I23842 (Salida 18:15 · 3h 45m de escala)', 'success');
+  showToast('✓ Conexión en Madrid corregida: Iberia IB3842 (Salida 16:45 · 2h 15m de escala)', 'success');
 }
 
 // ══════════════════════════════════════════════════
@@ -1383,7 +1394,7 @@ function renderAlerts(grand) {
           action: `
             <div class="mt-2.5">
               <button onclick="fixYesicaConnection()" class="px-3.5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center gap-1.5">
-                ✨ Corregir en 1 Clic: Cambiar a Iberia Express I23842 (Salida 18:15 ➔ 3h 45m de escala perfecta)
+                ✨ Corregir en 1 Clic: Cambiar a Iberia IB3842 (Salida 16:45 ➔ 2h 15m de escala perfecta)
               </button>
             </div>
           `

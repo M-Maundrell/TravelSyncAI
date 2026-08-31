@@ -372,10 +372,38 @@
       "id": "yes_spc_mad_16",
       "traveler": "yesica",
       "segment": "transatlantico-inicio",
-      "title": "Iberia Express (Retorno Tarde 18:15) ⭐ Conexión Perfecta",
+      "title": "Iberia Express (Retorno 16:45) ⭐ Escala Óptima 2h 15m",
       "airline": "iberia-express",
       "price": 3646,
-      "description": "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de margen perfecto tras aterrizar de Bogotá a las 14:30.",
+      "description": "Vuelo directo SPC ➔ MAD el 16 Oct (19:30). Retorno el 28 Nov a las 16:45 (llegada 19:35 a La Palma) con 2h 15m de margen perfecto tras aterrizar de Bogotá a las 14:30.",
+      "outbound": {
+        "route": "La Palma (SPC) ➔ Madrid (MAD)",
+        "schedule": "19:30 → 23:15",
+        "flightNumber": "I23841",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Madrid (MAD) ➔ La Palma (SPC)",
+        "schedule": "16:45 → 19:35",
+        "flightNumber": "IB3842",
+        "date": "Sábado 28 Nov 2026"
+      },
+      "class": "Tarifa Óptima",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false,
+      "googleFlightsUrl": "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
+      "bookingUrl": "https://www.iberiaexpress.com"
+    },
+    "yes_spc_mad_16_1815": {
+      "id": "yes_spc_mad_16_1815",
+      "traveler": "yesica",
+      "segment": "transatlantico-inicio",
+      "title": "Iberia Express (Retorno Tarde 18:15) · Escala 3h 45m",
+      "airline": "iberia-express",
+      "price": 3646,
+      "description": "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de escala holgada en Madrid.",
       "outbound": {
         "route": "La Palma (SPC) ➔ Madrid (MAD)",
         "schedule": "19:30 → 23:15",
@@ -385,7 +413,7 @@
       "return": {
         "route": "Madrid (MAD) ➔ La Palma (SPC)",
         "schedule": "18:15 → 22:00",
-        "flightNumber": "I23842",
+        "flightNumber": "I23844",
         "date": "Sábado 28 Nov 2026"
       },
       "class": "Tarifa Óptima",
