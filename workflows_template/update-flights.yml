@@ -1,0 +1,47 @@
+name: Actualización Automática de Tarifas de Vuelos
+
+on:
+  schedule:
+    # Se ejecuta todos los días a las 06:00 UTC (medianoche en CDMX / 07:00 en Canarias)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Permite ejecutar manualmente desde la pestaña Actions en GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  update-flights:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Instalar Dependencias
+        run: |
+          pip install -r requirements.txt
+
+      - name: ✈️ Ejecutar Motor de Búsqueda y Filtrado Migratorio
+        env:
+          AMADEUS_CLIENT_ID: ${{ secrets.AMADEUS_CLIENT_ID }}
+          AMADEUS_CLIENT_SECRET: ${{ secrets.AMADEUS_CLIENT_SECRET }}
+        run: |
+          python scripts/update_flights.py
+
+      - name: 💾 Guardar Cambios y Publicar en GitHub Pages
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Travel Planner Bot"
+          git add data/flights.json
+          if git diff --staged --quiet; then
+            echo "ℹ️ No hubo cambios en las tarifas ni catálogo."
+          else
+            git commit -m "🤖 Auto-update: Actualización automática de tarifas de vuelos"
+            git push origin main
+          fi

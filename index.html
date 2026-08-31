@@ -50,6 +50,12 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Indicador de Última Actualización de Tarifas -->
+          <div id="last-updated-badge" class="hidden text-xs font-bold text-slate-500 bg-slate-50 border border-slate-200/80 px-3 py-2 rounded-xl items-center gap-1.5 shadow-2xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span id="last-updated-text">Tarifas al día</span>
+          </div>
+
           <!-- Botón Colaborar en Vivo -->
           <button id="collab-btn" onclick="startCollab()" class="border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 transition shadow-sm">
             <span class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></span>
@@ -324,9 +330,9 @@ const formatEUR = v => new Intl.NumberFormat('es-ES', {
 }).format(v / MXN_EUR_RATE);
 
 // ══════════════════════════════════════════════════
-// CATÁLOGO DE VUELOS Y TRENES
+// CATÁLOGO DE VUELOS Y TRENES (Base + Actualizaciones)
 // ══════════════════════════════════════════════════
-const flightsCatalog = {
+let flightsCatalog = {
   // ─── MARIO: SALIDA DE ORIGEN (CDMX) ───
   "mex_mad_directo": {
     id: "mex_mad_directo", traveler: "mario", segment: "transatlantico-inicio",
@@ -1332,10 +1338,47 @@ function showToast(msg, type) {
 }
 
 // ══════════════════════════════════════════════════
+// CARGA DINÁMICA DE TARIFAS (data/flights.json)
+// ══════════════════════════════════════════════════
+async function loadDynamicFlights() {
+  try {
+    const res = await fetch('data/flights.json?v=' + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+
+    if (data && data.flights) {
+      // Combinar / actualizar catálogo en memoria
+      flightsCatalog = { ...flightsCatalog, ...data.flights };
+      
+      // Mostrar fecha de actualización
+      if (data.lastUpdated) {
+        const badge = document.getElementById('last-updated-badge');
+        const text = document.getElementById('last-updated-text');
+        if (badge && text) {
+          const dateObj = new Date(data.lastUpdated);
+          const dateStr = dateObj.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+          const timeStr = dateObj.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+          text.innerText = `Tarifas: ${dateStr} ${timeStr}`;
+          badge.classList.remove('hidden');
+          badge.classList.add('inline-flex');
+        }
+      }
+
+      validateState();
+      render();
+    }
+  } catch (err) {
+    // Si corre localmente sin servidor HTTP (file://), mantiene el catálogo base sin errores
+    console.info('Usando catálogo base local de vuelos.');
+  }
+}
+
+// ══════════════════════════════════════════════════
 // INICIALIZACIÓN
 // ══════════════════════════════════════════════════
 validateState();
 render();
+loadDynamicFlights();
 
 // Auto-conectar a sala si viene en el URL (?room=...)
 const roomParam = new URLSearchParams(location.search).get('room');

@@ -1,0 +1,417 @@
+{
+  "lastUpdated": "2026-08-31T02:21:27Z",
+  "currencyRate": {
+    "EUR_TO_MXN": 19.73
+  },
+  "rules": {
+    "mario": {
+      "citizenship": "Mexican",
+      "visas": [
+        "USA"
+      ],
+      "banned_transits": [
+        "CAN",
+        "YYZ",
+        "YUL",
+        "YVR"
+      ],
+      "us_transit_min_discount": 0.3,
+      "direct_price_ref_mxn": 20000
+    },
+    "yesica": {
+      "citizenship": "Venezuelan",
+      "residency": "Spanish Temporary Residency",
+      "visas": [],
+      "allowed_transit_countries": [
+        "ES",
+        "CO"
+      ],
+      "banned_transits": [
+        "USA",
+        "CAN",
+        "GBR",
+        "MEX",
+        "PAN",
+        "MIA",
+        "JFK",
+        "EWR",
+        "YYZ",
+        "YUL",
+        "LHR",
+        "PTY"
+      ]
+    }
+  },
+  "flights": {
+    "mex_mad_directo": {
+      "id": "mex_mad_directo",
+      "traveler": "mario",
+      "segment": "transatlantico-inicio",
+      "title": "Aeroméxico / Iberia (Directo)",
+      "airline": "aeromexico-iberia",
+      "price": 20000,
+      "description": "Vuelo directo sin escalas. La opción más rápida y cómoda.",
+      "outbound": {
+        "route": "CDMX (MEX) ➔ Madrid (MAD)",
+        "schedule": "12:00 → 06:00 (+1)",
+        "flightNumber": "AM1",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ CDMX (MEX)",
+        "schedule": "23:00 → 05:00 (+1)",
+        "flightNumber": "IB6586",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Clásica (Turista)",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false,
+      "usTransit": false
+    },
+    "mex_mad_united": {
+      "id": "mex_mad_united",
+      "traveler": "mario",
+      "segment": "transatlantico-inicio",
+      "title": "United Airlines (Escala Newark, -32% Ahorro)",
+      "airline": "united",
+      "price": 13500,
+      "description": "Escala en Newark (EWR). Requiere visa USA (disponible). Ahorro significativo de $6,500 MXN.",
+      "outbound": {
+        "route": "CDMX (MEX) ➔ Newark (EWR) ➔ Madrid (MAD)",
+        "schedule": "08:30 → 07:30 (+1)",
+        "flightNumber": "UA321/UA120",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ Newark (EWR) ➔ CDMX (MEX)",
+        "schedule": "16:00 → 22:30",
+        "flightNumber": "UA240",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Clásica (vía USA)",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false,
+      "usTransit": true
+    },
+    "mex_mad_copa": {
+      "id": "mex_mad_copa",
+      "traveler": "mario",
+      "segment": "transatlantico-inicio",
+      "title": "Copa / Air Europa (Escala Panamá, sin visa extra)",
+      "airline": "air-europa",
+      "price": 16800,
+      "description": "Conexión en Panamá (PTY). No requiere visado de tránsito para mexicanos.",
+      "outbound": {
+        "route": "CDMX (MEX) ➔ Panamá (PTY) ➔ Madrid (MAD)",
+        "schedule": "09:00 → 06:00 (+1)",
+        "flightNumber": "CM120/UX64",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ Panamá (PTY) ➔ CDMX (MEX)",
+        "schedule": "15:00 → 21:30",
+        "flightNumber": "CM440/CM121",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Turista (vía PTY)",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false,
+      "usTransit": false
+    },
+    "mex_bog_avianca": {
+      "id": "mex_bog_avianca",
+      "traveler": "mario",
+      "segment": "transatlantico-inicio",
+      "title": "🔄 RUTA ALTERNATIVA: CDMX ↔ Bogotá (Avianca)",
+      "airline": "avianca",
+      "price": 9800,
+      "description": "Primer tramo de la ruta alternativa. Vuelo redondo CDMX-Bogotá. El sistema añadirá en automático el salto a Europa.",
+      "outbound": {
+        "route": "CDMX (MEX) ➔ Bogotá (BOG)",
+        "schedule": "13:00 → 17:30",
+        "flightNumber": "AV73",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ CDMX (MEX)",
+        "schedule": "08:30 → 13:15",
+        "flightNumber": "AV72",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Classic (Turista)",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false,
+      "usTransit": false
+    },
+    "esp_col_avianca_bcn": {
+      "id": "esp_col_avianca_bcn",
+      "traveler": "mario",
+      "segment": "espana-colombia",
+      "title": "Avianca Directo BCN ➔ BOG (Vuelo Conjunto)",
+      "airline": "avianca",
+      "price": 14000,
+      "description": "Vuelo transatlántico directo de 10.5h desde Barcelona. Ideal para coincidir con Yesica.",
+      "outbound": {
+        "route": "Barcelona (BCN) ➔ Bogotá (BOG)",
+        "schedule": "14:30 → 18:30",
+        "flightNumber": "AV19",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "class": "Tarifa Classic (Directo)",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false
+    },
+    "esp_col_iberia_bcn": {
+      "id": "esp_col_iberia_bcn",
+      "traveler": "mario",
+      "segment": "espana-colombia",
+      "title": "Iberia (BCN ➔ MAD ➔ BOG, Escala Madrid)",
+      "airline": "iberia",
+      "price": 13000,
+      "description": "Salida de Barcelona con enlace aéreo rápido en Madrid Barajas hacia Bogotá.",
+      "outbound": {
+        "route": "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)",
+        "schedule": "12:00 → 18:30",
+        "flightNumber": "IB3001/IB6585",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "class": "Tarifa Classic",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false
+    },
+    "esp_col_avianca_mad": {
+      "id": "esp_col_avianca_mad",
+      "traveler": "mario",
+      "segment": "espana-colombia",
+      "title": "Avianca (desde MAD) + Tren AVE BCN ➔ MAD Incluido",
+      "airline": "avianca",
+      "price": 13000,
+      "description": "Vuelo directo MAD-BOG. Incluye tren AVE de alta velocidad Barcelona → Madrid.",
+      "outbound": {
+        "route": "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
+        "schedule": "Tren: 3h | Vuelo: 10h",
+        "flightNumber": "AVE/AV27",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "class": "Tarifa Classic + AVE",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": true
+    },
+    "esp_col_europa_mad": {
+      "id": "esp_col_europa_mad",
+      "traveler": "mario",
+      "segment": "espana-colombia",
+      "title": "Air Europa (desde MAD) + Tren AVE BCN ➔ MAD Incluido",
+      "airline": "air-europa",
+      "price": 11500,
+      "description": "Vuelo directo MAD-BOG con Air Europa. Incluye tren AVE BCN → MAD.",
+      "outbound": {
+        "route": "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
+        "schedule": "Tren: 3h | Vuelo: 10h",
+        "flightNumber": "AVE/UX21",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "class": "Tarifa Classic + AVE",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": true
+    },
+    "bog_esp_avianca": {
+      "id": "bog_esp_avianca",
+      "traveler": "mario",
+      "segment": "alternativo-regreso",
+      "title": "Avianca BOG ↔ España (Boleto Redondo)",
+      "airline": "avianca",
+      "price": 19500,
+      "description": "Segundo boleto de la ruta alternativa: Ida BOG→MAD (17 Oct) y Regreso BCN→BOG (30 Oct junto a Yesica).",
+      "outbound": {
+        "route": "Bogotá (BOG) ➔ Madrid (MAD)",
+        "schedule": "21:00 → 14:15 (+1)",
+        "flightNumber": "AV26",
+        "date": "Sábado 17 Oct 2026"
+      },
+      "return": {
+        "route": "Barcelona (BCN) ➔ Bogotá (BOG)",
+        "schedule": "14:30 → 18:30",
+        "flightNumber": "AV19",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "class": "Tarifa Classic",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false
+    },
+    "bog_esp_iberia": {
+      "id": "bog_esp_iberia",
+      "traveler": "mario",
+      "segment": "alternativo-regreso",
+      "title": "Iberia BOG ↔ España (Boleto Redondo, Escala)",
+      "airline": "iberia",
+      "price": 18200,
+      "description": "Segundo boleto alternativo: Ida BOG→MAD (17 Oct) y Regreso BCN→MAD→BOG (30 Oct).",
+      "outbound": {
+        "route": "Bogotá (BOG) ➔ Madrid (MAD)",
+        "schedule": "22:30 → 15:30 (+1)",
+        "flightNumber": "IB6586",
+        "date": "Sábado 17 Oct 2026"
+      },
+      "return": {
+        "route": "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)",
+        "schedule": "12:00 → 18:30",
+        "flightNumber": "IB3001/IB6585",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "class": "Tarifa Classic",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false
+    },
+    "yes_spc_mad_16": {
+      "id": "yes_spc_mad_16",
+      "traveler": "yesica",
+      "segment": "transatlantico-inicio",
+      "title": "Iberia Express (Directo Vie 16 Oct) ⭐ Recomendado",
+      "airline": "iberia-express",
+      "price": 3646,
+      "description": "Vuelo directo SPC → MAD. Permite descansar en Madrid y empezar juntos el sábado 17.",
+      "outbound": {
+        "route": "La Palma (SPC) ➔ Madrid (MAD)",
+        "schedule": "19:30 → 23:15",
+        "flightNumber": "I23841",
+        "date": "Viernes 16 Oct 2026"
+      },
+      "return": {
+        "route": "Madrid (MAD) ➔ La Palma (SPC)",
+        "schedule": "12:00 → 15:45",
+        "flightNumber": "I23840",
+        "date": "Sábado 28 Nov 2026"
+      },
+      "class": "Tarifa Óptima",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false
+    },
+    "yes_spc_mad_17": {
+      "id": "yes_spc_mad_17",
+      "traveler": "yesica",
+      "segment": "transatlantico-inicio",
+      "title": "Binter Canarias (Sáb 17 Oct, Escala Tenerife)",
+      "airline": "binter",
+      "price": 5000,
+      "description": "Con escala en Tenerife Norte (TFN). Más de 5 horas de viaje.",
+      "outbound": {
+        "route": "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)",
+        "schedule": "08:30 → 13:30",
+        "flightNumber": "NT342",
+        "date": "Sábado 17 Oct 2026"
+      },
+      "return": {
+        "route": "Madrid (MAD) ➔ La Palma (SPC)",
+        "schedule": "12:00 → 15:45",
+        "flightNumber": "NT5120",
+        "date": "Sábado 28 Nov 2026"
+      },
+      "class": "Tarifa Básica",
+      "bag": false,
+      "carry": true,
+      "seat": false,
+      "train": false
+    },
+    "yes_trans_iberia": {
+      "id": "yes_trans_iberia",
+      "traveler": "yesica",
+      "segment": "espana-colombia",
+      "title": "Iberia (BCN ➔ MAD ➔ BOG / Retorno BOG ➔ MAD directo)",
+      "airline": "iberia",
+      "price": 22881,
+      "description": "Ida con escala en Madrid el 30 Oct. Regreso directo Bogotá → Madrid el 27 Nov.",
+      "outbound": {
+        "route": "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)",
+        "schedule": "12:00 → 18:30",
+        "flightNumber": "IB3001/IB6585",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ Madrid (MAD)",
+        "schedule": "23:00 → 14:30 (+1)",
+        "flightNumber": "IB6586",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Classic Multidestino",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false
+    },
+    "yes_trans_avianca": {
+      "id": "yes_trans_avianca",
+      "traveler": "yesica",
+      "segment": "espana-colombia",
+      "title": "Avianca (BCN ➔ BOG directo / Retorno BOG ➔ MAD directo)",
+      "airline": "avianca",
+      "price": 25000,
+      "description": "Vuelo directo BCN-BOG el 30 Oct (coincide con Mario AV19). Regreso directo BOG-MAD el 27 Nov.",
+      "outbound": {
+        "route": "Barcelona (BCN) ➔ Bogotá (BOG)",
+        "schedule": "14:30 → 18:30",
+        "flightNumber": "AV19",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ Madrid (MAD)",
+        "schedule": "20:00 → 11:30 (+1)",
+        "flightNumber": "AV10",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Classic Multidestino",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": false
+    },
+    "yes_trans_avianca_mad": {
+      "id": "yes_trans_avianca_mad",
+      "traveler": "yesica",
+      "segment": "espana-colombia",
+      "title": "Avianca (desde MAD) + Tren AVE BCN ➔ MAD Incluido",
+      "airline": "avianca",
+      "price": 21000,
+      "description": "Ida con tren AVE BCN→MAD + Vuelo MAD→BOG. Regreso directo BOG→MAD.",
+      "outbound": {
+        "route": "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)",
+        "schedule": "Tren: 3h | Vuelo: 10h",
+        "flightNumber": "AVE/AV27",
+        "date": "Viernes 30 Oct 2026"
+      },
+      "return": {
+        "route": "Bogotá (BOG) ➔ Madrid (MAD)",
+        "schedule": "20:00 → 11:30 (+1)",
+        "flightNumber": "AV10",
+        "date": "Viernes 27 Nov 2026"
+      },
+      "class": "Tarifa Classic + AVE",
+      "bag": true,
+      "carry": true,
+      "seat": true,
+      "train": true
+    }
+  }
+}
