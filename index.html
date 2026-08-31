@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planificador Inteligente de Vuelos — Mario & Yesica | Octubre 2026</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
-  <!-- MQTT.js CDN para Colaboración en Vivo -->
-  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <!-- Tailwind CSS CDN Público Global -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- MQTT.js CDN para Colaboración en Vivo (jsDelivr Alta Disponibilidad) -->
+  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.3.4/dist/mqtt.min.js"></script>
   <style>
     /* Transiciones suaves para tarjetas y elementos interactivos */
     .transition-smooth { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -1294,10 +1294,18 @@ function startCollab() {
 function setupCollab(roomId) {
   collabRoomId = roomId;
   const btn = document.getElementById('collab-btn');
-  btn.className = 'border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 transition shadow-sm';
-  btn.innerHTML = '<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> 🟢 En Vivo (' + roomId + ') · Copiar';
+  if (btn) {
+    btn.className = 'border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs px-3.5 py-2.5 rounded-xl flex items-center gap-2 transition shadow-sm';
+    btn.innerHTML = '<span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span> 🟢 En Vivo (' + roomId + ') · Copiar';
+  }
 
-  mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: myClientId, clean: true });
+  if (typeof mqtt === 'undefined') {
+    console.warn('MQTT SDK no disponible aún.');
+    return;
+  }
+
+  try {
+    mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', { clientId: myClientId, clean: true });
 
   mqttClient.on('connect', () => {
     showToast('Conectado al servidor de colaboración en vivo.', 'success');
