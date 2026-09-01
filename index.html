@@ -1179,16 +1179,60 @@ let flightsCatalog = {
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Plus%20Ultra%20to%20MAD%20from%20BOG%20on%202026-10-17",
     bookingUrl: "https://www.plusultra.com"
   },
-  "bog_esp_latam": {
-    id: "bog_esp_latam", traveler: "mario", segment: "alternativo-regreso", group: "alt-mad",
-    title: "LATAM Airlines (Ida BOG ➔ MAD / Regreso MAD ➔ BOG LA710)",
-    airline: "avianca", price: 17500,
-    description: "Vuelo redondo directo Bogotá ↔ Madrid con LATAM Airlines.",
-    outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "22:45 → 14:40 (+1)", flightNumber: "LA711", date: "Sábado 17 Oct 2026" },
-    return: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:15 → 20:45", flightNumber: "LA710", date: "Sábado 24 Oct 2026" },
-    class: "Tarifa Light/Plus", bag: true, carry: true, seat: true, train: false,
-    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20LATAM%20to%20MAD%20from%20BOG%20on%202026-10-17",
-    bookingUrl: "https://www.latamairlines.com"
+  "bog_esp_avianca_ave": {
+    id: "bog_esp_avianca_ave", traveler: "mario", segment: "alternativo-regreso", group: "alt-mad",
+    title: "Avianca + Tren AVE (Ida BOG ➔ MAD / Regreso AVE + MAD ➔ BOG AV27)",
+    airline: "avianca", price: 19200,
+    description: "Ida directa BOG→MAD el 17 Oct. Regreso el 24 Oct combinando tren AVE BCN→MAD + vuelo directo MAD→BOG (AV27).",
+    outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:00 → 14:15 (+1)", flightNumber: "AV26", date: "Sábado 17 Oct 2026" },
+    return: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h (15:45 → 19:45)", flightNumber: "AVE/AV27", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20BOG%20on%202026-10-17",
+    bookingUrl: "https://www.avianca.com"
+  },
+  "bog_esp_iberia_night": {
+    id: "bog_esp_iberia_night", traveler: "mario", segment: "alternativo-regreso", group: "alt-mad",
+    title: "Iberia Nocturno (Ida BOG ➔ MAD / Regreso Nocturno MAD ➔ BOG IB6587)",
+    airline: "iberia", price: 18100,
+    description: "Vuelo directo de ida y regreso nocturno el 24 Oct saliendo a las 00:20 de Madrid hacia Bogotá.",
+    outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "22:30 → 15:30 (+1)", flightNumber: "IB6586", date: "Sábado 17 Oct 2026" },
+    return: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "00:20 → 04:30", flightNumber: "IB6587", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB6587%20from%20MAD%20to%20BOG%20on%202026-10-24",
+    bookingUrl: "https://www.iberia.com"
+  },
+  "bog_esp_aireuropa_ave": {
+    id: "bog_esp_aireuropa_ave", traveler: "mario", segment: "alternativo-regreso", group: "alt-mad",
+    title: "Air Europa + Tren AVE (Ida BOG ➔ MAD / Regreso AVE + MAD ➔ BOG UX21)",
+    airline: "air-europa", price: 16500,
+    description: "Ida BOG→MAD con Air Europa. Regreso con tren AVE desde Barcelona + vuelo transatlántico en Dreamliner 787.",
+    outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:30 → 13:45 (+1)", flightNumber: "UX22", date: "Sábado 17 Oct 2026" },
+    return: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h", flightNumber: "AVE/UX21", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Economy + AVE", bag: true, carry: true, seat: true, train: true,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20MAD%20from%20BOG%20on%202026-10-17",
+    bookingUrl: "https://www.aireuropa.com"
+  },
+  "bog_esp_airfrance": {
+    id: "bog_esp_airfrance", traveler: "mario", segment: "alternativo-regreso", group: "alt-bcn",
+    title: "Air France (Ida BOG ➔ CDG ➔ MAD / Regreso BCN ➔ CDG ➔ BOG)",
+    airline: "air-europa", price: 18400,
+    description: "Vuelo transatlántico en Boeing 777 con enlace cómodo en París Charles de Gaulle.",
+    outbound: { route: "Bogotá (BOG) ➔ París (CDG) ➔ Madrid (MAD)", schedule: "18:00 → 14:20 (+1)", flightNumber: "AF423/AF1400", date: "Sábado 17 Oct 2026" },
+    return: { route: "Barcelona (BCN) ➔ París (CDG) ➔ Bogotá (BOG)", schedule: "09:30 → 17:05", flightNumber: "AF1401/AF422", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Standard", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20France%20to%20MAD%20from%20BOG%20on%202026-10-17",
+    bookingUrl: "https://www.airfrance.com"
+  },
+  "bog_esp_klm": {
+    id: "bog_esp_klm", traveler: "mario", segment: "alternativo-regreso", group: "alt-bcn",
+    title: "KLM Royal Dutch (Ida BOG ➔ AMS ➔ MAD / Regreso BCN ➔ AMS ➔ BOG)",
+    airline: "air-europa", price: 18600,
+    description: "Vuelo en Boeing 787 con conexión en Ámsterdam Schiphol.",
+    outbound: { route: "Bogotá (BOG) ➔ Ámsterdam (AMS) ➔ Madrid (MAD)", schedule: "19:15 → 16:30 (+1)", flightNumber: "KL745/KL1701", date: "Sábado 17 Oct 2026" },
+    return: { route: "Barcelona (BCN) ➔ Ámsterdam (AMS) ➔ Bogotá (BOG)", schedule: "08:45 → 18:20", flightNumber: "KL1702/KL749", date: "Sábado 24 Oct 2026" },
+    class: "Tarifa Standard", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20KLM%20to%20MAD%20from%20BOG%20on%202026-10-17",
+    bookingUrl: "https://www.klm.com"
   },
 
   // ─── YESICA: CONEXIÓN NACIONAL / REGIONAL (SPC ↔ MAD) ───
@@ -1981,12 +2025,16 @@ function buildFlightGroupedOptions(traveler, segmentKey, currentFlightId) {
   } else if (traveler === 'mario' && segmentKey === 'alternativo-regreso') {
     groups = [
       {
-        label: "🇨🇴 Salidas de Retorno desde Barcelona (BCN ➔ BOG, coincide con Yesica)",
-        filter: f => ['bog_esp_avianca', 'bog_esp_iberia', 'bog_esp_aireuropa_bcn'].includes(f.id)
+        label: "🇨🇴 Salidas de Retorno desde Barcelona (BCN ➔ BOG: Avianca AV19, Iberia, Air Europa, Air France, KLM)",
+        filter: f => ['bog_esp_avianca', 'bog_esp_iberia', 'bog_esp_aireuropa_bcn', 'bog_esp_airfrance', 'bog_esp_klm'].includes(f.id)
       },
       {
-        label: "🇨🇴 Salidas de Retorno Directo desde Madrid (MAD ➔ BOG)",
-        filter: f => ['bog_esp_avianca_mad', 'bog_esp_iberia_mad', 'bog_esp_aireuropa_mad', 'bog_esp_plusultra', 'bog_esp_latam'].includes(f.id)
+        label: "🇨🇴 Salidas de Retorno Directo desde Madrid (MAD ➔ BOG: Avianca, Iberia A350, Air Europa, Plus Ultra, LATAM)",
+        filter: f => ['bog_esp_avianca_mad', 'bog_esp_iberia_mad', 'bog_esp_iberia_night', 'bog_esp_aireuropa_mad', 'bog_esp_plusultra', 'bog_esp_latam'].includes(f.id)
+      },
+      {
+        label: "🚄 Combinado Tren AVE BCN ➔ MAD + Vuelo Directo a Bogotá",
+        filter: f => ['bog_esp_avianca_ave', 'bog_esp_aireuropa_ave'].includes(f.id)
       }
     ];
   } else if (segmentKey === 'espana-colombia') {
