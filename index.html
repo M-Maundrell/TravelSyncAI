@@ -378,17 +378,17 @@
       <!-- Presets Rápidos de Itinerario -->
       <div class="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center gap-2">
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">⚡ Presets Rápidos:</span>
+        <button onclick="applyPreset('maestro_usuario')" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-lg shadow-xs transition flex items-center gap-1.5">
+          ⭐ Plan Maestro Usuario ($56,760 MXN)
+        </button>
         <button onclick="applyPreset('recomendado')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition">
-          🌟 Más Cómodo (Directos)
+          🌟 Vuelos Directos (24 Oct BCN)
         </button>
         <button onclick="applyPreset('economico')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition">
           💰 Económico (United + Iberia)
         </button>
         <button onclick="applyPreset('alternativo')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg border border-slate-200 transition">
-          🔄 Ruta Alternativa (vía Bogotá)
-        </button>
-        <button onclick="loadOfficialPreset()" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg border border-indigo-200 transition">
-          🇪🇸-🇨🇴 Mario & Yesica (Octubre 2026)
+          🔄 Ruta Alternativa (Avianca BCN)
         </button>
       </div>
     </header>
@@ -911,9 +911,20 @@ let flightsCatalog = {
     bookingUrl: "https://www.aireuropa.com"
   },
   // ─── MARIO: RUTA ALTERNATIVA · BOLETO 1 (CDMX ➔ BOGOTÁ) ───
+  "mex_bog_aeromexico_user": {
+    id: "mex_bog_aeromexico_user", traveler: "mario", segment: "transatlantico-inicio", group: "alt-direct",
+    title: "Aeroméxico AM761 / AM762 ($7,209 MXN) ⭐ Plan Maestro",
+    airline: "aeromexico-iberia", price: 7209,
+    description: "Vuelo redondo directo CDMX ➔ BOG con Aeroméxico (08:45 → 14:40). Retorno BOG ➔ CDMX (16:00 → 20:15) el 27 Nov.",
+    outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG)", schedule: "08:45 → 14:40", flightNumber: "AM761", date: "Viernes 16 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "16:00 → 20:15", flightNumber: "AM762", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Clásica", bag: true, carry: true, seat: true, train: false, usTransit: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20AM761%20to%20BOG%20from%20MEX%20on%202026-10-16",
+    bookingUrl: "https://www.aeromexico.com"
+  },
   "mex_bog_aeromexico": {
     id: "mex_bog_aeromexico", traveler: "mario", segment: "transatlantico-inicio", group: "alt-direct",
-    title: "Aeroméxico AM761/AM762 (Directo Diurno) ⭐ $7,100 MXN",
+    title: "Aeroméxico AM761/AM762 (Directo Diurno) · $7,100 MXN",
     airline: "aeromexico-iberia", price: 7100,
     description: "Vuelo redondo directo CDMX-Bogotá con Aeroméxico (08:50 → 14:40). Conecta con el segundo boleto Bogotá-Europa.",
     outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG)", schedule: "08:50 → 14:40", flightNumber: "AM761", date: "Viernes 16 Oct 2026" },
@@ -1102,9 +1113,20 @@ let flightsCatalog = {
   },
 
   // ─── MARIO: RUTA ALTERNATIVA · BOLETO 2 (BOGOTÁ ↔ ESPAÑA) ───
+  "bog_esp_iberia_user": {
+    id: "bog_esp_iberia_user", traveler: "mario", segment: "alternativo-regreso", group: "alt-mad",
+    title: "Iberia IB0152 / IB0153 ($24,482 MXN) ⭐ Plan Maestro (Salto 25 Oct Directo)",
+    airline: "iberia", price: 24482,
+    description: "Ida BOG ➔ MAD en IB0152 el 16 Oct (17:20 → 10:00 +1). Regreso conjunto con Yesica el Domingo 25 Oct en IB0153 directo (16:30 → 20:55).",
+    outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "17:20 → 10:00 (+1)", flightNumber: "IB0152", date: "Viernes 16 Oct 2026" },
+    return: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:30 → 20:55", flightNumber: "IB0153", date: "Domingo 25 Oct 2026" },
+    class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB0152%20from%20BOG%20to%20MAD%20on%202026-10-16",
+    bookingUrl: "https://www.iberia.com"
+  },
   "bog_esp_avianca": {
     id: "bog_esp_avianca", traveler: "mario", segment: "alternativo-regreso", group: "alt-bcn",
-    title: "Avianca (Ida BOG ➔ MAD / Regreso Directo BCN ➔ BOG AV19) ⭐",
+    title: "Avianca (Ida BOG ➔ MAD / Regreso Directo BCN ➔ BOG AV19) · $19,500 MXN",
     airline: "avianca", price: 19500,
     description: "Segundo boleto alternativo: Ida BOG→MAD (17 Oct) y Regreso BCN→BOG (24 Oct en AV19 coincidiendo 100% con Yesica).",
     outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:00 → 14:15 (+1)", flightNumber: "AV26", date: "Sábado 17 Oct 2026" },
@@ -1314,10 +1336,21 @@ let flightsCatalog = {
     bookingUrl: "https://www.vueling.com"
   },
 
-  // ─── YESICA: ESPAÑA ➔ COLOMBIA (MULTIDESTINO, SÁBADO 24 OCTUBRE - 27 NOVIEMBRE) ───
+  // ─── YESICA: ESPAÑA ➔ COLOMBIA (MULTIDESTINO, SÁBADO 24/25 OCTUBRE - 27 NOVIEMBRE) ───
+  "yes_trans_iberia_user": {
+    id: "yes_trans_iberia_user", traveler: "yesica", segment: "espana-colombia",
+    title: "Iberia IB0153 / IB156 ($21,423 MXN) ⭐ Plan Maestro (Salto 25 Oct Directo)",
+    airline: "iberia", price: 21423,
+    description: "Ida directa conjunta con Mario el Domingo 25 Oct en IB0153 (16:30 → 20:55 directo Barajas). Regreso directo BOG ➔ MAD el 27 Nov en IB156 (14:00 → 05:50 +1).",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:30 → 20:55", flightNumber: "IB0153", date: "Domingo 25 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "14:00 → 05:50 (+1)", flightNumber: "IB156", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB0153%20from%20MAD%20to%20BOG%20on%202026-10-25",
+    bookingUrl: "https://www.iberia.com"
+  },
   "yes_trans_avianca": {
     id: "yes_trans_avianca", traveler: "yesica", segment: "espana-colombia",
-    title: "Avianca (BCN ➔ BOG directo / Retorno AV10 BOG ➔ MAD directo) ⭐",
+    title: "Avianca (BCN ➔ BOG directo / Retorno AV10 BOG ➔ MAD directo) · $25,000 MXN",
     airline: "avianca", price: 25000,
     description: "Vuelo directo BCN-BOG el 24 Oct (AV19 14:30, coincide exactamente con Mario). Regreso directo nocturno BOG-MAD el 27 Nov en AV10 (20:00 → 11:30+1).",
     outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
@@ -1989,7 +2022,13 @@ function getSegments(traveler) {
 // PRESETS RÁPIDOS Y ALINEACIÓN
 // ══════════════════════════════════════════════════
 function applyPreset(type) {
-  if (type === 'recomendado') {
+  if (type === 'maestro_usuario') {
+    state.mario.salida = 'mex_bog_aeromexico_user';
+    state.mario.bog_esp = 'bog_esp_iberia_user';
+    state.yesica.salida = 'yes_spc_mad_16_1815';
+    state.yesica.trans = 'yes_trans_iberia_user';
+    showToast('⭐ Plan Maestro aplicado: Iberia IB0152/IB0153 + Aeroméxico ($56,760 MXN Total)', 'success');
+  } else if (type === 'recomendado') {
     state.mario.salida = 'mex_mad_iberia_152';
     state.mario.trans = 'esp_col_avianca_bcn';
     state.yesica.salida = 'yes_spc_mad_16';
@@ -2006,7 +2045,7 @@ function applyPreset(type) {
     state.mario.bog_esp = 'bog_esp_avianca';
     state.yesica.salida = 'yes_spc_mad_16';
     state.yesica.trans = 'yes_trans_avianca';
-    showToast('🔄 Preset aplicado: Ruta alternativa con Aeroméxico ($7,100 MXN) vía Bogotá', 'info');
+    showToast('🔄 Preset aplicado: Ruta alternativa con Avianca BCN ($7,100 + $19,500 MXN)', 'info');
   }
   saveState();
   render();
@@ -2030,6 +2069,14 @@ function alignJointFlights(targetCarrier) {
     }
     state.yesica.trans = 'yes_trans_iberia';
     showToast('✨ Vuelos sincronizados: Ambos viajarán en Iberia (BCN ➔ MAD ➔ BOG)', 'success');
+  } else if (targetCarrier === 'iberia_0153') {
+    if (isMarioAlt()) {
+      state.mario.bog_esp = 'bog_esp_iberia_user';
+    } else {
+      state.mario.trans = 'esp_col_iberia_mad_direct';
+    }
+    state.yesica.trans = 'yes_trans_iberia_user';
+    showToast('✨ Vuelos sincronizados: Ambos viajarán en Iberia IB0153 directo el 25 Oct (MAD ➔ BOG)', 'success');
   } else if (targetCarrier === 'aireuropa') {
     state.mario.trans = 'esp_col_aireuropa_bcn';
     state.yesica.trans = 'yes_trans_aireuropa';
@@ -2147,7 +2194,7 @@ function buildFlightGroupedOptions(traveler, segmentKey, currentFlightId) {
       },
       {
         label: "🔄 Ruta Alternativa: Boleto 1 Directo CDMX ➔ Bogotá (Aeroméxico / Avianca)",
-        filter: f => ['mex_bog_aeromexico', 'mex_bog_aeromexico_night', 'mex_bog_avianca', 'mex_bog_avianca_night'].includes(f.id)
+        filter: f => ['mex_bog_aeromexico_user', 'mex_bog_aeromexico', 'mex_bog_aeromexico_night', 'mex_bog_avianca', 'mex_bog_avianca_night'].includes(f.id)
       },
       {
         label: "🔄 Ruta Alternativa: Boleto 1 CDMX ➔ Bogotá Escala / Low-Cost (Copa, Wingo, LATAM)",
@@ -2161,8 +2208,8 @@ function buildFlightGroupedOptions(traveler, segmentKey, currentFlightId) {
         filter: f => ['bog_esp_avianca', 'bog_esp_iberia', 'bog_esp_aireuropa_bcn', 'bog_esp_airfrance', 'bog_esp_klm'].includes(f.id)
       },
       {
-        label: "🇨🇴 Salidas de Retorno Directo desde Madrid (MAD ➔ BOG: Avianca, Iberia A350, Air Europa, Plus Ultra, LATAM)",
-        filter: f => ['bog_esp_avianca_mad', 'bog_esp_iberia_mad', 'bog_esp_iberia_night', 'bog_esp_aireuropa_mad', 'bog_esp_plusultra', 'bog_esp_latam'].includes(f.id)
+        label: "🇨🇴 Salidas de Retorno Directo desde Madrid (MAD ➔ BOG: Iberia IB0153, Avianca, Air Europa, Plus Ultra, LATAM)",
+        filter: f => ['bog_esp_iberia_user', 'bog_esp_avianca_mad', 'bog_esp_iberia_mad', 'bog_esp_iberia_night', 'bog_esp_aireuropa_mad', 'bog_esp_plusultra', 'bog_esp_latam'].includes(f.id)
       },
       {
         label: "🚄 Combinado Tren AVE BCN ➔ MAD + Vuelo Directo a Bogotá",
@@ -2176,8 +2223,8 @@ function buildFlightGroupedOptions(traveler, segmentKey, currentFlightId) {
         filter: f => ['esp_col_avianca_bcn', 'esp_col_iberia_bcn', 'esp_col_aireuropa_bcn', 'yes_trans_avianca', 'yes_trans_avianca_alt', 'yes_trans_iberia', 'yes_trans_aireuropa', 'yes_trans_airfrance', 'yes_trans_klm'].includes(f.id) || (f.outbound && f.outbound.route && f.outbound.route.startsWith('Barcelona'))
       },
       {
-        label: "✈️ Salidas Directas desde Madrid (MAD ➔ BOG: Iberia A350, Avianca, Air Europa, LATAM, Plus Ultra)",
-        filter: f => !f.train && !f.id.includes('ave') && !f.id.includes('europa_mad') && !f.id.includes('avianca_ave') && ['esp_col_iberia_mad_direct', 'esp_col_iberia_mad_night', 'esp_col_avianca_mad_direct', 'esp_col_aireuropa_mad', 'esp_col_latam_mad', 'esp_col_plusultra_mad', 'yes_trans_iberia_mad', 'yes_trans_iberia_mad_night', 'yes_trans_avianca_mad', 'yes_trans_aireuropa_mad', 'yes_trans_latam_mad', 'yes_trans_plusultra_mad'].includes(f.id)
+        label: "✈️ Salidas Directas desde Madrid (MAD ➔ BOG: Iberia IB0153 / A350, Avianca, Air Europa, LATAM, Plus Ultra)",
+        filter: f => !f.train && !f.id.includes('ave') && !f.id.includes('europa_mad') && !f.id.includes('avianca_ave') && ['yes_trans_iberia_user', 'esp_col_iberia_mad_direct', 'esp_col_iberia_mad_night', 'esp_col_avianca_mad_direct', 'esp_col_aireuropa_mad', 'esp_col_latam_mad', 'esp_col_plusultra_mad', 'yes_trans_iberia_mad', 'yes_trans_iberia_mad_night', 'yes_trans_avianca_mad', 'yes_trans_aireuropa_mad', 'yes_trans_latam_mad', 'yes_trans_plusultra_mad'].includes(f.id)
       },
       {
         label: "🚄 Combinado Tren AVE (Barcelona ➔ Madrid) + Vuelo Directo a Bogotá",
