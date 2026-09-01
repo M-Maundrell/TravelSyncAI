@@ -1536,7 +1536,7 @@
       showToast('✓ Vuelo actualizado en el itinerario', 'success');
     }
 
-    // ─── PATH VISUALIZATION RENDERER ───
+    // ─── PATH VISUALIZATION RENDERER (100% DINÁMICO & REPRESENTATIVO) ───
     function renderPathVisualization() {
       const container = document.getElementById('path-visualization-container');
       if (!container) return;
@@ -1545,68 +1545,189 @@
       const ySal = getCatalogBrick(state.yesica.salida);
       const mTrans = isMarioAlt() ? getCatalogBrick(state.mario.bog_esp) : getCatalogBrick(state.mario.trans);
       const yTrans = getCatalogBrick(state.yesica.trans);
+
       const mJointFn = isMarioAlt() ? (mTrans?.return?.flightNumber || 'IB0153') : (mTrans?.outbound?.flightNumber || 'AV19');
+      const yJointFn = yTrans?.outbound?.flightNumber || 'AV19';
+      const isSynced = mJointFn === yJointFn;
 
-      container.innerHTML = `
-        <div class="flex items-center justify-between min-w-[620px] py-4 px-2">
-          <!-- NODO 1: ORÍGENES SEPARADOS -->
-          <div class="path-node">
-            <div class="space-y-2 text-center">
-              <div class="bg-blue-900/80 border border-blue-500/50 text-blue-300 px-3 py-1.5 rounded-xl text-xs font-black shadow-sm">
-                👤 Mario: MEX
+      const mSalCode = mSal?.outbound?.flightNumber || 'Vuelo';
+      const ySalCode = ySal?.outbound?.flightNumber || 'Vuelo';
+      const mRetCode = isMarioAlt() ? (mSal?.return?.flightNumber || 'AM762') : (mTrans?.return?.flightNumber || 'IB6586');
+      const yRetCode = yTrans?.return?.flightNumber || 'AV10';
+      const yConnCode = ySal?.return?.flightNumber || 'IB3842';
+
+      let html = '';
+
+      if (isMarioAlt()) {
+        // RUTA ALTERNATIVA (Mario vía Bogotá ➔ Madrid, Yesica vía La Palma ➔ Madrid)
+        html = `
+          <div class="space-y-4">
+            <!-- INDICADOR DE ESTRATEGIA -->
+            <div class="flex items-center justify-between text-xs pb-2 border-b border-slate-800">
+              <span class="text-indigo-400 font-bold">📍 Itinerario Activo: <strong>Estrategia Doble Boleto (Aeroméxico AM761 + Iberia IB0152/IB0153)</strong></span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${isSynced ? 'bg-emerald-900/80 text-emerald-300 border border-emerald-600' : 'bg-amber-900/80 text-amber-300 border border-amber-600'}">
+                ${isSynced ? '✨ Salto Conjunto Sincronizado' : '⚠️ Vuelos Separados'}
+              </span>
+            </div>
+
+            <!-- METRO MAP / TRANSIT DIAGRAM -->
+            <div class="flex items-center justify-between min-w-[700px] py-2 px-1">
+              <!-- ETAPA 1: ORÍGENES -->
+              <div class="path-node">
+                <div class="space-y-1.5 text-center">
+                  <div class="bg-blue-950 border border-blue-500 text-blue-300 px-2.5 py-1 rounded-xl text-[11px] font-black">
+                    🇲🇽 MEX (08:45)
+                  </div>
+                  <div class="bg-pink-950 border border-pink-500 text-pink-300 px-2.5 py-1 rounded-xl text-[11px] font-black">
+                    🇪🇸 SPC (19:30)
+                  </div>
+                </div>
+                <span class="text-[10px] text-slate-400 font-bold mt-1.5">16 Oct</span>
               </div>
-              <div class="bg-pink-900/80 border border-pink-500/50 text-pink-300 px-3 py-1.5 rounded-xl text-xs font-black shadow-sm">
-                👤 Yesica: SPC
+
+              <!-- LÍNEAS DE VUELO DE INICIO -->
+              <div class="path-line bg-blue-500 relative flex items-center justify-center">
+                <span class="absolute -top-4 bg-blue-900 text-blue-200 text-[9px] font-extrabold px-1.5 py-0.5 rounded">${mSalCode}</span>
+              </div>
+
+              <!-- ETAPA 2: BOGOTÁ (ESCALA MARIO) -->
+              <div class="path-node">
+                <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-black ring-2 ring-blue-300">
+                  BOG
+                </div>
+                <span class="text-[10px] text-blue-400 font-bold mt-1">Conexión IB0152</span>
+              </div>
+
+              <!-- LÍNEA A MADRID -->
+              <div class="path-line bg-gradient-to-r from-blue-500 via-pink-500 to-emerald-500 relative flex items-center justify-center">
+                <span class="absolute -top-4 bg-slate-800 text-slate-200 text-[9px] font-bold px-1.5 py-0.5 rounded">IB0152 & ${ySalCode}</span>
+              </div>
+
+              <!-- ETAPA 3: CONVERGENCIA EN ESPAÑA -->
+              <div class="path-node">
+                <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-950 text-xs font-black ring-4 ring-emerald-500/30">
+                  🇪🇸
+                </div>
+                <span class="text-xs font-black text-emerald-400 mt-1">MAD ➔ BCN</span>
+                <span class="text-[9px] text-slate-400">17-25 Oct (AVE)</span>
+              </div>
+
+              <!-- LÍNEA CONJUNTA TRANSATLÁNTICA -->
+              <div class="path-line ${isSynced ? 'bg-emerald-500' : 'bg-amber-500 border-dashed'} h-1.5 relative flex items-center justify-center">
+                <span class="absolute -top-4 ${isSynced ? 'bg-emerald-600' : 'bg-amber-600'} text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                  ✈️ ${mJointFn} ${isSynced ? '(Juntos)' : '(Separados)'}
+                </span>
+              </div>
+
+              <!-- ETAPA 4: COLOMBIA CONJUNTA -->
+              <div class="path-node">
+                <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-950 text-xs font-black ring-4 ring-emerald-500/30">
+                  🇨🇴
+                </div>
+                <span class="text-xs font-black text-emerald-400 mt-1">Bogotá</span>
+                <span class="text-[9px] text-slate-400">25 Oct - 27 Nov</span>
+              </div>
+
+              <!-- LÍNEA DE BIFURCACIÓN DE REGRESO -->
+              <div class="path-line bg-gradient-to-r from-emerald-500 via-indigo-500 to-pink-500 relative flex items-center justify-center">
+                <span class="absolute -top-4 bg-slate-800 text-slate-200 text-[9px] font-bold px-1.5 py-0.5 rounded">${mRetCode} / ${yRetCode}</span>
+              </div>
+
+              <!-- ETAPA 5: DESTINOS FINALES -->
+              <div class="path-node">
+                <div class="space-y-1.5 text-center">
+                  <div class="bg-blue-950 border border-blue-500 text-blue-300 px-2.5 py-1 rounded-xl text-[11px] font-black">
+                    🇲🇽 MEX (27 Nov)
+                  </div>
+                  <div class="bg-pink-950 border border-pink-500 text-pink-300 px-2.5 py-1 rounded-xl text-[11px] font-black">
+                    🇪🇸 SPC (28 Nov)
+                  </div>
+                </div>
+                <span class="text-[10px] text-slate-400 font-bold mt-1.5">Llegada</span>
               </div>
             </div>
-            <span class="text-[10px] text-slate-400 font-bold mt-2">16 Oct · Salida</span>
           </div>
-
-          <!-- LÍNEAS DE VUELO INDEPENDIENTES HACIA MADRID -->
-          <div class="path-line bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500"></div>
-
-          <!-- NODO 2: CONVERGENCIA EN MADRID / BARCELONA -->
-          <div class="path-node">
-            <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-900 font-black text-xs ring-4 ring-emerald-500/20 shadow-md">
-              📍
+        `;
+      } else {
+        // RUTA ESTÁNDAR DIRECTA (Mario MEX ➔ MAD directo en IB0152)
+        html = `
+          <div class="space-y-4">
+            <!-- INDICADOR DE ESTRATEGIA -->
+            <div class="flex items-center justify-between text-xs pb-2 border-b border-slate-800">
+              <span class="text-indigo-400 font-bold">📍 Itinerario Activo: <strong>Vuelos Directos Transatlánticos (${mSalCode} + Salto ${mJointFn})</strong></span>
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black ${isSynced ? 'bg-emerald-900/80 text-emerald-300 border border-emerald-600' : 'bg-amber-900/80 text-amber-300 border border-amber-600'}">
+                ${isSynced ? '✨ Salto Conjunto Sincronizado' : '⚠️ Vuelos Separados'}
+              </span>
             </div>
-            <span class="text-xs font-black text-emerald-400 mt-1.5">Madrid / BCN</span>
-            <span class="text-[10px] text-slate-400 font-bold">17 - 24 Oct (AVE)</span>
-          </div>
 
-          <!-- LÍNEA GRUESA CONJUNTA: SALTO TRANSATLÁNTICO A BOGOTÁ -->
-          <div class="path-line bg-emerald-500 h-1.5 flex items-center justify-center">
-            <span class="bg-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">
-              ✈️ ${mJointFn} Conjunto
-            </span>
-          </div>
-
-          <!-- NODO 3: ESTANCIA CONJUNTA EN COLOMBIA -->
-          <div class="path-node">
-            <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-900 font-black text-xs ring-4 ring-emerald-500/20 shadow-md">
-              ☕
-            </div>
-            <span class="text-xs font-black text-emerald-400 mt-1.5">Bogotá (BOG)</span>
-            <span class="text-[10px] text-slate-400 font-bold">24 Oct - 27 Nov</span>
-          </div>
-
-          <!-- LÍNEA DE BIFURCACIÓN DE RETORNO -->
-          <div class="path-line bg-gradient-to-r from-emerald-500 via-indigo-500 to-pink-500"></div>
-
-          <!-- NODO 4: BIFURCACIÓN Y RETORNO A CASA -->
-          <div class="path-node">
-            <div class="space-y-2 text-center">
-              <div class="bg-blue-900/80 border border-blue-500/50 text-blue-300 px-3 py-1.5 rounded-xl text-xs font-black shadow-sm">
-                👤 Mario ➔ MEX
+            <!-- METRO MAP / TRANSIT DIAGRAM -->
+            <div class="flex items-center justify-between min-w-[620px] py-2 px-1">
+              <!-- ETAPA 1: ORÍGENES -->
+              <div class="path-node">
+                <div class="space-y-1.5 text-center">
+                  <div class="bg-blue-950 border border-blue-500 text-blue-300 px-2.5 py-1 rounded-xl text-[11px] font-black">
+                    🇲🇽 MEX (${mSal?.outbound?.schedule?.split('→')[0]?.trim() || '20:05'})
+                  </div>
+                  <div class="bg-pink-950 border border-pink-500 text-pink-300 px-2.5 py-1 rounded-xl text-[11px] font-black">
+                    🇪🇸 SPC (${ySal?.outbound?.schedule?.split('→')[0]?.trim() || '19:30'})
+                  </div>
+                </div>
+                <span class="text-[10px] text-slate-400 font-bold mt-1.5">16 Oct</span>
               </div>
-              <div class="bg-pink-900/80 border border-pink-500/50 text-pink-300 px-3 py-1.5 rounded-xl text-xs font-black shadow-sm">
-                👤 Yesica ➔ SPC
+
+              <!-- LÍNEAS DE VUELO INDEPENDIENTES HACIA MADRID -->
+              <div class="path-line bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500 relative flex items-center justify-center">
+                <span class="absolute -top-4 bg-slate-800 text-slate-200 text-[9px] font-bold px-1.5 py-0.5 rounded">${mSalCode} & ${ySalCode}</span>
+              </div>
+
+              <!-- ETAPA 2: CONVERGENCIA EN ESPAÑA -->
+              <div class="path-node">
+                <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-950 text-xs font-black ring-4 ring-emerald-500/30">
+                  🇪🇸
+                </div>
+                <span class="text-xs font-black text-emerald-400 mt-1">MAD ➔ BCN</span>
+                <span class="text-[9px] text-slate-400">17-24 Oct (AVE)</span>
+              </div>
+
+              <!-- LÍNEA GRUESA CONJUNTA: SALTO TRANSATLÁNTICO -->
+              <div class="path-line ${isSynced ? 'bg-emerald-500' : 'bg-amber-500 border-dashed'} h-1.5 relative flex items-center justify-center">
+                <span class="absolute -top-4 ${isSynced ? 'bg-emerald-600' : 'bg-amber-600'} text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                  ✈️ ${mJointFn} ${isSynced ? '(Juntos)' : '(Separados)'}
+                </span>
+              </div>
+
+              <!-- ETAPA 3: COLOMBIA CONJUNTA -->
+              <div class="path-node">
+                <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-950 text-xs font-black ring-4 ring-emerald-500/30">
+                  🇨🇴
+                </div>
+                <span class="text-xs font-black text-emerald-400 mt-1">Bogotá</span>
+                <span class="text-[9px] text-slate-400">24 Oct - 27 Nov</span>
+              </div>
+
+              <!-- LÍNEA DE BIFURCACIÓN DE REGRESO -->
+              <div class="path-line bg-gradient-to-r from-emerald-500 via-indigo-500 to-pink-500 relative flex items-center justify-center">
+                <span class="absolute -top-4 bg-slate-800 text-slate-200 text-[9px] font-bold px-1.5 py-0.5 rounded">${mRetCode} / ${yRetCode}</span>
+              </div>
+
+              <!-- ETAPA 4: DESTINOS FINALES -->
+              <div class="path-node">
+                <div class="space-y-1.5 text-center">
+                  <div class="bg-blue-950 border border-blue-500 text-blue-300 px-2.5 py-1 rounded-xl text-[11px] font-black">
+                    🇲🇽 MEX (27 Nov)
+                  </div>
+                  <div class="bg-pink-950 border border-pink-500 text-pink-300 px-2.5 py-1 rounded-xl text-[11px] font-black">
+                    🇪🇸 SPC (${yConnCode})
+                  </div>
+                </div>
+                <span class="text-[10px] text-slate-400 font-bold mt-1.5">Llegada</span>
               </div>
             </div>
-            <span class="text-[10px] text-slate-400 font-bold mt-2">27-28 Nov · Llegada</span>
           </div>
-        </div>
-      `;
+        `;
+      }
+
+      container.innerHTML = html;
     }
 
     // ─── RENDERIZADO DEL PASO 4 (RESULTADOS) ───
