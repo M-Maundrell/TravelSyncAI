@@ -2446,35 +2446,206 @@ function renderAlerts(grand) {
 }
 
 // ══════════════════════════════════════════════════
-// CRONOLOGÍA VISUAL DEL VIAJE
+// CRONOLOGÍA VISUAL DEL VIAJE (DINÁMICA CON DETALLES DE CADA PASAJERO)
 // ══════════════════════════════════════════════════
 function renderCalendarTimeline() {
   const cont = document.getElementById('calendar-timeline');
   if (!cont) return;
 
+  const mSalida = getCatalogBrick(state.mario.salida);
+  const mTrans = getCatalogBrick(state.mario.trans);
+  const mBogEsp = getCatalogBrick(state.mario.bog_esp);
+  const isAlt = isMarioAlt();
+
+  const ySalida = getCatalogBrick(state.yesica.salida);
+  const yTrans = getCatalogBrick(state.yesica.trans);
+
+  // Vuelo conjunto info
+  const mJointFn = isAlt ? (mBogEsp?.return?.flightNumber || 'N/A') : (mTrans?.outbound?.flightNumber || 'N/A');
+  const mJointSched = isAlt ? (mBogEsp?.return?.schedule || '') : (mTrans?.outbound?.schedule || '');
+  const mJointRoute = isAlt ? (mBogEsp?.return?.route || '') : (mTrans?.outbound?.route || '');
+
+  const yJointFn = yTrans?.outbound?.flightNumber || 'N/A';
+  const yJointSched = yTrans?.outbound?.schedule || '';
+  const yJointRoute = yTrans?.outbound?.route || '';
+
+  const isJointSynced = (mJointFn === yJointFn && mJointFn !== 'N/A');
+
+  // Retorno info
+  const mRetFn = mSalida?.return?.flightNumber || 'N/A';
+  const mRetSched = mSalida?.return?.schedule || '';
+  const mRetRoute = mSalida?.return?.route || '';
+
+  const yRetFn = yTrans?.return?.flightNumber || 'N/A';
+  const yRetSched = yTrans?.return?.schedule || '';
+  const yRetRoute = yTrans?.return?.route || '';
+
   const events = [
-    { date: 'Vie 16 - Sáb 17 Oct', title: 'Salidas de Origen', desc: `${tripConfig.p1.name} (MEX ➔ MAD) · ${tripConfig.p2.name} (SPC ➔ MAD). Ambos llegan a Madrid.`, icon: '🛫', badge: 'Llegada' },
-    { date: '17 - 21 Octubre', title: 'Estancia en Madrid', desc: '4 noches juntos. Días obligatorios 18, 19 y 20 Octubre.', icon: '🏨', badge: 'Encuentro' },
-    { date: 'Miércoles 21 Octubre', title: 'Tren AVE a Barcelona', desc: 'Madrid Puerta de Atocha ➔ Barcelona Sants (~2h 45min).', icon: '🚄', badge: 'Tren' },
-    { date: '21 - 24 Octubre', title: 'Estancia en Barcelona', desc: '3 noches explorando Barcelona (Eixample / Born).', icon: '🍷', badge: 'Ciudad' },
-    { date: 'Sábado 24 Octubre', title: 'Salto Conjunto a Colombia', desc: `Vuelo transatlántico directo ${tripConfig.p1.name} & ${tripConfig.p2.name} (AV19 / Iberia).`, icon: '✈️', badge: 'Vuelo Conjunto' },
-    { date: '24 Oct - 27 Nov', title: 'Estancia en Colombia', desc: '~5 semanas de trabajo remoto y turismo en Bogotá.', icon: '☕', badge: 'Colombia' },
-    { date: 'Viernes 27 Noviembre', title: 'Retorno Transatlántico', desc: 'Salida de Bogotá hacia Madrid (Yesica) y CDMX (Mario).', icon: '🛫', badge: 'Regreso' },
-    { date: 'Sábado 28 Noviembre', title: 'Conexión a Canarias', desc: `${tripConfig.p2.name}: Madrid ➔ La Palma (IB3842 16:45, escala 2h 15m).`, icon: '🏠', badge: 'Fin del Viaje' }
+    {
+      date: 'Vie 16 - Sáb 17 Oct',
+      badge: 'Salidas de Origen',
+      badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+      icon: '🛫',
+      title: 'Vuelos de Salida hacia España',
+      htmlContent: `
+        <div class="space-y-1.5 mt-2 text-xs">
+          <div class="p-2 bg-blue-50/70 border border-blue-200/80 rounded-lg">
+            <span class="font-extrabold text-blue-900 block mb-0.5">👤 ${tripConfig.p1.name} (${tripConfig.p1.origin.split(' ')[0]}):</span>
+            ${isAlt ? `
+              <div class="text-[11px] text-slate-700 space-y-0.5">
+                <div>✈️ <strong>${mSalida?.outbound?.flightNumber || 'AM761'}</strong>: ${mSalida?.outbound?.route || 'MEX ➔ BOG'} (${mSalida?.outbound?.schedule || '08:50 → 14:40'})</div>
+                <div>✈️ <strong>${mBogEsp?.outbound?.flightNumber || 'AV26'}</strong>: ${mBogEsp?.outbound?.route || 'BOG ➔ MAD'} (${mBogEsp?.outbound?.schedule || '21:00 → 14:15 (+1)'})</div>
+              </div>
+            ` : `
+              <div class="text-[11px] text-slate-700">
+                ✈️ <strong>${mSalida?.outbound?.flightNumber || 'IB0152'}</strong> (${mSalida?.outbound?.route || 'MEX ➔ MAD'}) · ⏱️ ${mSalida?.outbound?.schedule || '20:05 → 14:00 (+1)'}
+              </div>
+            `}
+          </div>
+          <div class="p-2 bg-pink-50/70 border border-pink-200/80 rounded-lg">
+            <span class="font-extrabold text-pink-900 block mb-0.5">👤 ${tripConfig.p2.name} (${tripConfig.p2.origin.split(' ')[0]}):</span>
+            <div class="text-[11px] text-slate-700">
+              ✈️ <strong>${ySalida?.outbound?.flightNumber || 'I23841'}</strong> (${ySalida?.outbound?.route || 'SPC ➔ MAD'}) · ⏱️ ${ySalida?.outbound?.schedule || '19:30 → 23:15'}
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      date: '17 - 21 Octubre',
+      badge: 'Encuentro Madrid',
+      badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      icon: '🏨',
+      title: 'Estancia Conjunta en Madrid',
+      htmlContent: `
+        <div class="mt-2 text-xs text-slate-600 space-y-1">
+          <p>🏨 <strong>4 noches juntos en Madrid</strong> (Chamberí / Salamanca).</p>
+          <p class="text-[11px] text-slate-500">📌 Días obligatorios en España: Domingo 18, Lunes 19 y Martes 20 Octubre.</p>
+        </div>
+      `
+    },
+    {
+      date: 'Miércoles 21 Octubre',
+      badge: 'Tren de Alta Velocidad',
+      badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+      icon: '🚄',
+      title: 'Traslado Madrid ➔ Barcelona',
+      htmlContent: `
+        <div class="mt-2 p-2 bg-amber-50/60 border border-amber-200 rounded-lg text-xs space-y-1">
+          <div class="font-bold text-amber-950 flex items-center justify-between">
+            <span>🚄 Tren AVE / Ouigo / Iryo</span>
+            <span class="text-[10px] bg-white px-1.5 py-0.5 rounded border border-amber-200">~2h 45min</span>
+          </div>
+          <div class="text-[11px] text-slate-600">Madrid Puerta de Atocha ➔ Barcelona Sants. Viajan ambos pasajeros juntos.</div>
+        </div>
+      `
+    },
+    {
+      date: '21 - 24 Octubre',
+      badge: 'Estancia Barcelona',
+      badgeClass: 'bg-purple-100 text-purple-800 border-purple-200',
+      icon: '🍷',
+      title: 'Estancia en Barcelona',
+      htmlContent: `
+        <div class="mt-2 text-xs text-slate-600 space-y-1">
+          <p>🏨 <strong>3 noches en Barcelona</strong> (Eixample / El Born).</p>
+          <p class="text-[11px] text-slate-500">Turismo, gastronomía y preparación para el salto transatlántico a América.</p>
+        </div>
+      `
+    },
+    {
+      date: 'Sábado 24 Octubre',
+      badge: isJointSynced ? '✨ Mismo Vuelo' : '⚠️ Revisar Sincronía',
+      badgeClass: isJointSynced ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-rose-100 text-rose-800 border-rose-200',
+      icon: '✈️',
+      title: 'Salto Conjunto a Colombia',
+      htmlContent: `
+        <div class="space-y-1.5 mt-2 text-xs">
+          <div class="p-2 bg-blue-50/70 border border-blue-200/80 rounded-lg">
+            <span class="font-extrabold text-blue-900 block mb-0.5">👤 ${tripConfig.p1.name}:</span>
+            <div class="text-[11px] text-slate-700">
+              ✈️ <strong>${mJointFn}</strong> (${mJointRoute}) · ⏱️ ${mJointSched}
+            </div>
+          </div>
+          <div class="p-2 bg-pink-50/70 border border-pink-200/80 rounded-lg">
+            <span class="font-extrabold text-pink-900 block mb-0.5">👤 ${tripConfig.p2.name}:</span>
+            <div class="text-[11px] text-slate-700">
+              ✈️ <strong>${yJointFn}</strong> (${yJointRoute}) · ⏱️ ${yJointSched}
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      date: '24 Oct - 27 Nov',
+      badge: 'Estancia Colombia',
+      badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      icon: '☕',
+      title: 'Estancia Conjunta en Colombia',
+      htmlContent: `
+        <div class="mt-2 text-xs text-slate-600 space-y-1">
+          <p>🏢 <strong>~5 semanas de estancia conjunta en Bogotá</strong> (Chapinero / Chicó / Parque 93).</p>
+          <p class="text-[11px] text-slate-500">Trabajo remoto sincronizado, turismo cafetero y vida local.</p>
+        </div>
+      `
+    },
+    {
+      date: 'Viernes 27 Noviembre',
+      badge: 'Retorno Transatlántico',
+      badgeClass: 'bg-blue-100 text-blue-800 border-blue-200',
+      icon: '🛫',
+      title: 'Vuelos de Retorno desde Bogotá',
+      htmlContent: `
+        <div class="space-y-1.5 mt-2 text-xs">
+          <div class="p-2 bg-blue-50/70 border border-blue-200/80 rounded-lg">
+            <span class="font-extrabold text-blue-900 block mb-0.5">👤 ${tripConfig.p1.name} (Retorno a México):</span>
+            <div class="text-[11px] text-slate-700">
+              ✈️ <strong>${mRetFn}</strong> (${mRetRoute}) · ⏱️ ${mRetSched}
+            </div>
+          </div>
+          <div class="p-2 bg-pink-50/70 border border-pink-200/80 rounded-lg">
+            <span class="font-extrabold text-pink-900 block mb-0.5">👤 ${tripConfig.p2.name} (Retorno a España):</span>
+            <div class="text-[11px] text-slate-700">
+              ✈️ <strong>${yRetFn}</strong> (${yRetRoute}) · ⏱️ ${yRetSched}
+            </div>
+          </div>
+        </div>
+      `
+    },
+    {
+      date: 'Sábado 28 Noviembre',
+      badge: 'Conexión Final',
+      badgeClass: 'bg-slate-100 text-slate-800 border-slate-200',
+      icon: '🏠',
+      title: 'Llegada y Enlace a Canarias',
+      htmlContent: `
+        <div class="space-y-1.5 mt-2 text-xs">
+          <div class="p-2 bg-pink-50/70 border border-pink-200/80 rounded-lg">
+            <span class="font-extrabold text-pink-900 block mb-0.5">👤 ${tripConfig.p2.name} (Madrid ➔ La Palma):</span>
+            <div class="text-[11px] text-slate-700">
+              ✈️ <strong>${ySalida?.return?.flightNumber || 'IB3842'}</strong> (${ySalida?.return?.route || 'MAD ➔ SPC'}) · ⏱️ ${ySalida?.return?.schedule || '16:45 → 19:35'}
+            </div>
+            <div class="text-[10px] text-emerald-700 font-bold mt-1">✓ Escala holgada en Madrid Barajas T4 tras aterrizar de Bogotá</div>
+          </div>
+        </div>
+      `
+    }
   ];
 
   let html = '';
   events.forEach(ev => {
     html += `
-      <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3.5 space-y-1.5 shadow-2xs">
-        <div class="flex justify-between items-center text-xs">
-          <span class="font-extrabold text-blue-700">${ev.date}</span>
-          <span class="bg-white border border-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded text-[10px]">${ev.badge}</span>
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2 shadow-2xs flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-black text-blue-700">${ev.date}</span>
+            <span class="border px-2 py-0.5 rounded-md font-bold text-[10px] ${ev.badgeClass}">${ev.badge}</span>
+          </div>
+          <div class="font-black text-slate-900 text-sm flex items-center gap-1.5 mt-1">
+            <span>${ev.icon}</span> ${ev.title}
+          </div>
+          ${ev.htmlContent}
         </div>
-        <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
-          <span>${ev.icon}</span> ${ev.title}
-        </div>
-        <p class="text-xs text-slate-600">${ev.desc}</p>
       </div>
     `;
   });
