@@ -223,6 +223,8 @@
     .h-2 { height: 0.5rem; }
     .w-2\.5 { width: 0.625rem; }
     .h-2\.5 { height: 0.625rem; }
+    .w-3 { width: 0.75rem; }
+    .h-3 { height: 0.75rem; }
     .w-3\.5 { width: 0.875rem; }
     .h-3\.5 { height: 0.875rem; }
     .w-4 { width: 1rem; }
@@ -239,13 +241,14 @@
     .transition { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
     .overflow-hidden { overflow: hidden; }
     .overflow-y-auto { overflow-y: auto; }
-    .relative { position: position: relative; }
+    .relative { position: relative; }
     .fixed { position: fixed; }
     .inset-0 { inset: 0px; }
     .z-50 { z-index: 50; }
+    .z-60 { z-index: 60; }
     .backdrop-blur-sm { backdrop-filter: blur(4px); }
 
-    /* Estilos para Wizard Stepper */
+    /* Stepper Wizard */
     .step-item {
       display: flex;
       align-items: center;
@@ -291,6 +294,22 @@
     }
     .radar-pulse {
       animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    /* Path visualization styling */
+    .path-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .path-line {
+      height: 4px;
+      flex-grow: 1;
+      margin-top: 14px;
+      position: relative;
+      z-index: 1;
     }
 
     /* Toast Container */
@@ -349,10 +368,10 @@
         <!-- ACCIONES RÁPIDAS EN HEADER -->
         <div class="flex flex-wrap items-center gap-2">
           <button onclick="loadOfficialCase()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
-            ⭐ Cargar Caso Mario & Yesica (Octubre 2026)
+            ⭐ Cargar Caso Mario & Yesica ($56,760 MXN)
           </button>
           <button onclick="resetToBlank()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold rounded-xl border border-slate-700 transition">
-            🔄 Nuevo Viaje en Blanco
+            🔄 Nuevo Viaje
           </button>
           <div id="mqtt-status" class="text-[11px] font-bold px-2.5 py-1.5 rounded-xl bg-slate-800 text-slate-400 border border-slate-700 flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Conectado
@@ -367,7 +386,7 @@
             <div class="step-badge">1</div>
             <div>
               <div class="text-xs font-bold text-white">Pasajeros</div>
-              <div class="text-[10px] text-slate-400">Perfiles & Origen</div>
+              <div class="text-[10px] text-slate-400">País & Orígenes</div>
             </div>
           </div>
           <div id="step-nav-2" onclick="goToStep(2)" class="step-item bg-slate-950/60 p-2.5 rounded-2xl border border-slate-800">
@@ -388,7 +407,7 @@
             <div class="step-badge">4</div>
             <div>
               <div class="text-xs font-bold text-white">Resultados</div>
-              <div class="text-[10px] text-slate-400">Planes & Compra</div>
+              <div class="text-[10px] text-slate-400">Rutas, OTA & Compra</div>
             </div>
           </div>
         </div>
@@ -404,10 +423,10 @@
         <div>
           <span class="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Paso 1 de 4</span>
           <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1">Configura a los Pasajeros</h2>
-          <p class="text-xs md:text-sm text-slate-500">Define los orígenes iniciales, pasaportes, visados y preferencias de cada viajero.</p>
+          <p class="text-xs md:text-sm text-slate-500">Selecciona el país para ver sus aeropuertos disponibles y define visas y preferencias.</p>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-slate-500">Número de Pasajeros:</span>
+          <span class="text-xs font-bold text-slate-500">Pasajeros:</span>
           <select id="cfg-passenger-count" onchange="changePassengerCount(this.value)" class="bg-slate-100 border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800">
             <option value="2" selected>2 Pasajeros (Mario & Yesica)</option>
             <option value="1">1 Pasajero Individual</option>
@@ -429,46 +448,39 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre Completo</label>
-              <input type="text" id="p1-cfg-name" value="Mario" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-indigo-500">
+              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
+              <input type="text" id="p1-cfg-name" value="Mario" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">📅 Fecha Salida Inicial</label>
-              <input type="date" id="p1-cfg-date" value="2026-10-16" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800 focus:outline-indigo-500">
+              <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
+              <input type="date" id="p1-cfg-date" value="2026-10-16" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">🛫 Aeropuerto de Origen Inicial</label>
-            <select id="p1-cfg-origin" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
-              <optgroup label="🇲🇽 México & Norteamérica">
-                <option value="MEX (Ciudad de México)" selected>MEX — Ciudad de México (Benito Juárez / AIFA)</option>
-                <option value="GDL (Guadalajara)">GDL — Guadalajara Miguel Hidalgo</option>
-                <option value="MTY (Monterrey)">MTY — Monterrey Mariano Escobedo</option>
-                <option value="CUN (Cancún)">CUN — Cancún Internacional</option>
-                <option value="JFK (Nueva York, USA)">JFK — Nueva York John F. Kennedy</option>
-                <option value="MIA (Miami, USA)">MIA — Miami Internacional</option>
-              </optgroup>
-              <optgroup label="🇪🇸 España & Europa">
-                <option value="MAD (Madrid Barajas)">MAD — Madrid Barajas Adolfo Suárez</option>
-                <option value="BCN (Barcelona El Prat)">BCN — Barcelona El Prat Josep Tarradellas</option>
-                <option value="SPC (La Palma, Canarias)">SPC — La Palma, Islas Canarias</option>
-              </optgroup>
-              <optgroup label="🇨🇴 Colombia & Sudamérica">
-                <option value="BOG (Bogotá El Dorado)">BOG — Bogotá El Dorado</option>
-                <option value="MDE (Medellín)">MDE — Medellín José María Córdova</option>
-              </optgroup>
-            </select>
+          <!-- SELECTOR EN CASCADA: PAÍS ➔ AEROPUERTO -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white rounded-xl border border-slate-200">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 mb-1">🌍 País de Origen</label>
+              <select id="p1-country-select" onchange="updateAirportOptions('p1')" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                <!-- Se llena con renderCountryOptions -->
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 mb-1">🛫 Ciudad / Aeropuerto</label>
+              <select id="p1-cfg-origin" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                <!-- Se llena dinámicamente -->
+              </select>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nacionalidad / Pasaporte</label>
               <select id="p1-cfg-nat" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                <option value="MX" selected>🇲🇽 México (Exento Schengen / Requiere Visa USA)</option>
-                <option value="ES">🇪🇸 España / Unión Europea (Libre circulación)</option>
-                <option value="CO">🇨🇴 Colombia (Exento Schengen / Requiere Visa USA)</option>
-                <option value="VE">🇻🇪 Venezuela (Restricciones migratorias especiales)</option>
+                <option value="MX" selected>🇲🇽 México (Exento Schengen / Visa USA)</option>
+                <option value="ES">🇪🇸 España / Unión Europea</option>
+                <option value="CO">🇨🇴 Colombia</option>
+                <option value="VE">🇻🇪 Venezuela</option>
               </select>
             </div>
             <div>
@@ -504,37 +516,36 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre Completo</label>
-              <input type="text" id="p2-cfg-name" value="Yesica" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800 focus:outline-indigo-500">
+              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
+              <input type="text" id="p2-cfg-name" value="Yesica" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">📅 Fecha Salida Inicial</label>
-              <input type="date" id="p2-cfg-date" value="2026-10-16" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800 focus:outline-indigo-500">
+              <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
+              <input type="date" id="p2-cfg-date" value="2026-10-16" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">🛫 Aeropuerto de Origen Inicial</label>
-            <select id="p2-cfg-origin" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
-              <optgroup label="🇪🇸 España & Islas Canarias">
-                <option value="SPC (La Palma, Canarias)" selected>SPC — La Palma, Islas Canarias</option>
-                <option value="TFN (Tenerife Norte)">TFN — Tenerife Norte Ciudad de La Laguna</option>
-                <option value="LPA (Gran Canaria)">LPA — Gran Canaria Gando</option>
-                <option value="MAD (Madrid Barajas)">MAD — Madrid Barajas Adolfo Suárez</option>
-                <option value="BCN (Barcelona El Prat)">BCN — Barcelona El Prat</option>
-              </optgroup>
-              <optgroup label="🇲🇽 México & Colombia">
-                <option value="MEX (Ciudad de México)">MEX — Ciudad de México</option>
-                <option value="BOG (Bogotá El Dorado)">BOG — Bogotá El Dorado</option>
-              </optgroup>
-            </select>
+          <!-- SELECTOR EN CASCADA: PAÍS ➔ AEROPUERTO -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white rounded-xl border border-slate-200">
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 mb-1">🌍 País de Origen</label>
+              <select id="p2-country-select" onchange="updateAirportOptions('p2')" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                <!-- Se llena con renderCountryOptions -->
+              </select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-slate-500 mb-1">🛫 Ciudad / Aeropuerto</label>
+              <select id="p2-cfg-origin" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                <!-- Se llena dinámicamente -->
+              </select>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nacionalidad / Residencia</label>
               <select id="p2-cfg-nat" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                <option value="ES" selected>🇪🇸 España / Residencia UE (Entrada Libre Colombia/España)</option>
+                <option value="ES" selected>🇪🇸 España / Residencia UE</option>
                 <option value="MX">🇲🇽 México</option>
                 <option value="CO">🇨🇴 Colombia</option>
               </select>
@@ -579,7 +590,7 @@
         <div>
           <span class="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Paso 2 de 4</span>
           <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1">Estancias, Paradas y Vuelos Conjuntos</h2>
-          <p class="text-xs md:text-sm text-slate-500">Define las fechas de cada parada, orígenes alternativos de salida y confirma si viajan juntos.</p>
+          <p class="text-xs md:text-sm text-slate-500">Selecciona el país y ciudad de cada parada; los títulos y rutas se actualizarán automáticamente.</p>
         </div>
       </div>
 
@@ -616,7 +627,7 @@
           <h4 class="text-sm font-black text-emerald-900">Regla Maestra de Sincronización de Vuelo Conjunto</h4>
         </div>
         <p class="text-xs text-emerald-800">
-          Mario y Yesica coinciden en España (Madrid y Barcelona) y <strong>deben realizar el salto transatlántico a Colombia en el mismo vuelo y mismo horario</strong> (Sábado 24 Octubre en Avianca AV19 o Domingo 25 Octubre en Iberia IB0153). El motor priorizará este requisito automáticamente.
+          Mario y Yesica deben realizar el salto transatlántico a Colombia en el <strong>mismo vuelo y mismo horario</strong> (24 Oct en Avianca AV19 o 25 Oct en Iberia IB0153).
         </p>
         <div class="flex items-center gap-3">
           <label class="flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer">
@@ -665,7 +676,7 @@
           <span>✓</span> <span>Garantía de escalas seguras en Madrid T4 (≥ 90 min)</span>
         </div>
         <div id="chk-4" class="flex items-center gap-2 text-indigo-600 animate-pulse">
-          <span>⏳</span> <span>Consolidando presupuestos combinados vs Límite $58,000 MXN</span>
+          <span>⏳</span> <span>Consolidando presupuestos combinados vs Límite</span>
         </div>
       </div>
 
@@ -678,11 +689,11 @@
 
 
     <!-- ══════════════════════════════════════════════════
-         PASO 4: RESULTADOS, COMPARADOR DE PLANES & COMPRA
+         PASO 4: RESULTADOS, COMPARADOR DE PLANES, PATH VISUALIZATION & COMPRA
          ══════════════════════════════════════════════════ -->
     <div id="step-container-4" class="space-y-6 hidden">
 
-      <!-- BANNER SUPERIOR CON MEDIDOR DE PRESUPUESTO -->
+      <!-- BANNER SUPERIOR CON MEDIDOR DE PRESUPUESTO EDITABLE -->
       <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
           <div>
@@ -693,8 +704,18 @@
               <div id="cost-display-eur" class="text-sm md:text-base font-bold text-slate-500">€0 EUR</div>
             </div>
           </div>
-          <div id="budget-status" class="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-200 self-start sm:self-auto">
-            ✓ Dentro del presupuesto
+          <div class="flex flex-col sm:items-end gap-2">
+            <div class="flex items-center gap-2">
+              <label class="text-xs font-bold text-slate-500">Presupuesto Límite:</label>
+              <div class="relative flex items-center">
+                <span class="absolute left-2.5 text-xs font-bold text-slate-400">$</span>
+                <input type="number" id="cfg-budget-input" value="58000" onchange="updateBudgetLimit(this.value)" class="w-28 pl-6 pr-2 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-black text-slate-800 text-right">
+                <span class="ml-1 text-xs font-bold text-slate-400">MXN</span>
+              </div>
+            </div>
+            <div id="budget-status" class="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-200 self-start sm:self-auto">
+              ✓ Dentro del presupuesto
+            </div>
           </div>
         </div>
 
@@ -705,7 +726,7 @@
         
         <div class="flex justify-between items-center text-xs text-slate-500 font-medium">
           <span id="budget-percent">0% del presupuesto</span>
-          <span>Límite conjunto de vuelos: <strong>$58,000 MXN</strong> (~€2,940 EUR)</span>
+          <span id="budget-limit-label">Límite conjunto: <strong>$58,000 MXN</strong> (~€2,940 EUR)</span>
         </div>
 
         <!-- SELECTOR DE PLANES MAESTROS RECOMENDADOS (1 CLIC) -->
@@ -723,6 +744,29 @@
           <button onclick="applyPreset('alternativo')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition">
             🔄 Ruta Alternativa (Avianca BCN)
           </button>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════════════
+           PATH VISUALIZATION: DIAGRAMA DE RUTAS Y CONVERGENCIA
+           ══════════════════════════════════════════════════ -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl text-white space-y-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <h3 class="text-base md:text-lg font-black text-white flex items-center gap-2">
+              <span>🗺️</span> Visualización de Rutas (Path Visualization)
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Mapa interactivo de convergencia, tramo conjunto y bifurcación de retorno.</p>
+          </div>
+          <div class="flex gap-3 text-xs font-bold">
+            <span class="flex items-center gap-1.5 text-blue-400"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Mario</span>
+            <span class="flex items-center gap-1.5 text-pink-400"><span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span> Yesica</span>
+            <span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Tramo Conjunto</span>
+          </div>
+        </div>
+
+        <div id="path-visualization-container" class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 overflow-x-auto">
+          <!-- Renderizado por renderPathVisualization() -->
         </div>
       </div>
 
@@ -803,64 +847,118 @@
 
   </div>
 
+
   <!-- ══════════════════════════════════════════════════
-       MODAL DE CREAR VUELO PERSONALIZADO
+       MODAL PROFESIONAL DE SELECCIÓN DE VUELOS (ESTILO OTA)
        ══════════════════════════════════════════════════ -->
-  <div id="custom-flight-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 md:p-6 z-50 transition-all">
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-        <h3 class="text-base font-extrabold text-slate-900">➕ Agregar Vuelo Personalizado</h3>
-        <button type="button" onclick="closeCustomFlightModal()" class="text-slate-400 hover:text-slate-700 text-xl font-bold leading-none">&times;</button>
-      </div>
-      <form id="custom-flight-form" onsubmit="handleSaveCustomFlight(event)" class="space-y-3">
-        <input type="hidden" id="form-traveler">
-        <input type="hidden" id="form-segment">
+  <div id="flight-picker-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm hidden items-center justify-center p-3 md:p-6 z-60 transition-all">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+      <!-- HEADER DEL MODAL -->
+      <div class="flex justify-between items-center p-5 border-b border-slate-100 shrink-0 bg-slate-50">
         <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Título / Nombre de la Opción</label>
-          <input type="text" id="form-title" required placeholder="Ej. Air France (Vía CDG)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold">
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Precio Total (MXN)</label>
-            <input type="number" id="form-price" required placeholder="18500" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">✈️</span>
+            <h3 id="modal-picker-title" class="text-base font-black text-slate-900">Seleccionar Vuelo</h3>
           </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">Aerolínea Principal</label>
-            <select id="form-airline" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold">
-              <option value="iberia">Iberia</option>
-              <option value="avianca">Avianca</option>
-              <option value="aeromexico-iberia">Aeroméxico</option>
-              <option value="air-europa">Air Europa / Otra</option>
+          <p id="modal-picker-subtitle" class="text-xs text-slate-500 mt-0.5">Compara aerolíneas, disponibilidad de asientos y compatibilidad.</p>
+        </div>
+        <button onclick="closeFlightPickerModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold leading-none p-1">&times;</button>
+      </div>
+
+      <!-- FILTROS Y BÚSQUEDA RÁPIDA -->
+      <div class="p-4 border-b border-slate-100 bg-white shrink-0 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <!-- Filtro por Aerolínea -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1">
+            <span class="text-[11px] font-extrabold text-slate-400 uppercase mr-1">Aerolínea:</span>
+            <button onclick="filterModalByAirline('all')" id="flt-btn-all" class="px-2.5 py-1 bg-indigo-600 text-white rounded-lg text-xs font-bold">Todas</button>
+            <button onclick="filterModalByAirline('iberia')" id="flt-btn-iberia" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">Iberia</button>
+            <button onclick="filterModalByAirline('avianca')" id="flt-btn-avianca" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">Avianca</button>
+            <button onclick="filterModalByAirline('aeromexico-iberia')" id="flt-btn-aeromexico" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">Aeroméxico</button>
+            <button onclick="filterModalByAirline('air-europa')" id="flt-btn-aireuropa" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">Air Europa / Otras</button>
+          </div>
+
+          <!-- Ordenamiento -->
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] font-bold text-slate-400">Ordenar por:</span>
+            <select id="modal-sort-select" onchange="renderModalFlightCards()" class="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700">
+              <option value="price_asc">Menor Precio</option>
+              <option value="price_desc">Mayor Precio</option>
+              <option value="direct_first">Vuelos Directos Primero</option>
             </select>
           </div>
         </div>
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-          <span class="text-xs font-extrabold text-slate-700 block">Ida (Salida):</span>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="form-route" required placeholder="Ruta: MEX ➔ MAD" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs">
-            <input type="text" id="form-sched" required placeholder="Horario: 20:05 → 14:00+1" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs">
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="form-flightno" required placeholder="Nº Vuelo: AF179" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs">
-            <input type="date" id="form-date" class="w-full bg-white border border-slate-200 rounded-lg p-1 text-xs">
-          </div>
-        </div>
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
-          <button type="button" onclick="closeCustomFlightModal()" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">Cancelar</button>
-          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl shadow-xs">Guardar Vuelo</button>
-        </div>
-      </form>
+      </div>
+
+      <!-- LISTA SCROLLEABLE DE OPCIONES DE VUELO -->
+      <div id="modal-flight-cards-container" class="p-5 overflow-y-auto space-y-3.5 grow">
+        <!-- Generado dinámicamente -->
+      </div>
     </div>
   </div>
 
 
   <!-- ══════════════════════════════════════════════════
-       MOTOR JAVASCRIPT: CATÁLOGOS, WIZARD & REACTIVIDAD
+       MOTOR JAVASCRIPT: CATÁLOGOS, OTA MODAL & REACTIVIDAD
        ══════════════════════════════════════════════════ -->
   <script>
     const EXCHANGE_RATE = 19.73;
-    const BUDGET_LIMIT = 58000;
+    let budgetLimit = 58000;
     let currentStep = 1;
+
+    // Estado activo para el Modal de Selección de Vuelo
+    let activeModalContext = { traveler: null, segmentKey: null, selectedAirline: 'all' };
+
+    // ─── CATÁLOGO GEOGRÁFICO DE PAÍSES Y AEROPUERTOS ───
+    const geoCatalog = {
+      MX: {
+        name: "🇲🇽 México",
+        airports: [
+          { code: "MEX", name: "MEX — Ciudad de México (Benito Juárez / AIFA)" },
+          { code: "GDL", name: "GDL — Guadalajara Miguel Hidalgo" },
+          { code: "MTY", name: "MTY — Monterrey Mariano Escobedo" },
+          { code: "CUN", name: "CUN — Cancún Internacional" }
+        ]
+      },
+      ES: {
+        name: "🇪🇸 España",
+        airports: [
+          { code: "MAD", name: "MAD — Madrid Barajas Adolfo Suárez" },
+          { code: "BCN", name: "BCN — Barcelona El Prat" },
+          { code: "SPC", name: "SPC — La Palma, Islas Canarias" },
+          { code: "TFN", name: "TFN — Tenerife Norte" },
+          { code: "LPA", name: "LPA — Gran Canaria" }
+        ]
+      },
+      CO: {
+        name: "🇨🇴 Colombia",
+        airports: [
+          { code: "BOG", name: "BOG — Bogotá El Dorado" },
+          { code: "MDE", name: "MDE — Medellín José María Córdova" },
+          { code: "CTG", name: "CTG — Cartagena Rafael Núñez" }
+        ]
+      },
+      US: {
+        name: "🇺🇸 Estados Unidos",
+        airports: [
+          { code: "JFK", name: "JFK — Nueva York John F. Kennedy" },
+          { code: "MIA", name: "MIA — Miami Internacional" },
+          { code: "EWR", name: "EWR — Newark Liberty" }
+        ]
+      },
+      FR: {
+        name: "🇫🇷 Francia",
+        airports: [
+          { code: "CDG", name: "CDG — París Charles de Gaulle" }
+        ]
+      },
+      NL: {
+        name: "🇳🇱 Países Bajos",
+        airports: [
+          { code: "AMS", name: "AMS — Ámsterdam Schiphol" }
+        ]
+      }
+    };
 
     // ─── MODELO DE ESTADO DEL VIAJE ───
     let tripConfig = {
@@ -868,28 +966,30 @@
       strictJointFlight: true,
       p1: {
         name: "Mario",
-        origin: "MEX (Ciudad de México)",
+        country: "MX",
+        origin: "MEX — Ciudad de México (Benito Juárez / AIFA)",
         startDate: "2026-10-16",
         nationality: "MX",
         visas: { usa: true },
         prefs: { bag: true, carry: true, seat: true },
         waypoints: [
-          { name: "Madrid (MAD)", arrivalDate: "2026-10-17", departureDate: "2026-10-21", departureOrigins: "MAD, BCN", jointFlight: false },
-          { name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", departureOrigins: "BCN, MAD", jointFlight: true },
-          { name: "Bogotá (BOG)", arrivalDate: "2026-10-24", departureDate: "2026-11-27", departureOrigins: "BOG", jointFlight: true }
+          { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "2026-10-17", departureDate: "2026-10-21", departureOrigins: "MAD, BCN", jointFlight: false },
+          { country: "ES", cityCode: "BCN", name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", departureOrigins: "BCN, MAD", jointFlight: true },
+          { country: "CO", cityCode: "BOG", name: "Bogotá (BOG)", arrivalDate: "2026-10-24", departureDate: "2026-11-27", departureOrigins: "BOG", jointFlight: true }
         ]
       },
       p2: {
         name: "Yesica",
-        origin: "SPC (La Palma, Canarias)",
+        country: "ES",
+        origin: "SPC — La Palma, Islas Canarias",
         startDate: "2026-10-16",
         nationality: "ES",
         visas: { residencia: true },
         prefs: { bag: true, carry: true, seat: true },
         waypoints: [
-          { name: "Madrid (MAD)", arrivalDate: "2026-10-16", departureDate: "2026-10-21", departureOrigins: "MAD, BCN", jointFlight: false },
-          { name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", departureOrigins: "BCN, MAD", jointFlight: true },
-          { name: "Bogotá (BOG)", arrivalDate: "2026-10-24", departureDate: "2026-11-27", departureOrigins: "BOG", jointFlight: true }
+          { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "2026-10-16", departureDate: "2026-10-21", departureOrigins: "MAD, BCN", jointFlight: false },
+          { country: "ES", cityCode: "BCN", name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", departureOrigins: "BCN, MAD", jointFlight: true },
+          { country: "CO", cityCode: "BOG", name: "Bogotá (BOG)", arrivalDate: "2026-10-24", departureDate: "2026-11-27", departureOrigins: "BOG", jointFlight: true }
         ]
       }
     };
@@ -900,155 +1000,144 @@
       yesica: { salida: "yes_spc_mad_16_1815", trans: "yes_trans_iberia_user" }
     };
 
-    // ─── CATÁLOGO COMPLETO DE VUELOS ───
+    // ─── CATÁLOGO COMPLETO DE VUELOS CON OCUPACIÓN & DISPONIBILIDAD ───
     let flightsCatalog = {
-      // MARIO: BOLETO 1 (CDMX ➔ MAD / CDMX ➔ BOG)
+      // MARIO: BOLETO 1
       "mex_mad_iberia_152": {
         id: "mex_mad_iberia_152", traveler: "mario", segment: "transatlantico-inicio",
         title: "Iberia IB0152 (Directo Nocturno 20:05) ⭐",
-        airline: "iberia", price: 20000,
-        description: "Vuelo directo vespertino/nocturno IB0152 saliendo a las 20:05 de CDMX y llegando a las 14:00 del sábado 17 a Madrid.",
+        airline: "iberia", price: 20000, occupancy: 78, seatsLeft: 5, aircraft: "Airbus A350-900",
+        description: "Vuelo directo nocturno IB0152 saliendo a las 20:05 de CDMX y llegando a las 14:00 del sábado 17 a Madrid Barajas T4S.",
         outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "20:05 → 14:00 (+1)", flightNumber: "IB0152", date: "Viernes 16 Oct 2026" },
         return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Óptima (Directo)", bag: true, carry: true, seat: true, train: false, usTransit: false,
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB152%20to%20MAD%20from%20MEX%20on%202026-10-16",
         bookingUrl: "https://www.iberia.com"
       },
       "mex_bog_aeromexico_user": {
-        id: "mex_bog_aeromexico_user", traveler: "mario", segment: "transatlantico-inicio", group: "alt-direct",
+        id: "mex_bog_aeromexico_user", traveler: "mario", segment: "transatlantico-inicio",
         title: "Aeroméxico AM761 / AM762 ($7,209 MXN) ⭐ Plan Maestro",
-        airline: "aeromexico-iberia", price: 7209,
+        airline: "aeromexico-iberia", price: 7209, occupancy: 65, seatsLeft: 9, aircraft: "Boeing 737 MAX 9",
         description: "Vuelo redondo directo CDMX ➔ BOG con Aeroméxico (08:45 → 14:40). Retorno BOG ➔ CDMX (16:00 → 20:15) el 27 Nov.",
         outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG)", schedule: "08:45 → 14:40", flightNumber: "AM761", date: "Viernes 16 Oct 2026" },
         return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "16:00 → 20:15", flightNumber: "AM762", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Clásica", bag: true, carry: true, seat: true, train: false, usTransit: false,
+        class: "Tarifa Clásica", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20AM761%20to%20BOG%20from%20MEX%20on%202026-10-16",
-        bookingUrl: "https://www.aeromexico.com"
-      },
-      "mex_bog_aeromexico": {
-        id: "mex_bog_aeromexico", traveler: "mario", segment: "transatlantico-inicio", group: "alt-direct",
-        title: "Aeroméxico AM761/AM762 (Directo Diurno) · $7,100 MXN",
-        airline: "aeromexico-iberia", price: 7100,
-        description: "Vuelo redondo directo CDMX-Bogotá con Aeroméxico (08:50 → 14:40).",
-        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG)", schedule: "08:50 → 14:40", flightNumber: "AM761", date: "Viernes 16 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "15:55 → 20:00", flightNumber: "AM762", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Clásica", bag: true, carry: true, seat: true, train: false, usTransit: false,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20to%20BOG%20from%20MEX%20on%202026-10-16",
         bookingUrl: "https://www.aeromexico.com"
       },
       "mex_mad_united": {
         id: "mex_mad_united", traveler: "mario", segment: "transatlantico-inicio",
-        title: "United Airlines (Escala Newark, Gran Ahorro) · $13,500 MXN",
-        airline: "united", price: 13500,
+        title: "United Airlines (Escala Newark EWR) · $13,500 MXN",
+        airline: "air-europa", price: 13500, occupancy: 88, seatsLeft: 2, aircraft: "Boeing 787-10",
         description: "Escala en Newark (EWR). Requiere visa USA activa.",
         outbound: { route: "CDMX (MEX) ➔ Newark (EWR) ➔ Madrid (MAD)", schedule: "08:30 → 07:30 (+1)", flightNumber: "UA321/UA120", date: "Viernes 16 Oct 2026" },
         return: { route: "Bogotá (BOG) ➔ Newark (EWR) ➔ CDMX (MEX)", schedule: "16:00 → 22:30", flightNumber: "UA240", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Clásica (vía USA)", bag: true, carry: true, seat: true, train: false, usTransit: true,
+        class: "Tarifa Clásica", bag: true, carry: true, seat: true, direct: false,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20United%20to%20MAD%20from%20MEX%20on%202026-10-16",
         bookingUrl: "https://www.united.com"
       },
 
-      // MARIO: BOLETO 2 ALTERNATIVO (BOGOTÁ ↔ ESPAÑA)
+      // MARIO: BOLETO 2 ALTERNATIVO
       "bog_esp_iberia_user": {
-        id: "bog_esp_iberia_user", traveler: "mario", segment: "alternativo-regreso", group: "alt-mad",
-        title: "Iberia IB0152 / IB0153 ($24,482 MXN) ⭐ Plan Maestro (Salto 25 Oct Directo)",
-        airline: "iberia", price: 24482,
+        id: "bog_esp_iberia_user", traveler: "mario", segment: "alternativo-regreso",
+        title: "Iberia IB0152 / IB0153 ($24,482 MXN) ⭐ Plan Maestro",
+        airline: "iberia", price: 24482, occupancy: 82, seatsLeft: 4, aircraft: "Airbus A350-900",
         description: "Ida BOG ➔ MAD en IB0152 el 16 Oct (17:20 → 10:00 +1). Regreso conjunto con Yesica el Domingo 25 Oct en IB0153 directo (16:30 → 20:55).",
         outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "17:20 → 10:00 (+1)", flightNumber: "IB0152", date: "Viernes 16 Oct 2026" },
         return: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:30 → 20:55", flightNumber: "IB0153", date: "Domingo 25 Oct 2026" },
-        class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB0152%20from%20BOG%20to%20MAD%20on%202026-10-16",
         bookingUrl: "https://www.iberia.com"
       },
       "bog_esp_avianca": {
-        id: "bog_esp_avianca", traveler: "mario", segment: "alternativo-regreso", group: "alt-bcn",
+        id: "bog_esp_avianca", traveler: "mario", segment: "alternativo-regreso",
         title: "Avianca (Ida BOG ➔ MAD / Regreso Directo BCN ➔ BOG AV19) · $19,500 MXN",
-        airline: "avianca", price: 19500,
-        description: "Segundo boleto alternativo: Ida BOG→MAD (17 Oct) y Regreso BCN→BOG (24 Oct en AV19 coincidiendo 100% con Yesica).",
+        airline: "avianca", price: 19500, occupancy: 70, seatsLeft: 6, aircraft: "Boeing 787-8",
+        description: "Segundo boleto alternativo: Ida BOG→MAD (17 Oct) y Regreso BCN→BOG (24 Oct en AV19 coincidiendo con Yesica).",
         outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:00 → 14:15 (+1)", flightNumber: "AV26", date: "Sábado 17 Oct 2026" },
         return: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
-        class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20BOG%20on%202026-10-17",
         bookingUrl: "https://www.avianca.com"
       },
 
-      // MARIO: SALTO ESPAÑA ➔ COLOMBIA (MULTIDESTINO ESTÁNDAR)
+      // MARIO: SALTO ESPAÑA ➔ COLOMBIA
       "esp_col_avianca_bcn": {
         id: "esp_col_avianca_bcn", traveler: "mario", segment: "espana-colombia",
-        title: "Avianca Directo BCN ➔ BOG (AV19, Vuelo Conjunto)",
-        airline: "avianca", price: 14000,
+        title: "Avianca Directo BCN ➔ BOG (AV19, Vuelo Conjunto) · $14,000 MXN",
+        airline: "avianca", price: 14000, occupancy: 74, seatsLeft: 6, aircraft: "Boeing 787-8 Dreamliner",
         description: "Vuelo transatlántico directo desde Barcelona el Sábado 24 Octubre (14:30 → 18:30).",
         outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
-        class: "Tarifa Classic (Directo)", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24",
         bookingUrl: "https://www.avianca.com"
       },
       "esp_col_iberia_bcn": {
         id: "esp_col_iberia_bcn", traveler: "mario", segment: "espana-colombia",
-        title: "Iberia BCN ➔ MAD ➔ BOG (Conexión Barajas)",
-        airline: "iberia", price: 13500,
+        title: "Iberia BCN ➔ MAD ➔ BOG (Conexión Barajas) · $13,500 MXN",
+        airline: "iberia", price: 13500, occupancy: 80, seatsLeft: 3, aircraft: "A320 + A350",
         description: "Enlace rápido desde Barcelona hacia Madrid Barajas y conexión en A350 a Bogotá.",
         outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
-        class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: false,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24",
         bookingUrl: "https://www.iberia.com"
       },
 
-      // YESICA: CONEXIÓN REGIONAL (SPC ↔ MAD)
+      // YESICA: REGIONAL CANARIAS
       "yes_spc_mad_16": {
         id: "yes_spc_mad_16", traveler: "yesica", segment: "transatlantico-inicio",
-        title: "Iberia Express (Retorno 16:45) ⭐ Escala Óptima 2h 15m",
-        airline: "iberia-express", price: 3646,
+        title: "Iberia Express (Retorno 16:45) ⭐ Escala Óptima 2h 15m · $3,646 MXN",
+        airline: "iberia", price: 3646, occupancy: 60, seatsLeft: 12, aircraft: "Airbus A320neo",
         description: "Vuelo directo SPC ➔ MAD el 16 Oct (19:30). Retorno el 28 Nov a las 16:45 con 2h 15m de margen.",
         outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
         return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "16:45 → 19:35", flightNumber: "IB3842", date: "Sábado 28 Nov 2026" },
-        class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16",
         bookingUrl: "https://www.iberiaexpress.com"
       },
       "yes_spc_mad_16_1815": {
         id: "yes_spc_mad_16_1815", traveler: "yesica", segment: "transatlantico-inicio",
         title: "Iberia Express (Retorno Tarde 18:15) · $3,646 MXN",
-        airline: "iberia-express", price: 3646,
+        airline: "iberia", price: 3646, occupancy: 55, seatsLeft: 14, aircraft: "Airbus A320neo",
         description: "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de escala en Madrid T4.",
         outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
         return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "18:15 → 22:00", flightNumber: "I23844", date: "Sábado 28 Nov 2026" },
-        class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16",
         bookingUrl: "https://www.iberiaexpress.com"
       },
 
-      // YESICA: SALTO ESPAÑA ➔ COLOMBIA (MULTIDESTINO)
+      // YESICA: SALTO ESPAÑA ➔ COLOMBIA
       "yes_trans_iberia_user": {
         id: "yes_trans_iberia_user", traveler: "yesica", segment: "espana-colombia",
-        title: "Iberia IB0153 / IB156 ($21,423 MXN) ⭐ Plan Maestro (Salto 25 Oct Directo)",
-        airline: "iberia", price: 21423,
+        title: "Iberia IB0153 / IB156 ($21,423 MXN) ⭐ Plan Maestro",
+        airline: "iberia", price: 21423, occupancy: 85, seatsLeft: 3, aircraft: "Airbus A350-900",
         description: "Ida directa conjunta con Mario el Domingo 25 Oct en IB0153 (16:30 → 20:55). Regreso directo BOG ➔ MAD el 27 Nov en IB156 (14:00 → 05:50 +1).",
         outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:30 → 20:55", flightNumber: "IB0153", date: "Domingo 25 Oct 2026" },
         return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "14:00 → 05:50 (+1)", flightNumber: "IB156", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB0153%20from%20MAD%20to%20BOG%20on%202026-10-25",
         bookingUrl: "https://www.iberia.com"
       },
       "yes_trans_avianca": {
         id: "yes_trans_avianca", traveler: "yesica", segment: "espana-colombia",
-        title: "Avianca (BCN ➔ BOG directo AV19 / Retorno AV10 BOG ➔ MAD) · $25,000 MXN",
-        airline: "avianca", price: 25000,
+        title: "Avianca (BCN ➔ BOG directo AV19 / Retorno AV10) · $25,000 MXN",
+        airline: "avianca", price: 25000, occupancy: 74, seatsLeft: 6, aircraft: "Boeing 787-8",
         description: "Vuelo directo BCN-BOG el 24 Oct (AV19 14:30, coincide con Mario). Regreso directo nocturno BOG-MAD el 27 Nov en AV10.",
         outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
         return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24",
         bookingUrl: "https://www.avianca.com"
       },
       "yes_trans_iberia": {
         id: "yes_trans_iberia", traveler: "yesica", segment: "espana-colombia",
-        title: "Iberia (BCN ➔ MAD ➔ BOG / Retorno IB6586 BOG ➔ MAD directo) · $22,881 MXN",
-        airline: "iberia", price: 22881,
-        description: "Ida con escala rápida en Madrid el 24 Oct (IB3001/IB6585 en A350). Regreso directo nocturno Bogotá → Madrid el 27 Nov.",
+        title: "Iberia (BCN ➔ MAD ➔ BOG / Retorno IB6586) · $22,881 MXN",
+        airline: "iberia", price: 22881, occupancy: 79, seatsLeft: 5, aircraft: "A320 + A350",
+        description: "Ida con escala rápida en Madrid el 24 Oct (IB3001/IB6585). Regreso directo nocturno Bogotá → Madrid el 27 Nov.",
         outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
         return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24",
         bookingUrl: "https://www.iberia.com"
       }
@@ -1066,7 +1155,9 @@
           nav.classList.toggle('completed', s < currentStep);
         }
       }
-      if (stepNumber === 2) {
+      if (stepNumber === 1) {
+        initPassengerCountrySelectors();
+      } else if (stepNumber === 2) {
         renderWaypointsList('p1');
         renderWaypointsList('p2');
       } else if (stepNumber === 4) {
@@ -1075,8 +1166,32 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // ─── SELECTORES DE PAÍS & CIUDAD EN CASCADA ───
+    function initPassengerCountrySelectors() {
+      ['p1', 'p2'].forEach(pKey => {
+        const cSelect = document.getElementById(`${pKey}-country-select`);
+        if (!cSelect) return;
+        cSelect.innerHTML = Object.entries(geoCatalog).map(([code, country]) => 
+          `<option value="${code}" ${tripConfig[pKey].country === code ? 'selected' : ''}>${country.name}</option>`
+        ).join('');
+        updateAirportOptions(pKey);
+      });
+    }
+
+    function updateAirportOptions(pKey) {
+      const cSelect = document.getElementById(`${pKey}-country-select`);
+      const aSelect = document.getElementById(`${pKey}-cfg-origin`);
+      if (!cSelect || !aSelect) return;
+      const countryCode = cSelect.value;
+      tripConfig[pKey].country = countryCode;
+      const airports = geoCatalog[countryCode]?.airports || [];
+      aSelect.innerHTML = airports.map(a => 
+        `<option value="${a.name}" ${tripConfig[pKey].origin === a.name ? 'selected' : ''}>${a.name}</option>`
+      ).join('');
+      tripConfig[pKey].origin = aSelect.value;
+    }
+
     function saveStep1AndNext() {
-      // Guardar datos de Pasajero 1
       tripConfig.p1.name = document.getElementById('p1-cfg-name').value || "Mario";
       tripConfig.p1.startDate = document.getElementById('p1-cfg-date').value || "2026-10-16";
       tripConfig.p1.origin = document.getElementById('p1-cfg-origin').value;
@@ -1086,7 +1201,6 @@
       tripConfig.p1.prefs.carry = document.getElementById('p1-pref-carry').checked;
       tripConfig.p1.prefs.seat = document.getElementById('p1-pref-seat').checked;
 
-      // Guardar datos de Pasajero 2 (si existe)
       if (tripConfig.passengerCount >= 2) {
         tripConfig.p2.name = document.getElementById('p2-cfg-name').value || "Yesica";
         tripConfig.p2.startDate = document.getElementById('p2-cfg-date').value || "2026-10-16";
@@ -1098,7 +1212,7 @@
         tripConfig.p2.prefs.seat = document.getElementById('p2-pref-seat').checked;
       }
 
-      showToast('✓ Perfiles de pasajeros guardados con éxito', 'success');
+      showToast('✓ Perfiles y orígenes guardados con éxito', 'success');
       goToStep(2);
     }
 
@@ -1130,18 +1244,35 @@
 
       let html = '';
       wps.forEach((wp, idx) => {
+        const countryKey = wp.country || 'ES';
+        const country = geoCatalog[countryKey] || geoCatalog['ES'];
+        const countryOptions = Object.entries(geoCatalog).map(([k, c]) => 
+          `<option value="${k}" ${countryKey === k ? 'selected' : ''}>${c.name}</option>`
+        ).join('');
+        const cityOptions = country.airports.map(a => 
+          `<option value="${a.code}" ${wp.cityCode === a.code ? 'selected' : ''}>${a.name}</option>`
+        ).join('');
+
         html += `
           <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
             <div class="flex justify-between items-center">
-              <span class="text-xs font-black text-slate-800">📍 Estancia ${idx + 1}: ${wp.name}</span>
+              <span id="wp-title-${pKey}-${idx}" class="text-xs font-black text-slate-800">📍 Estancia ${idx + 1}: ${wp.name}</span>
               <button type="button" onclick="removeWaypoint('${pKey}', ${idx})" class="text-xs text-rose-600 hover:text-rose-800 font-bold px-2 py-0.5 rounded hover:bg-rose-50 transition">
                 ✕ Eliminar
               </button>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
               <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Ciudad Destino</label>
-                <input type="text" onchange="updateWpField('${pKey}', ${idx}, 'name', this.value)" value="${wp.name || ''}" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold">
+                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">🌍 País Destino</label>
+                <select onchange="handleWpCountryChange('${pKey}', ${idx}, this.value)" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                  ${countryOptions}
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">🏙️ Ciudad / Aeropuerto</label>
+                <select id="wp-city-select-${pKey}-${idx}" onchange="handleWpCityChange('${pKey}', ${idx}, this.value)" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                  ${cityOptions}
+                </select>
               </div>
               <div>
                 <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📅 Fecha Llegada</label>
@@ -1170,6 +1301,28 @@
       container.innerHTML = html;
     }
 
+    function handleWpCountryChange(pKey, idx, newCountryCode) {
+      tripConfig[pKey].waypoints[idx].country = newCountryCode;
+      const airports = geoCatalog[newCountryCode]?.airports || [];
+      if (airports.length > 0) {
+        tripConfig[pKey].waypoints[idx].cityCode = airports[0].code;
+        tripConfig[pKey].waypoints[idx].name = airports[0].name.split('—')[1]?.trim() || airports[0].name;
+      }
+      renderWaypointsList(pKey);
+    }
+
+    function handleWpCityChange(pKey, idx, newCityCode) {
+      const countryCode = tripConfig[pKey].waypoints[idx].country || 'ES';
+      const airport = geoCatalog[countryCode]?.airports.find(a => a.code === newCityCode);
+      if (airport) {
+        tripConfig[pKey].waypoints[idx].cityCode = airport.code;
+        tripConfig[pKey].waypoints[idx].name = airport.name.split('—')[1]?.trim() || airport.name;
+        // Actualizar título reactivo
+        const titleEl = document.getElementById(`wp-title-${pKey}-${idx}`);
+        if (titleEl) titleEl.innerText = `📍 Estancia ${idx + 1}: ${tripConfig[pKey].waypoints[idx].name}`;
+      }
+    }
+
     function updateWpField(pKey, idx, field, val) {
       if (tripConfig[pKey].waypoints[idx]) {
         tripConfig[pKey].waypoints[idx][field] = val;
@@ -1178,7 +1331,9 @@
 
     function addWaypoint(pKey) {
       tripConfig[pKey].waypoints.push({
-        name: "Nueva Parada",
+        country: "ES",
+        cityCode: "MAD",
+        name: "Madrid (MAD)",
         arrivalDate: "2026-10-25",
         departureDate: "2026-11-27",
         departureOrigins: "MAD, BCN",
@@ -1206,11 +1361,7 @@
 
     function resetToBlank() {
       tripConfig.p1.name = "Viajero 1";
-      tripConfig.p1.origin = "MEX (Ciudad de México)";
       tripConfig.p2.name = "Viajero 2";
-      tripConfig.p2.origin = "MAD (Madrid Barajas)";
-      document.getElementById('p1-cfg-name').value = "Viajero 1";
-      document.getElementById('p2-cfg-name').value = "Viajero 2";
       goToStep(1);
       showToast('🔄 Formulario restablecido para nuevo viaje', 'info');
     }
@@ -1230,6 +1381,13 @@
       return state.mario.salida && state.mario.salida.startsWith('mex_bog');
     }
 
+    function updateBudgetLimit(val) {
+      budgetLimit = parseInt(val, 10) || 58000;
+      document.getElementById('budget-limit-label').innerHTML = `Límite conjunto: <strong>${formatMXN(budgetLimit)}</strong> (~${formatEUR(budgetLimit)})`;
+      render();
+      showToast(`✓ Presupuesto actualizado a ${formatMXN(budgetLimit)}`, 'info');
+    }
+
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toast-container');
       const t = document.createElement('div');
@@ -1237,6 +1395,218 @@
       t.innerText = msg;
       container.appendChild(t);
       setTimeout(() => { t.remove(); }, 3500);
+    }
+
+    // ─── MODAL EXTENDIDO DE SELECCIÓN DE VUELOS (OTA STYLE) ───
+    function openFlightPickerModal(traveler, segmentKey) {
+      activeModalContext = { traveler, segmentKey, selectedAirline: 'all' };
+      const travelerName = traveler === 'mario' ? tripConfig.p1.name : tripConfig.p2.name;
+      document.getElementById('modal-picker-title').innerText = `Seleccionar Vuelo para ${travelerName}`;
+      document.getElementById('modal-picker-subtitle').innerText = `Tramo: ${segmentKey.replace('-', ' ').toUpperCase()} · Comparador en vivo con disponibilidad y ocupación`;
+      
+      // Resetear tabs
+      filterModalByAirline('all');
+      document.getElementById('flight-picker-modal').classList.remove('hidden');
+      document.getElementById('flight-picker-modal').classList.add('flex');
+    }
+
+    function closeFlightPickerModal() {
+      document.getElementById('flight-picker-modal').classList.add('hidden');
+      document.getElementById('flight-picker-modal').classList.remove('flex');
+    }
+
+    function filterModalByAirline(airline) {
+      activeModalContext.selectedAirline = airline;
+      ['all', 'iberia', 'avianca', 'aeromexico', 'aireuropa'].forEach(al => {
+        const btn = document.getElementById(`flt-btn-${al}`);
+        if (btn) {
+          btn.className = (al === airline || (al === 'all' && airline === 'all') || (al === 'aeromexico' && airline === 'aeromexico-iberia') || (al === 'aireuropa' && airline === 'air-europa'))
+            ? 'px-2.5 py-1 bg-indigo-600 text-white rounded-lg text-xs font-bold'
+            : 'px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold';
+        }
+      });
+      renderModalFlightCards();
+    }
+
+    function renderModalFlightCards() {
+      const container = document.getElementById('modal-flight-cards-container');
+      if (!container) return;
+      const { traveler, segmentKey, selectedAirline } = activeModalContext;
+
+      let options = Object.values(flightsCatalog).filter(f => f.traveler === traveler && f.segment === segmentKey);
+      if (selectedAirline !== 'all') {
+        options = options.filter(f => f.airline === selectedAirline);
+      }
+
+      // Ordenamiento
+      const sortVal = document.getElementById('modal-sort-select').value;
+      if (sortVal === 'price_asc') options.sort((a, b) => a.price - b.price);
+      else if (sortVal === 'price_desc') options.sort((a, b) => b.price - a.price);
+      else if (sortVal === 'direct_first') options.sort((a, b) => (b.direct ? 1 : 0) - (a.direct ? 1 : 0));
+
+      const currentSelectedId = state[traveler][segmentKey === 'transatlantico-inicio' ? 'salida' : (segmentKey === 'alternativo-regreso' ? 'bog_esp' : 'trans')];
+
+      // Verificación de sincronización con el otro pasajero
+      const otherTraveler = traveler === 'mario' ? 'yesica' : 'mario';
+      const otherFlightId = state[otherTraveler]?.trans;
+      const otherFlight = getCatalogBrick(otherFlightId);
+
+      container.innerHTML = options.map(f => {
+        const isSelected = f.id === currentSelectedId;
+        const occ = f.occupancy || 70;
+        const occBadge = occ >= 80 
+          ? `<span class="text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">🔥 ${occ}% Vendido · Quedan ${f.seatsLeft || 3} asientos</span>`
+          : (occ >= 60 
+            ? `<span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">🟡 ${occ}% Ocupación</span>`
+            : `<span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">🟢 ${occ}% Ocupación · Alta disponibilidad</span>`);
+
+        const isJointSegment = segmentKey === 'espana-colombia' || segmentKey === 'alternativo-regreso';
+        let syncBadge = '';
+        if (isJointSegment && otherFlight) {
+          const isSameFlight = (f.outbound?.flightNumber === otherFlight.outbound?.flightNumber) || (f.return?.flightNumber === otherFlight.outbound?.flightNumber);
+          syncBadge = isSameFlight 
+            ? `<span class="text-[11px] font-extrabold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">✨ Sincronizado en Mismo Vuelo</span>`
+            : `<span class="text-[11px] font-bold text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">⚠️ Vuelo diferente a ${otherTraveler === 'yesica' ? 'Yesica' : 'Mario'}</span>`;
+        }
+
+        return `
+          <div class="bg-slate-50 border ${isSelected ? 'border-indigo-600 ring-2 ring-indigo-100 bg-indigo-50/20' : 'border-slate-200'} rounded-2xl p-4 transition hover:border-indigo-300 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-black text-slate-900">${f.title}</span>
+                  ${syncBadge}
+                </div>
+                <div class="flex items-center gap-2 mt-1">
+                  ${occBadge}
+                  <span class="text-[11px] text-slate-500 font-semibold">✈️ ${f.aircraft || 'Aeronave Comercial'}</span>
+                </div>
+              </div>
+              <div class="text-left sm:text-right">
+                <div class="text-lg font-black text-slate-900">${formatMXN(f.price)}</div>
+                <div class="text-xs font-bold text-slate-500">${formatEUR(f.price)}</div>
+              </div>
+            </div>
+
+            <!-- ITINERARIO DEL VUELO -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-slate-800">🛫 Ida: ${f.outbound?.route}</span>
+                <span class="font-extrabold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">${f.outbound?.flightNumber}</span>
+              </div>
+              <div class="text-slate-600 flex justify-between">
+                <span>🕒 Salida/Llegada: <strong>${f.outbound?.schedule}</strong></span>
+                <span>📅 ${f.outbound?.date}</span>
+              </div>
+              ${f.return ? `
+                <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-slate-700">
+                  <span>🛬 Regreso: <strong>${f.return.route}</strong> (${f.return.flightNumber})</span>
+                  <span class="text-slate-500">${f.return.schedule} · ${f.return.date}</span>
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- FOOTER DE TARJETA CON BOTÓN DE SELECCIÓN -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
+              <div class="flex items-center gap-2 text-[11px] text-slate-500 font-bold">
+                <span>${f.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
+                <span>${f.carry ? '✓ Carry-On' : ''}</span>
+                <span>${f.seat ? '✓ Asiento' : ''}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <a href="${f.googleFlightsUrl}" target="_blank" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                  🔍 Google Flights ↗
+                </a>
+                <button onclick="selectFlightFromModal('${f.id}')" class="px-4 py-1.5 ${isSelected ? 'bg-emerald-600 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white'} text-xs font-black rounded-xl shadow-xs transition">
+                  ${isSelected ? '✓ Seleccionado' : 'Seleccionar Vuelo'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectFlightFromModal(flightId) {
+      const { traveler, segmentKey } = activeModalContext;
+      const stateKey = segmentKey === 'transatlantico-inicio' ? 'salida' : (segmentKey === 'alternativo-regreso' ? 'bog_esp' : 'trans');
+      state[traveler][stateKey] = flightId;
+      closeFlightPickerModal();
+      render();
+      showToast('✓ Vuelo actualizado en el itinerario', 'success');
+    }
+
+    // ─── PATH VISUALIZATION RENDERER ───
+    function renderPathVisualization() {
+      const container = document.getElementById('path-visualization-container');
+      if (!container) return;
+
+      const mSal = getCatalogBrick(state.mario.salida);
+      const ySal = getCatalogBrick(state.yesica.salida);
+      const mTrans = isMarioAlt() ? getCatalogBrick(state.mario.bog_esp) : getCatalogBrick(state.mario.trans);
+      const yTrans = getCatalogBrick(state.yesica.trans);
+      const mJointFn = isMarioAlt() ? (mTrans?.return?.flightNumber || 'IB0153') : (mTrans?.outbound?.flightNumber || 'AV19');
+
+      container.innerHTML = `
+        <div class="flex items-center justify-between min-w-[620px] py-4 px-2">
+          <!-- NODO 1: ORÍGENES SEPARADOS -->
+          <div class="path-node">
+            <div class="space-y-2 text-center">
+              <div class="bg-blue-900/80 border border-blue-500/50 text-blue-300 px-3 py-1.5 rounded-xl text-xs font-black shadow-sm">
+                👤 Mario: MEX
+              </div>
+              <div class="bg-pink-900/80 border border-pink-500/50 text-pink-300 px-3 py-1.5 rounded-xl text-xs font-black shadow-sm">
+                👤 Yesica: SPC
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400 font-bold mt-2">16 Oct · Salida</span>
+          </div>
+
+          <!-- LÍNEAS DE VUELO INDEPENDIENTES HACIA MADRID -->
+          <div class="path-line bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500"></div>
+
+          <!-- NODO 2: CONVERGENCIA EN MADRID / BARCELONA -->
+          <div class="path-node">
+            <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-900 font-black text-xs ring-4 ring-emerald-500/20 shadow-md">
+              📍
+            </div>
+            <span class="text-xs font-black text-emerald-400 mt-1.5">Madrid / BCN</span>
+            <span class="text-[10px] text-slate-400 font-bold">17 - 24 Oct (AVE)</span>
+          </div>
+
+          <!-- LÍNEA GRUESA CONJUNTA: SALTO TRANSATLÁNTICO A BOGOTÁ -->
+          <div class="path-line bg-emerald-500 h-1.5 flex items-center justify-center">
+            <span class="bg-emerald-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm">
+              ✈️ ${mJointFn} Conjunto
+            </span>
+          </div>
+
+          <!-- NODO 3: ESTANCIA CONJUNTA EN COLOMBIA -->
+          <div class="path-node">
+            <div class="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-900 font-black text-xs ring-4 ring-emerald-500/20 shadow-md">
+              ☕
+            </div>
+            <span class="text-xs font-black text-emerald-400 mt-1.5">Bogotá (BOG)</span>
+            <span class="text-[10px] text-slate-400 font-bold">24 Oct - 27 Nov</span>
+          </div>
+
+          <!-- LÍNEA DE BIFURCACIÓN DE RETORNO -->
+          <div class="path-line bg-gradient-to-r from-emerald-500 via-indigo-500 to-pink-500"></div>
+
+          <!-- NODO 4: BIFURCACIÓN Y RETORNO A CASA -->
+          <div class="path-node">
+            <div class="space-y-2 text-center">
+              <div class="bg-blue-900/80 border border-blue-500/50 text-blue-300 px-3 py-1.5 rounded-xl text-xs font-black shadow-sm">
+                👤 Mario ➔ MEX
+              </div>
+              <div class="bg-pink-900/80 border border-pink-500/50 text-pink-300 px-3 py-1.5 rounded-xl text-xs font-black shadow-sm">
+                👤 Yesica ➔ SPC
+              </div>
+            </div>
+            <span class="text-[10px] text-slate-400 font-bold mt-2">27-28 Nov · Llegada</span>
+          </div>
+        </div>
+      `;
     }
 
     // ─── RENDERIZADO DEL PASO 4 (RESULTADOS) ───
@@ -1303,16 +1673,6 @@
       });
     }
 
-    function buildFlightGroupedOptions(traveler, segmentKey, currentFlightId) {
-      const allOptions = Object.values(flightsCatalog).filter(f => f.traveler === traveler && f.segment === segmentKey);
-      let html = '';
-      allOptions.forEach(opt => {
-        const isSelected = opt.id === currentFlightId;
-        html += `<option value="${opt.id}" ${isSelected ? 'selected' : ''}>${opt.title} — ${formatMXN(opt.price)} (${formatEUR(opt.price)})</option>`;
-      });
-      return html;
-    }
-
     function buildSelectCard(traveler, seg) {
       const currentFlightId = state[traveler][seg.key];
       const flight = getCatalogBrick(currentFlightId);
@@ -1328,31 +1688,33 @@
             </div>
             <span class="text-xs font-black text-slate-900">${flight ? formatMXN(flight.price) : '$0'}</span>
           </div>
-          <div>
-            <select onchange="updateFlightSelection('${traveler}', '${seg.key}', this.value)" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
-              ${buildFlightGroupedOptions(traveler, seg.segment, currentFlightId)}
-            </select>
-          </div>
-          ${flight ? `
-            <div class="bg-white p-3 rounded-xl border border-slate-100 text-xs space-y-1.5">
-              <div class="flex justify-between items-center">
-                <span class="font-bold text-slate-800">🛫 ${flight.outbound.route}</span>
-                <span class="font-extrabold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">${flight.outbound.flightNumber}</span>
+
+          <!-- BOTÓN PARA ABRIR MODAL OTA -->
+          <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200">
+            <div>
+              <div class="text-xs font-black text-slate-900">${flight ? flight.title : 'Seleccionar Vuelo'}</div>
+              <div class="text-[11px] text-slate-500 font-semibold mt-0.5">
+                ${flight ? `🛫 ${flight.outbound?.route} · 🕒 ${flight.outbound?.schedule}` : 'Haz clic para ver alternativas'}
               </div>
-              <div class="text-slate-500 font-medium">🕒 Horario: <strong>${flight.outbound.schedule}</strong> · 📅 ${flight.outbound.date}</div>
-              <div class="flex justify-between items-center pt-2 border-t border-slate-100">
-                <div class="flex gap-2 text-[11px] font-bold text-slate-500">
-                  <span>${flight.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
-                  <span>${flight.seat ? '✓ Asiento' : ''}</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <a href="${flight.googleFlightsUrl}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold text-[11px] flex items-center gap-0.5">
-                    🔍 Google Flights ↗
-                  </a>
-                  <a href="${flight.bookingUrl}" target="_blank" class="text-emerald-700 hover:text-emerald-900 font-bold text-[11px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    💳 Comprar ↗
-                  </a>
-                </div>
+            </div>
+            <button onclick="openFlightPickerModal('${traveler}', '${seg.segment}')" class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-extrabold rounded-xl border border-indigo-200 transition shrink-0">
+              ✈️ Cambiar Vuelo
+            </button>
+          </div>
+
+          ${flight ? `
+            <div class="flex justify-between items-center text-[11px] pt-1">
+              <div class="flex gap-2 text-slate-500 font-bold">
+                <span>${flight.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
+                <span>${flight.seat ? '✓ Asiento' : ''}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <a href="${flight.googleFlightsUrl}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold">
+                  🔍 Google Flights ↗
+                </a>
+                <a href="${flight.bookingUrl}" target="_blank" class="text-emerald-700 hover:text-emerald-900 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  💳 Comprar ↗
+                </a>
               </div>
             </div>
           ` : ''}
@@ -1397,11 +1759,6 @@
           </div>
         </div>
       `;
-    }
-
-    function updateFlightSelection(traveler, key, flightId) {
-      state[traveler][key] = flightId;
-      render();
     }
 
     function applyPreset(type) {
@@ -1529,17 +1886,14 @@
     }
 
     function render() {
-      // Actualizar nombres en Paso 4
       document.getElementById('p1-name-display').innerText = tripConfig.p1.name;
       document.getElementById('p1-origin-display').innerText = `Salida: ${tripConfig.p1.origin} · Pasaporte ${tripConfig.p1.nationality}`;
       document.getElementById('p2-name-display').innerText = tripConfig.p2.name;
       document.getElementById('p2-origin-display').innerText = `Salida: ${tripConfig.p2.origin} · Residencia ${tripConfig.p2.nationality}`;
 
-      // Renderizar columnas LEGO
       renderTravelerColumn('mario', 'col-mario');
       renderTravelerColumn('yesica', 'col-yesica');
 
-      // Calcular costos
       const mCost = calculateTravelerCost('mario');
       const yCost = calculateTravelerCost('yesica');
       const totalCost = mCost + yCost;
@@ -1550,63 +1904,24 @@
       document.getElementById('cost-display').innerText = formatMXN(totalCost);
       document.getElementById('cost-display-eur').innerText = formatEUR(totalCost);
 
-      // Barra de presupuesto
-      const pct = Math.min(100, Math.round((totalCost / BUDGET_LIMIT) * 100));
+      const pct = Math.min(100, Math.round((totalCost / budgetLimit) * 100));
       const bar = document.getElementById('budget-bar');
       bar.style.width = pct + '%';
-      bar.className = 'h-full transition-all duration-500 rounded-full ' + (totalCost <= BUDGET_LIMIT ? 'bg-emerald-500' : 'bg-rose-500');
+      bar.className = 'h-full transition-all duration-500 rounded-full ' + (totalCost <= budgetLimit ? 'bg-emerald-500' : 'bg-rose-500');
 
-      document.getElementById('budget-percent').innerText = `${pct}% del presupuesto utilizado (${formatMXN(totalCost)})`;
+      document.getElementById('budget-percent').innerText = `${pct}% del presupuesto (${formatMXN(totalCost)})`;
       const statusEl = document.getElementById('budget-status');
-      if (totalCost <= BUDGET_LIMIT) {
-        statusEl.className = 'text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-200 self-start sm:self-auto';
-        statusEl.innerText = `✓ Dentro del presupuesto (Ahorro de ${formatMXN(BUDGET_LIMIT - totalCost)})`;
+      if (totalCost <= budgetLimit) {
+        statusEl.className = 'text-xs font-extrabold text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-200 self-start sm:self-auto';
+        statusEl.innerText = `✓ Dentro del presupuesto (Ahorro de ${formatMXN(budgetLimit - totalCost)})`;
       } else {
-        statusEl.className = 'text-xs font-extrabold text-rose-700 bg-rose-50 px-3.5 py-2 rounded-xl border border-rose-200 self-start sm:self-auto';
-        statusEl.innerText = `⚠️ Excede por ${formatMXN(totalCost - BUDGET_LIMIT)}`;
+        statusEl.className = 'text-xs font-extrabold text-rose-700 bg-rose-50 px-3.5 py-1.5 rounded-xl border border-rose-200 self-start sm:self-auto';
+        statusEl.innerText = `⚠️ Excede por ${formatMXN(totalCost - budgetLimit)}`;
       }
 
       renderAlerts();
+      renderPathVisualization();
       renderTimeline();
-    }
-
-    // Modal Custom Flight
-    function openCustomFlightModal(traveler, segment) {
-      document.getElementById('form-traveler').value = traveler;
-      document.getElementById('form-segment').value = segment;
-      document.getElementById('custom-flight-modal').classList.remove('hidden');
-      document.getElementById('custom-flight-modal').classList.add('flex');
-    }
-    function closeCustomFlightModal() {
-      document.getElementById('custom-flight-modal').classList.add('hidden');
-      document.getElementById('custom-flight-modal').classList.remove('flex');
-    }
-    function handleSaveCustomFlight(e) {
-      e.preventDefault();
-      const traveler = document.getElementById('form-traveler').value;
-      const segment = document.getElementById('form-segment').value;
-      const id = 'custom_' + Date.now();
-      const title = document.getElementById('form-title').value;
-      const price = parseInt(document.getElementById('form-price').value, 10);
-      const airline = document.getElementById('form-airline').value;
-      const route = document.getElementById('form-route').value;
-      const schedule = document.getElementById('form-sched').value;
-      const flightNumber = document.getElementById('form-flightno').value;
-      const date = document.getElementById('form-date').value;
-
-      flightsCatalog[id] = {
-        id, traveler, segment, title, price, airline,
-        description: "Opción personalizada agregada por el usuario.",
-        outbound: { route, schedule, flightNumber, date },
-        class: "Personalizado", bag: true, carry: true, seat: true, train: false,
-        googleFlightsUrl: "https://www.google.com/travel/flights",
-        bookingUrl: "https://www.google.com/travel/flights"
-      };
-
-      state[traveler][segment === 'transatlantico-inicio' ? 'salida' : (segment === 'alternativo-regreso' ? 'bog_esp' : 'trans')] = id;
-      closeCustomFlightModal();
-      render();
-      showToast('✓ Vuelo personalizado agregado', 'success');
     }
 
     // Inicialización automática
