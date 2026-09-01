@@ -1251,80 +1251,212 @@ let flightsCatalog = {
     id: "yes_spc_mad_16_1815", traveler: "yesica", segment: "transatlantico-inicio",
     title: "Iberia Express (Retorno Tarde 18:15) · Escala 3h 45m",
     airline: "iberia-express", price: 3646,
-    description: "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de escala holgada en Madrid.",
+    description: "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de escala holgada en Madrid Barajas T4.",
     outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
     return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "18:15 → 22:00", flightNumber: "I23844", date: "Sábado 28 Nov 2026" },
     class: "Tarifa Óptima", bag: true, carry: true, seat: true, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16%20through%202026-11-28",
     bookingUrl: "https://www.iberiaexpress.com"
   },
+  "yes_spc_mad_16_noon": {
+    id: "yes_spc_mad_16_noon", traveler: "yesica", segment: "transatlantico-inicio",
+    title: "Iberia Express (Salida Diurna 12:15) · $3,800 MXN",
+    airline: "iberia-express", price: 3800,
+    description: "Vuelo diurno directo SPC ➔ MAD saliendo a las 12:15 y aterrizando a las 16:00 en Madrid. Retorno el 28 Nov a las 16:45.",
+    outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "12:15 → 16:00", flightNumber: "I23843", date: "Viernes 16 Oct 2026" },
+    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "16:45 → 19:35", flightNumber: "IB3842", date: "Sábado 28 Nov 2026" },
+    class: "Tarifa Clásica", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16",
+    bookingUrl: "https://www.iberiaexpress.com"
+  },
+  "yes_spc_mad_16_early": {
+    id: "yes_spc_mad_16_early", traveler: "yesica", segment: "transatlantico-inicio",
+    title: "Iberia Express (Madrugada 07:00) · $3,450 MXN",
+    airline: "iberia-express", price: 3450,
+    description: "Vuelo matutino directo SPC ➔ MAD llegando a las 10:45 del viernes a Madrid.",
+    outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "07:00 → 10:45", flightNumber: "I23839", date: "Viernes 16 Oct 2026" },
+    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "16:45 → 19:35", flightNumber: "IB3842", date: "Sábado 28 Nov 2026" },
+    class: "Tarifa Económica", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16",
+    bookingUrl: "https://www.iberiaexpress.com"
+  },
+  "yes_spc_mad_binter_dir": {
+    id: "yes_spc_mad_binter_dir", traveler: "yesica", segment: "transatlantico-inicio",
+    title: "Binter Canarias (Vuelo Directo Embraer E195-E2) · $4,950 MXN",
+    airline: "binter", price: 4950,
+    description: "Vuelo directo de Binter Canarias en reactor Embraer con catering gourmet incluido.",
+    outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "15:30 → 19:20", flightNumber: "NT5100", date: "Viernes 16 Oct 2026" },
+    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "17:30 → 19:30", flightNumber: "NT5101", date: "Sábado 28 Nov 2026" },
+    class: "Tarifa Binter Plus", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Binter%20to%20MAD%20from%20SPC%20on%202026-10-16",
+    bookingUrl: "https://www.bintercanarias.com"
+  },
   "yes_spc_mad_17": {
     id: "yes_spc_mad_17", traveler: "yesica", segment: "transatlantico-inicio",
-    title: "Binter Canarias (Sáb 17 Oct, Escala Tenerife TFN)",
-    airline: "binter", price: 5000,
-    description: "Con escala en Tenerife Norte (TFN). Más de 5 horas de viaje.",
+    title: "Binter Canarias (Sáb 17 Oct, Escala Tenerife TFN) · $4,800 MXN",
+    airline: "binter", price: 4800,
+    description: "Con escala en Tenerife Norte (TFN). Conexión interinsular hacia Madrid.",
     outbound: { route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)", schedule: "08:30 → 13:30", flightNumber: "NT342/NT201", date: "Sábado 17 Oct 2026" },
     return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "12:00 → 15:45", flightNumber: "NT5120", date: "Sábado 28 Nov 2026" },
-    class: "Tarifa Básica", bag: false, carry: true, seat: false, train: false,
+    class: "Tarifa Básica", bag: true, carry: true, seat: false, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-17",
     bookingUrl: "https://www.bintercanarias.com"
   },
+  "yes_spc_mad_vueling": {
+    id: "yes_spc_mad_vueling", traveler: "yesica", segment: "transatlantico-inicio",
+    title: "Vueling / Iberia (Conexión Madrid Barajas T4) · $4,100 MXN",
+    airline: "vueling", price: 4100,
+    description: "Opción combinada de Vueling e Iberia para el tramo peninsular.",
+    outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "14:00 → 18:00", flightNumber: "VY3151", date: "Viernes 16 Oct 2026" },
+    return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "16:45 → 19:35", flightNumber: "IB3842", date: "Sábado 28 Nov 2026" },
+    class: "Tarifa Optima", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Vueling%20to%20MAD%20from%20SPC%20on%202026-10-16",
+    bookingUrl: "https://www.vueling.com"
+  },
 
-  // ─── YESICA: ESPAÑA ➔ COLOMBIA (MULTIDESTINO, SÁBADO 24 OCTUBRE) ───
-  "yes_trans_iberia": {
-    id: "yes_trans_iberia", traveler: "yesica", segment: "espana-colombia",
-    title: "Iberia (BCN ➔ MAD ➔ BOG / Retorno BOG ➔ MAD directo)",
-    airline: "iberia", price: 22881,
-    description: "Ida con escala rápida en Madrid el 24 Oct (IB3001/IB6585). Regreso directo nocturno Bogotá → Madrid el 27 Nov (IB6586).",
-    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
-    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
-    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24%20through%202026-11-27%20from%20BOG%20to%20MAD",
-    bookingUrl: "https://www.iberia.com"
-  },
-  "yes_trans_iberia_mad": {
-    id: "yes_trans_iberia_mad", traveler: "yesica", segment: "espana-colombia",
-    title: "Iberia Directo MAD ➔ BOG (IB6585 / Retorno IB6586)",
-    airline: "iberia", price: 21900,
-    description: "Ida directa desde Madrid Barajas T4 el 24 Oct a las 14:30. Regreso directo Bogotá → Madrid el 27 Nov.",
-    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "IB6585", date: "Sábado 24 Oct 2026" },
-    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
-    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB6585%20to%20BOG%20from%20MAD%20on%202026-10-24",
-    bookingUrl: "https://www.iberia.com"
-  },
+  // ─── YESICA: ESPAÑA ➔ COLOMBIA (MULTIDESTINO, SÁBADO 24 OCTUBRE - 27 NOVIEMBRE) ───
   "yes_trans_avianca": {
     id: "yes_trans_avianca", traveler: "yesica", segment: "espana-colombia",
-    title: "Avianca (BCN ➔ BOG directo / Retorno BOG ➔ MAD directo)",
+    title: "Avianca (BCN ➔ BOG directo / Retorno AV10 BOG ➔ MAD directo) ⭐",
     airline: "avianca", price: 25000,
-    description: "Vuelo directo BCN-BOG el 24 Oct (AV19, coincide con Mario). Regreso directo BOG-MAD el 27 Nov en AV10.",
+    description: "Vuelo directo BCN-BOG el 24 Oct (AV19 14:30, coincide exactamente con Mario). Regreso directo nocturno BOG-MAD el 27 Nov en AV10 (20:00 → 11:30+1).",
     outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24%20through%202026-11-27%20from%20BOG%20to%20MAD",
     bookingUrl: "https://www.avianca.com"
   },
+  "yes_trans_avianca_alt": {
+    id: "yes_trans_avianca_alt", traveler: "yesica", segment: "espana-colombia",
+    title: "Avianca (BCN ➔ BOG directo AV19 / Retorno AV26 BOG ➔ MAD 21:00)",
+    airline: "avianca", price: 24500,
+    description: "Ida directa con Mario en AV19. Regreso el 27 Nov a las 21:00 en AV26 llegando a las 14:15 a Madrid.",
+    outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:00 → 14:15 (+1)", flightNumber: "AV26", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24",
+    bookingUrl: "https://www.avianca.com"
+  },
+  "yes_trans_iberia": {
+    id: "yes_trans_iberia", traveler: "yesica", segment: "espana-colombia",
+    title: "Iberia (BCN ➔ MAD ➔ BOG / Retorno IB6586 BOG ➔ MAD directo)",
+    airline: "iberia", price: 22881,
+    description: "Ida con escala rápida en Madrid el 24 Oct (IB3001/IB6585 en A350). Regreso directo nocturno Bogotá → Madrid el 27 Nov (IB6586 23:00 → 14:30+1).",
+    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24%20through%202026-11-27%20from%20BOG%20to%20MAD",
+    bookingUrl: "https://www.iberia.com"
+  },
+  "yes_trans_aireuropa": {
+    id: "yes_trans_aireuropa", traveler: "yesica", segment: "espana-colombia",
+    title: "Air Europa (BCN ➔ MAD ➔ BOG / Retorno UX22 BOG ➔ MAD)",
+    airline: "air-europa", price: 20500,
+    description: "Ida de Barcelona con escala rápida en Madrid Barajas (UX7701/UX193 en 787). Regreso directo BOG ➔ MAD en UX22 (21:30 → 13:45+1).",
+    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "11:30 → 19:35", flightNumber: "UX7701/UX193", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:30 → 13:45 (+1)", flightNumber: "UX22", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Economy Multidestino", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20BOG%20from%20BCN%20on%202026-10-24",
+    bookingUrl: "https://www.aireuropa.com"
+  },
+  "yes_trans_airfrance": {
+    id: "yes_trans_airfrance", traveler: "yesica", segment: "espana-colombia",
+    title: "Air France (BCN ➔ CDG ➔ BOG / Retorno BOG ➔ CDG ➔ MAD)",
+    airline: "air-europa", price: 21900,
+    description: "Ida desde Barcelona con escala en París CDG (AF1401/AF422). Regreso transatlántico en Boeing 777 con enlace a Madrid.",
+    outbound: { route: "Barcelona (BCN) ➔ París (CDG) ➔ Bogotá (BOG)", schedule: "09:30 → 17:05", flightNumber: "AF1401/AF422", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ París (CDG) ➔ Madrid (MAD)", schedule: "18:00 → 14:20 (+1)", flightNumber: "AF423/AF1400", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Standard", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20France%20from%20BCN%20to%20BOG%20on%202026-10-24",
+    bookingUrl: "https://www.airfrance.com"
+  },
+  "yes_trans_klm": {
+    id: "yes_trans_klm", traveler: "yesica", segment: "espana-colombia",
+    title: "KLM Royal Dutch (BCN ➔ AMS ➔ BOG / Retorno BOG ➔ AMS ➔ MAD)",
+    airline: "air-europa", price: 22200,
+    description: "Ida con escala en Ámsterdam Schiphol (KL1702/KL749). Regreso con Boeing 787 hacia Madrid.",
+    outbound: { route: "Barcelona (BCN) ➔ Ámsterdam (AMS) ➔ Bogotá (BOG)", schedule: "08:45 → 18:20", flightNumber: "KL1702/KL749", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Ámsterdam (AMS) ➔ Madrid (MAD)", schedule: "19:15 → 16:30 (+1)", flightNumber: "KL745/KL1701", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Standard", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20KLM%20from%20BCN%20to%20BOG%20on%202026-10-24",
+    bookingUrl: "https://www.klm.com"
+  },
+  "yes_trans_iberia_mad": {
+    id: "yes_trans_iberia_mad", traveler: "yesica", segment: "espana-colombia",
+    title: "Iberia Directo MAD ➔ BOG (IB6585 / Retorno IB6586)",
+    airline: "iberia", price: 21900,
+    description: "Ida directa desde Madrid Barajas T4 el 24 Oct a las 14:30 en A350. Regreso directo nocturno Bogotá → Madrid el 27 Nov.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "IB6585", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB6585%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.iberia.com"
+  },
+  "yes_trans_iberia_mad_night": {
+    id: "yes_trans_iberia_mad_night", traveler: "yesica", segment: "espana-colombia",
+    title: "Iberia Directo Nocturno MAD ➔ BOG (IB6587 / Retorno IB6586)",
+    airline: "iberia", price: 21500,
+    description: "Ida nocturna directa MAD-BOG (00:20 → 04:30) y regreso directo nocturno BOG-MAD.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "00:20 → 04:30", flightNumber: "IB6587", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Classic", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB6587%20from%20MAD%20to%20BOG%20on%202026-10-24",
+    bookingUrl: "https://www.iberia.com"
+  },
   "yes_trans_avianca_mad": {
     id: "yes_trans_avianca_mad", traveler: "yesica", segment: "espana-colombia",
     title: "Avianca Directo MAD ➔ BOG (AV11 / Retorno AV10)",
     airline: "avianca", price: 22500,
-    description: "Ida directa desde Madrid a las 12:45 en AV11. Regreso directo nocturno BOG-MAD en AV10.",
+    description: "Ida directa diurna desde Madrid a las 12:45 en AV11. Regreso directo nocturno BOG-MAD en AV10.",
     outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:45 → 16:45", flightNumber: "AV11", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
     class: "Tarifa Classic Multidestino", bag: true, carry: true, seat: true, train: false,
     googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20AV11%20to%20BOG%20from%20MAD%20on%202026-10-24",
     bookingUrl: "https://www.avianca.com"
   },
-  "yes_trans_aireuropa": {
-    id: "yes_trans_aireuropa", traveler: "yesica", segment: "espana-colombia",
-    title: "Air Europa (BCN ➔ MAD ➔ BOG / Retorno UX22 BOG ➔ MAD)",
-    airline: "air-europa", price: 20500,
-    description: "Ida de Barcelona con escala rápida en Madrid Barajas (UX7701/UX193). Regreso directo BOG ➔ MAD en UX22.",
-    outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "11:30 → 19:35", flightNumber: "UX7701/UX193", date: "Sábado 24 Oct 2026" },
+  "yes_trans_aireuropa_mad": {
+    id: "yes_trans_aireuropa_mad", traveler: "yesica", segment: "espana-colombia",
+    title: "Air Europa Directo Dreamliner MAD ➔ BOG (UX193 / Retorno UX22)",
+    airline: "air-europa", price: 19200,
+    description: "Ida directa en Boeing 787 Dreamliner desde Madrid Barajas (15:35 → 19:35) y regreso directo UX22.",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "15:35 → 19:35", flightNumber: "UX193", date: "Sábado 24 Oct 2026" },
     return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:30 → 13:45 (+1)", flightNumber: "UX22", date: "Viernes 27 Nov 2026" },
-    class: "Tarifa Economy Multidestino", bag: true, carry: true, seat: true, train: false,
-    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20BOG%20from%20BCN%20on%202026-10-24",
+    class: "Tarifa Economy Directo", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20UX193%20from%20MAD%20to%20BOG%20on%202026-10-24",
     bookingUrl: "https://www.aireuropa.com"
+  },
+  "yes_trans_latam_mad": {
+    id: "yes_trans_latam_mad", traveler: "yesica", segment: "espana-colombia",
+    title: "LATAM Airlines Directo MAD ➔ BOG (LA710 / Retorno LA711)",
+    airline: "avianca", price: 21200,
+    description: "Vuelo directo transatlántico Madrid-Bogotá con LATAM Airlines (16:15 → 20:45).",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:15 → 20:45", flightNumber: "LA710", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "22:45 → 14:40 (+1)", flightNumber: "LA711", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Light/Plus", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20LATAM%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.latamairlines.com"
+  },
+  "yes_trans_plusultra_mad": {
+    id: "yes_trans_plusultra_mad", traveler: "yesica", segment: "espana-colombia",
+    title: "Plus Ultra Directo MAD ➔ BOG (PU301 / Retorno PU302) · $18,400 MXN",
+    airline: "air-europa", price: 18400,
+    description: "Opción más económica de vuelo redondo directo Madrid ↔ Bogotá (13:00 → 17:30).",
+    outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "13:00 → 17:30", flightNumber: "PU301", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "19:30 → 12:00 (+1)", flightNumber: "PU302", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Básica Directa", bag: true, carry: true, seat: true, train: false,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Plus%20Ultra%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.plusultra.com"
+  },
+  "yes_trans_avianca_ave": {
+    id: "yes_trans_avianca_ave", traveler: "yesica", segment: "espana-colombia",
+    title: "Avianca (desde MAD) + Tren AVE BCN ➔ MAD Incluido · $21,000 MXN",
+    airline: "avianca", price: 21000,
+    description: "Ida el 24 Oct combinando tren AVE BCN→MAD + Vuelo directo AV27 MAD→BOG (15:45). Regreso directo BOG→MAD en AV10.",
+    outbound: { route: "BCN ➔ MAD (Tren AVE) + MAD ➔ BOG (Vuelo)", schedule: "Tren: 3h | Vuelo: 10h (15:45 → 19:45)", flightNumber: "AVE/AV27", date: "Sábado 24 Oct 2026" },
+    return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
+    class: "Tarifa Classic + AVE", bag: true, carry: true, seat: true, train: true,
+    googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20MAD%20on%202026-10-24",
+    bookingUrl: "https://www.avianca.com"
   },
   "yes_trans_europa_mad": {
     id: "yes_trans_europa_mad", traveler: "yesica", segment: "espana-colombia",
@@ -2040,27 +2172,31 @@ function buildFlightGroupedOptions(traveler, segmentKey, currentFlightId) {
   } else if (segmentKey === 'espana-colombia') {
     groups = [
       {
-        label: "✈️ Salidas desde Barcelona (BCN ➔ BOG: Avianca AV19, Iberia, Air Europa)",
-        filter: f => f.id.includes('_bcn')
+        label: "✈️ Salidas desde Barcelona (BCN ➔ BOG: Avianca AV19 directo, Iberia, Air Europa, Air France, KLM)",
+        filter: f => ['esp_col_avianca_bcn', 'esp_col_iberia_bcn', 'esp_col_aireuropa_bcn', 'yes_trans_avianca', 'yes_trans_avianca_alt', 'yes_trans_iberia', 'yes_trans_aireuropa', 'yes_trans_airfrance', 'yes_trans_klm'].includes(f.id) || (f.outbound && f.outbound.route && f.outbound.route.startsWith('Barcelona'))
       },
       {
-        label: "✈️ Salidas desde Madrid (MAD ➔ BOG: Iberia IB6585, Avianca, Air Europa, LATAM, Plus Ultra)",
-        filter: f => f.id.includes('_mad') && !f.id.includes('europa_mad') && !f.id.includes('avianca_mad')
+        label: "✈️ Salidas Directas desde Madrid (MAD ➔ BOG: Iberia A350, Avianca, Air Europa, LATAM, Plus Ultra)",
+        filter: f => !f.train && !f.id.includes('ave') && !f.id.includes('europa_mad') && !f.id.includes('avianca_ave') && ['esp_col_iberia_mad_direct', 'esp_col_iberia_mad_night', 'esp_col_avianca_mad_direct', 'esp_col_aireuropa_mad', 'esp_col_latam_mad', 'esp_col_plusultra_mad', 'yes_trans_iberia_mad', 'yes_trans_iberia_mad_night', 'yes_trans_avianca_mad', 'yes_trans_aireuropa_mad', 'yes_trans_latam_mad', 'yes_trans_plusultra_mad'].includes(f.id)
       },
       {
-        label: "🚄 Combinado Tren AVE + Vuelo desde Madrid Barajas",
-        filter: f => f.id.includes('europa_mad') || f.id.includes('avianca_mad')
+        label: "🚄 Combinado Tren AVE (Barcelona ➔ Madrid) + Vuelo Directo a Bogotá",
+        filter: f => f.train || f.id.includes('ave') || f.id.includes('europa_mad') || f.id.includes('avianca_mad')
       }
     ];
   } else if (traveler === 'yesica' && segmentKey === 'transatlantico-inicio') {
     groups = [
       {
-        label: "✈️ Iberia Express (Vuelos Directos SPC ➔ MAD Barajas)",
+        label: "✈️ Iberia Express (Vuelos Directos SPC ➔ MAD Barajas T4)",
         filter: f => f.id.startsWith('yes_spc_mad_16')
       },
       {
-        label: "✈️ Binter Canarias (Conexión vía Tenerife TFN)",
+        label: "✈️ Binter Canarias (Vuelos Directos & Escalas Canarias)",
         filter: f => f.id.includes('binter') || f.id.includes('yes_spc_mad_17')
+      },
+      {
+        label: "✈️ Vueling / Conexiones Peninsulares",
+        filter: f => f.id.includes('vueling')
       }
     ];
   }
