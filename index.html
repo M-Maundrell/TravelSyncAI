@@ -636,8 +636,8 @@
 
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
                 <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Fecha de Vuelo Conjunto</label>
-                  <input type="text" id="cfg-joint-date" value="Sábado 24 Octubre 2026" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Fecha de Vuelo Conjunto (Calendario)</label>
+                  <input type="date" id="cfg-joint-date" value="2026-10-24" class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-xs font-bold text-slate-800">
                 </div>
                 <div>
                   <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Orígenes de Salida Permitidos</label>
@@ -731,8 +731,8 @@
                 <input type="text" id="form-fn" placeholder="IB0152" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
               </div>
               <div>
-                <label class="block text-xs font-bold text-slate-400 mb-1">Fecha</label>
-                <input type="text" id="form-date" placeholder="Vie 16 Oct" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold">
+                <label class="block text-xs font-bold text-slate-400 mb-1">Fecha (Calendario)</label>
+                <input type="date" id="form-date" value="2026-10-16" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold text-slate-800">
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-400 mb-1">Ruta</label>
@@ -754,7 +754,7 @@
             <h4 class="text-xs font-bold text-slate-600 uppercase tracking-wider">Detalles de Tramo de Regreso</h4>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               <div><label class="block text-xs font-bold text-slate-400 mb-1">Nº Vuelo</label><input type="text" id="form-ret-fn" placeholder="IB6586" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
-              <div><label class="block text-xs font-bold text-slate-400 mb-1">Fecha</label><input type="text" id="form-ret-date" placeholder="Vie 27 Nov" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
+              <div><label class="block text-xs font-bold text-slate-400 mb-1">Fecha (Calendario)</label><input type="date" id="form-ret-date" value="2026-11-27" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold text-slate-800"></div>
               <div><label class="block text-xs font-bold text-slate-400 mb-1">Ruta</label><input type="text" id="form-ret-route" placeholder="BOG ➔ MAD" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
               <div><label class="block text-xs font-bold text-slate-400 mb-1">Horario</label><input type="text" id="form-ret-sched" placeholder="23:00 → 14:30" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-sm font-semibold"></div>
             </div>
@@ -1362,10 +1362,35 @@ function buildAirportSelectOptions(selectedCode, includeNone = false) {
   return html;
 }
 
+// ══════════════════════════════════════════════════
+// FORMATEADORES DE FECHAS & DATEPICKERS
+// ══════════════════════════════════════════════════
+function formatToISODate(str) {
+  if (!str) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+  const match = str.match(/(\d{1,2})/);
+  const day = match ? String(match[1]).padStart(2, '0') : '16';
+  const month = str.toLowerCase().includes('nov') ? '11' : '10';
+  return `2026-${month}-${day}`;
+}
+
+function formatReadableDate(isoStr) {
+  if (!isoStr) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(isoStr)) {
+    const [yyyy, mm, dd] = isoStr.split('-');
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const d = new Date(parseInt(yyyy), parseInt(mm) - 1, parseInt(dd));
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const dayName = dayNames[d.getDay()] || '';
+    return `${dayName} ${parseInt(dd)} ${months[parseInt(mm) - 1]} ${yyyy}`;
+  }
+  return isoStr;
+}
+
 function openTripConfigModal() {
   document.getElementById('cfg-p1-name').value = tripConfig.p1.name;
   document.getElementById('cfg-p1-origin').value = tripConfig.p1.origin.includes('MEX') ? 'MEX' : (tripConfig.p1.origin.includes('MAD') ? 'MAD' : tripConfig.p1.origin);
-  document.getElementById('cfg-p1-date').value = tripConfig.p1.startDate;
+  document.getElementById('cfg-p1-date').value = formatToISODate(tripConfig.p1.startDate);
   document.getElementById('cfg-p1-nat').value = tripConfig.p1.nationality;
   document.getElementById('cfg-p1-visa-usa').checked = tripConfig.p1.visas.includes('USA');
   document.getElementById('cfg-p1-visa-es').checked = tripConfig.p1.visas.includes('ES_RESIDENCY');
@@ -1373,11 +1398,16 @@ function openTripConfigModal() {
 
   document.getElementById('cfg-p2-name').value = tripConfig.p2.name;
   document.getElementById('cfg-p2-origin').value = tripConfig.p2.origin.includes('SPC') ? 'SPC' : (tripConfig.p2.origin.includes('MAD') ? 'MAD' : tripConfig.p2.origin);
-  document.getElementById('cfg-p2-date').value = tripConfig.p2.startDate;
+  document.getElementById('cfg-p2-date').value = formatToISODate(tripConfig.p2.startDate);
   document.getElementById('cfg-p2-nat').value = tripConfig.p2.nationality;
   document.getElementById('cfg-p2-visa-es').checked = tripConfig.p2.visas.includes('ES_RESIDENCY');
   document.getElementById('cfg-p2-visa-usa').checked = tripConfig.p2.visas.includes('USA');
   document.getElementById('cfg-p2-visa-can').checked = tripConfig.p2.visas.includes('CAN');
+
+  if (tripConfig.jointFlight && tripConfig.jointFlight.date) {
+    const jointDateEl = document.getElementById('cfg-joint-date');
+    if (jointDateEl) jointDateEl.value = formatToISODate(tripConfig.jointFlight.date);
+  }
 
   updateTabLabels();
   renderWaypointsEditor('p1');
@@ -1445,12 +1475,12 @@ function renderWaypointsEditor(pKey) {
             <input type="text" id="wp-${pKey}-${idx}-name" value="${wp.name || ''}" placeholder="Ej. Madrid (MAD)" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Llegada a Ciudad</label>
-            <input type="text" id="wp-${pKey}-${idx}-arr" value="${wp.arrivalDate || ''}" placeholder="17 Octubre 2026" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📅 Llegada a Ciudad (Calendario)</label>
+            <input type="date" id="wp-${pKey}-${idx}-arr" value="${formatToISODate(wp.arrivalDate)}" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold text-slate-800">
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">Salida de Ciudad</label>
-            <input type="text" id="wp-${pKey}-${idx}-dep" value="${wp.departureDate || ''}" placeholder="24 Octubre 2026" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold">
+            <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📅 Salida de Ciudad (Calendario)</label>
+            <input type="date" id="wp-${pKey}-${idx}-dep" value="${formatToISODate(wp.departureDate)}" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-1.5 text-xs font-bold text-slate-800">
           </div>
         </div>
         
@@ -1491,8 +1521,8 @@ function addWaypoint(pKey) {
   tripConfig[pKey].waypoints.push({
     id: `wp_${pKey}_${Date.now()}`,
     name: 'Nueva Estancia',
-    arrivalDate: '',
-    departureDate: '',
+    arrivalDate: '2026-10-17',
+    departureDate: '2026-10-24',
     meetsWith: otherKey,
     departureOrigins: 'MAD, BCN',
     notes: ''
@@ -1532,8 +1562,8 @@ function saveTripConfig(e) {
       const orig2El = document.getElementById(`wp-p1-${idx}-orig2`);
 
       if (nameEl) wp.name = nameEl.value.trim();
-      if (arrEl) wp.arrivalDate = arrEl.value.trim();
-      if (depEl) wp.departureDate = depEl.value.trim();
+      if (arrEl) wp.arrivalDate = arrEl.value;
+      if (depEl) wp.departureDate = depEl.value;
       if (meetsEl) wp.meetsWith = meetsEl.value;
       if (orig1El) {
         const o1 = orig1El.value;
@@ -1565,8 +1595,8 @@ function saveTripConfig(e) {
       const orig2El = document.getElementById(`wp-p2-${idx}-orig2`);
 
       if (nameEl) wp.name = nameEl.value.trim();
-      if (arrEl) wp.arrivalDate = arrEl.value.trim();
-      if (depEl) wp.departureDate = depEl.value.trim();
+      if (arrEl) wp.arrivalDate = arrEl.value;
+      if (depEl) wp.departureDate = depEl.value;
       if (meetsEl) wp.meetsWith = meetsEl.value;
       if (orig1El) {
         const o1 = orig1El.value;
@@ -1578,7 +1608,7 @@ function saveTripConfig(e) {
 
   // Guardar Configuración de Tramo Conjunto
   if (!tripConfig.jointFlight) tripConfig.jointFlight = {};
-  tripConfig.jointFlight.date = document.getElementById('cfg-joint-date')?.value.trim() || '2026-10-24';
+  tripConfig.jointFlight.date = document.getElementById('cfg-joint-date')?.value || '2026-10-24';
   tripConfig.jointFlight.allowedOrigins = document.getElementById('cfg-joint-origs')?.value.trim() || 'BCN, MAD';
   tripConfig.jointFlight.dest = document.getElementById('cfg-joint-dest')?.value.trim() || 'BOG';
   tripConfig.jointFlight.required = document.getElementById('cfg-joint-required')?.checked ?? true;
