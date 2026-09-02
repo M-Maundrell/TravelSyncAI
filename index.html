@@ -2297,34 +2297,117 @@
       `;
     }
 
-    // ─── RENDERIZADO DEL PASO 4 (RESULTADOS) ───
+    // ─── RENDERIZADO DINÁMICO DEL ITINERARIO POR TRAMOS (PASO 4) ───
+    function getCleanCityName(str) {
+      if (!str) return 'Destino';
+      if (str.includes('—')) str = str.split('—')[1].trim();
+      return str.split('(')[0].trim();
+    }
+
     function getSegments(traveler) {
-      if (traveler === 'mario') {
-        if (isMarioAlt()) {
-          return [
-            { key: 'salida', step: '1', label: 'Boleto 1 (Ida): México ➔ Bogotá', type: 'select', segment: 'transatlantico-inicio', sub: 'Primer boleto redondo CDMX ↔ BOG' },
-            { key: 'bog_esp', step: '2', label: 'Boleto 2 (Ida): Bogotá ➔ España', type: 'select', segment: 'alternativo-regreso', sub: 'Segundo boleto redondo BOG ↔ España' },
-            { key: 'train_bcn', step: '3', label: 'Conexión Intermedia: Madrid ➔ Barcelona', type: 'train', sub: 'Tren de Alta Velocidad AVE (Miércoles 21 Oct)' },
-            { key: 'bog_esp_ret', step: '4', label: 'Boleto 2 (Regreso): Salto Conjunto España ➔ Bogotá', type: 'included', parentKey: 'bog_esp', leg: 'return', sub: 'Vuelo conjunto de retorno a Colombia' },
-            { key: 'salida_ret', step: '5', label: 'Boleto 1 (Regreso): Bogotá ➔ México', type: 'included', parentKey: 'salida', leg: 'return', sub: 'Retorno final a CDMX' }
-          ];
-        } else {
-          return [
-            { key: 'salida', step: '1', label: 'Tramo 1: Salida México ➔ Madrid', type: 'select', segment: 'transatlantico-inicio', sub: 'Vuelo Transatlántico de Ida' },
-            { key: 'train_bcn', step: '2', label: 'Tramo 2: Madrid ➔ Barcelona', type: 'train', sub: 'Tren de Alta Velocidad AVE (Miércoles 21 Oct)' },
-            { key: 'trans', step: '3', label: 'Tramo 3: Salto Conjunto España ➔ Bogotá', type: 'select', segment: 'espana-colombia', sub: 'Multidestino / Redondo (24 Oct - 27 Nov)' },
-            { key: 'salida_ret', step: '4', label: 'Tramo 4: Retorno Bogotá ➔ México', type: 'included', parentKey: 'salida', leg: 'return', sub: 'Cubierto por el regreso de tu boleto del Tramo 1' }
-          ];
-        }
-      } else {
+      const pKey = traveler === 'mario' ? 'p1' : 'p2';
+      const travelerData = tripConfig[pKey];
+      const origCode = travelerData.origin ? (travelerData.origin.split('—')[0]?.trim() || (traveler === 'mario' ? 'MEX' : 'SPC')) : (traveler === 'mario' ? 'MEX' : 'SPC');
+      const origCity = getCleanCityName(travelerData.origin) || origCode;
+      const wps = travelerData.waypoints || [];
+
+      if (wps.length === 0) {
         return [
-          { key: 'salida', step: '1', label: 'Tramo 1: Conexión La Palma ➔ Madrid', type: 'select', segment: 'transatlantico-inicio', sub: 'Vuelo Regional / Nacional Redondo (SPC ↔ MAD)' },
-          { key: 'train_bcn', step: '2', label: 'Tramo 2: Madrid ➔ Barcelona', type: 'train', sub: 'Tren de Alta Velocidad AVE (Miércoles 21 Oct)' },
-          { key: 'trans', step: '3', label: 'Tramo 3: Salto Transatlántico España ➔ Bogotá', type: 'select', segment: 'espana-colombia', sub: 'Multidestino / Redondo (24 Oct - 27 Nov)' },
-          { key: 'trans_ret', step: '4', label: 'Tramo 4: Regreso Transatlántico Bogotá ➔ Madrid', type: 'included', parentKey: 'trans', leg: 'return', sub: 'Cubierto por el regreso de tu boleto del Tramo 3' },
-          { key: 'salida_ret', step: '5', label: 'Tramo 5: Retorno Final a Canarias Madrid ➔ La Palma', type: 'included', parentKey: 'salida', leg: 'return', sub: 'Cubierto por el regreso de tu boleto del Tramo 1' }
+          { key: 'salida', step: '1', label: `Tramo 1: Salida ${origCode} ➔ Destino`, type: 'select', segment: 'transatlantico-inicio', sub: 'Vuelo de Ida' }
         ];
       }
+
+      const segments = [];
+      let stepCounter = 1;
+
+      // 1. TRAMO INICIAL: Origen -> Primera Estancia
+      const firstWp = wps[0];
+      const firstCity = getCleanCityName(firstWp.name);
+      const firstCode = firstWp.cityCode || 'MAD';
+
+      if (traveler === 'mario' && isMarioAlt()) {
+        segments.push({
+          key: 'salida', step: String(stepCounter++),
+          label: `Boleto 1 (Ida): ${origCode} ➔ Bogotá (BOG)`,
+          type: 'select', segment: 'transatlantico-inicio',
+          sub: `Primer boleto redondo ${origCode} ↔ BOG (${travelerData.startDate || '16 Oct'})`
+        });
+        segments.push({
+          key: 'bog_esp', step: String(stepCounter++),
+          label: `Boleto 2 (Ida): Bogotá ➔ ${firstCity} (${firstCode})`,
+          type: 'select', segment: 'alternativo-regreso',
+          sub: `Segundo boleto redondo BOG ↔ ${firstCity} (${travelerData.startDate || '16 Oct'})`
+        });
+      } else {
+        segments.push({
+          key: 'salida', step: String(stepCounter++),
+          label: `Tramo 1: Salida ${origCity} (${origCode}) ➔ ${firstCity} (${firstCode})`,
+          type: 'select', segment: 'transatlantico-inicio',
+          sub: `Salida el ${travelerData.startDate || '16 Oct'} · Llegada el ${firstWp.arrivalDate || '17 Oct'}`
+        });
+      }
+
+      // 2. TRAMOS INTERMEDIOS ENTRE ESTANCIAS
+      for (let i = 0; i < wps.length - 1; i++) {
+        const curWp = wps[i];
+        const nextWp = wps[i + 1];
+        const fromCity = getCleanCityName(curWp.name);
+        const toCity = getCleanCityName(nextWp.name);
+        const fromCountry = curWp.country || 'ES';
+        const toCountry = nextWp.country || 'ES';
+
+        if (fromCountry === 'ES' && toCountry === 'ES') {
+          // Desplazamiento interno en España (ej. AVE Madrid ➔ Barcelona)
+          segments.push({
+            key: `train_${i}`, step: String(stepCounter++),
+            label: `Conexión Intermedia: ${fromCity} ➔ ${toCity}`,
+            type: 'train',
+            sub: `Tren de Alta Velocidad AVE (${curWp.departureDate || '21 Oct'}) · ~2h 45min`
+          });
+        } else {
+          // Vuelo internacional (ej. Madrid ➔ Bogotá o Madrid ➔ México)
+          if (traveler === 'mario' && isMarioAlt()) {
+            segments.push({
+              key: 'bog_esp_ret', step: String(stepCounter++),
+              label: `Boleto 2 (Regreso): ${nextWp.jointFlight ? '🔗 Salto Conjunto' : 'Vuelo'} ${fromCity} ➔ ${toCity}`,
+              type: 'included', parentKey: 'bog_esp', leg: 'return',
+              sub: `Vuelo de retorno conjunto a ${toCity} (${curWp.departureDate || '25 Oct'})`
+            });
+          } else {
+            segments.push({
+              key: 'trans', step: String(stepCounter++),
+              label: `${nextWp.jointFlight ? '🔗 Salto Conjunto' : 'Vuelo'}: ${fromCity} ➔ ${toCity}`,
+              type: 'select', segment: 'espana-colombia',
+              sub: `Vuelo del ${curWp.departureDate || '24 Oct'} al ${nextWp.departureDate || '27 Nov'}`
+            });
+          }
+        }
+      }
+
+      // 3. TRAMO FINAL: Retorno a Casa
+      const lastWp = wps[wps.length - 1];
+      const lastCity = getCleanCityName(lastWp.name);
+      const lastCode = lastWp.cityCode || 'BOG';
+
+      if (lastCode !== origCode) {
+        if (traveler === 'mario' && isMarioAlt()) {
+          segments.push({
+            key: 'salida_ret', step: String(stepCounter++),
+            label: `Boleto 1 (Regreso): ${lastCity} (${lastCode}) ➔ ${origCity} (${origCode})`,
+            type: 'included', parentKey: 'salida', leg: 'return',
+            sub: `Retorno final a ${origCity} (${lastWp.departureDate || '27 Nov'})`
+          });
+        } else {
+          segments.push({
+            key: 'salida_ret', step: String(stepCounter++),
+            label: `Retorno a Casa: ${lastCity} (${lastCode}) ➔ ${origCity} (${origCode})`,
+            type: 'included', parentKey: (traveler === 'mario' ? 'salida' : 'trans'), leg: 'return',
+            sub: `Vuelo final de regreso a ${origCity} (${lastWp.departureDate || '27 Nov'})`
+          });
+        }
+      }
+
+      return segments;
     }
 
     function calculateTravelerCost(traveler) {
@@ -2482,54 +2565,53 @@
       const container = document.getElementById('calendar-timeline');
       if (!container) return;
 
-      const mSal = getCatalogBrick(state.mario.salida);
-      const ySal = getCatalogBrick(state.yesica.salida);
-      const mTrans = isMarioAlt() ? getCatalogBrick(state.mario.bog_esp) : getCatalogBrick(state.mario.trans);
-      const yTrans = getCatalogBrick(state.yesica.trans);
+      const wps = tripConfig.p1.waypoints || [];
+      const n1 = tripConfig.p1.name || 'Mario';
+      const n2 = tripConfig.p2.name || 'Yesica';
+      const orig1 = tripConfig.p1.origin?.split('—')[0]?.trim() || 'MEX';
+      const orig2 = tripConfig.p2.origin?.split('—')[0]?.trim() || 'SPC';
 
-      const mJointFn = isMarioAlt() ? (mTrans?.return?.flightNumber || 'IB0153') : (mTrans?.outbound?.flightNumber || 'AV19');
-      const yJointFn = yTrans?.outbound?.flightNumber || 'AV19';
-      const isSynced = mJointFn === yJointFn;
-
-      container.innerHTML = `
+      let html = `
         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
-          <div class="text-[11px] font-extrabold uppercase text-slate-400">16 - 17 Oct · Salidas</div>
-          <div class="text-xs font-black text-slate-800">🛫 Vuelos de Salida</div>
+          <div class="text-[11px] font-extrabold uppercase text-slate-400">Salidas Iniciales</div>
+          <div class="text-xs font-black text-slate-800">🛫 Vuelos de Origen</div>
           <div class="text-xs space-y-1">
-            <div class="text-blue-700 font-bold">👤 Mario: ${mSal?.outbound?.flightNumber || 'IB0152'} (${mSal?.outbound?.schedule || '20:05'})</div>
-            <div class="text-pink-700 font-bold">👤 Yesica: ${ySal?.outbound?.flightNumber || 'I23841'} (${ySal?.outbound?.schedule || '19:30'})</div>
-          </div>
-        </div>
-
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
-          <div class="text-[11px] font-extrabold uppercase text-slate-400">17 - 21 Oct · España</div>
-          <div class="text-xs font-black text-slate-800">🏨 Estancia en Madrid</div>
-          <div class="text-xs text-slate-600 font-medium">Reunión y días presenciales obligatorios (18-20 Oct). Traslado en AVE a Barcelona el 21 Oct.</div>
-        </div>
-
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
-          <div class="text-[11px] font-extrabold uppercase text-slate-400">24/25 Oct · Salto Conjunto</div>
-          <div class="flex justify-between items-center">
-            <div class="text-xs font-black text-slate-800">✈️ España ➔ Bogotá</div>
-            <span class="text-[10px] font-black px-2 py-0.5 rounded ${isSynced ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-              ${isSynced ? '✨ Mismo Vuelo' : '⚠️ Revisar'}
-            </span>
-          </div>
-          <div class="text-xs space-y-1">
-            <div class="text-blue-700 font-bold">👤 Mario: ${mJointFn}</div>
-            <div class="text-pink-700 font-bold">👤 Yesica: ${yJointFn}</div>
-          </div>
-        </div>
-
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
-          <div class="text-[11px] font-extrabold uppercase text-slate-400">27 - 28 Nov · Retorno</div>
-          <div class="text-xs font-black text-slate-800">🛬 Regreso a Casa</div>
-          <div class="text-xs space-y-1">
-            <div class="text-blue-700 font-bold">👤 Mario ➔ CDMX (${isMarioAlt() ? mSal?.return?.flightNumber : mTrans?.return?.flightNumber || 'AM762'})</div>
-            <div class="text-pink-700 font-bold">👤 Yesica ➔ Canarias (${ySal?.return?.flightNumber || 'IB3842'})</div>
+            <div class="text-blue-700 font-bold">👤 ${n1}: Salida desde ${orig1} (${tripConfig.p1.startDate || '16 Oct'})</div>
+            <div class="text-pink-700 font-bold">👤 ${n2}: Salida desde ${orig2} (${tripConfig.p2.startDate || '16 Oct'})</div>
           </div>
         </div>
       `;
+
+      wps.forEach((wp, idx) => {
+        const cityName = getCleanCityName(wp.name);
+        const isJoint = wp.jointFlight === true;
+        html += `
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
+            <div class="text-[11px] font-extrabold uppercase text-slate-400">Estancia ${idx + 1} · ${wp.arrivalDate?.substring(5) || ''} al ${wp.departureDate?.substring(5) || ''}</div>
+            <div class="flex justify-between items-center">
+              <div class="text-xs font-black text-slate-800">📍 ${cityName} (${wp.cityCode || ''})</div>
+              <span class="text-[10px] font-black px-2 py-0.5 rounded ${isJoint ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'}">
+                ${isJoint ? '✨ Conjunta' : 'Independiente'}
+              </span>
+            </div>
+            <div class="text-xs text-slate-600 font-medium">Estancia de viaje confirmada. Salida hacia el siguiente destino programada el ${wp.departureDate || ''}.</div>
+          </div>
+        `;
+      });
+
+      const lastWp = wps[wps.length - 1];
+      html += `
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
+          <div class="text-[11px] font-extrabold uppercase text-slate-400">Retorno a Casa</div>
+          <div class="text-xs font-black text-slate-800">🛬 Regreso Final</div>
+          <div class="text-xs space-y-1">
+            <div class="text-blue-700 font-bold">👤 ${n1}: Regreso a ${orig1} (${lastWp ? lastWp.departureDate : '27 Nov'})</div>
+            <div class="text-pink-700 font-bold">👤 ${n2}: Regreso a ${orig2} (${lastWp ? lastWp.departureDate : '28 Nov'})</div>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
     }
 
     function renderAlerts() {
@@ -2548,8 +2630,8 @@
             <div class="flex items-center gap-2.5">
               <span class="text-xl">✨</span>
               <div>
-                <div class="text-xs font-extrabold text-emerald-900">¡Vuelo Conjunto Perfectamente Sincronizado!</div>
-                <div class="text-xs text-emerald-700">Mario y Yesica viajarán juntos en el vuelo <strong>${mJointFn}</strong> hacia Bogotá.</div>
+                <div class="text-xs font-extrabold text-emerald-900">¡Vuelo Conjunto Sincronizado!</div>
+                <div class="text-xs text-emerald-700">Los pasajeros viajarán juntos en el vuelo <strong>${mJointFn}</strong> en el tramo conjunto.</div>
               </div>
             </div>
             <span class="text-xs font-extrabold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-xl">✓ Sincronizado</span>
@@ -2561,12 +2643,12 @@
             <div class="flex items-center gap-2.5">
               <span class="text-xl">⚠️</span>
               <div>
-                <div class="text-xs font-extrabold text-amber-900">Vuelos de Salto a Colombia Desincronizados</div>
-                <div class="text-xs text-amber-700">Mario tiene asignado <strong>${mJointFn}</strong> y Yesica <strong>${yJointFn}</strong>.</div>
+                <div class="text-xs font-extrabold text-amber-900">Vuelos con Horarios o Códigos Diferentes</div>
+                <div class="text-xs text-amber-700">Mario tiene asignado <strong>${mJointFn}</strong> y Yesica <strong>${yJointFn}</strong>. Puedes sincronizarlos desde el selector de vuelos.</div>
               </div>
             </div>
-            <button onclick="applyPreset('maestro_usuario')" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-xs">
-              Sincronizar a Iberia IB0153
+            <button onclick="openFlightPickerModal('mario', 'espana-colombia')" class="text-xs font-extrabold text-amber-800 bg-amber-100 px-3 py-1 rounded-xl hover:bg-amber-200 transition">
+              Sincronizar Vuelo ➔
             </button>
           </div>
         `;
