@@ -1974,14 +1974,7 @@
       goToStep(2);
     }
 
-    function startOptimizationAndSearch() {
-      tripConfig.strictJointFlight = document.getElementById('cfg-strict-joint-flight').checked;
-      goToStep(3);
-      setTimeout(() => {
-        goToStep(4);
-        showToast('✨ Vuelos optimizados y combinaciones calculadas', 'success');
-      }, 900);
-    }
+
 
     function switchWpTab(traveler) {
       document.getElementById('wp-panel-p1').classList.toggle('hidden', traveler !== 'p1');
