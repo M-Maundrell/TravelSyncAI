@@ -2136,75 +2136,57 @@
       wps.forEach((wp, i) => {
         const stepIdx = i + 1;
         const curX = getX(stepIdx);
-        const isJoint = wp.jointFlight === true;
         const midX = Math.round((prevX + curX) / 2);
 
         // Extraer nombre limpio de la estancia
         let cleanName = wp.name || `Estancia ${stepIdx}`;
         if (cleanName.includes('—')) cleanName = cleanName.split('—')[1].trim();
 
-        if (isJoint) {
-          // Si este tramo es conjunto
-          if (!prevIsJoint) {
-            // Convergen hacia el centro desde Mario y Yesica
-            tracksSvg += `
-              <path d="M ${prevX} ${yMario} C ${midX} ${yMario}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvBlueToGreen)" stroke-width="4" stroke-linecap="round" />
-              <path d="M ${prevX} ${yYesica} C ${midX} ${yYesica}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvPinkToGreen)" stroke-width="4" stroke-linecap="round" />
-            `;
-            // Pill sobre el tramo de convergencia
-            pillsSvg += `
-              <g transform="translate(${midX}, ${yCenter - 18})" filter="url(#pvShadow)">
-                <rect x="-42" y="-11" width="84" height="22" rx="11" fill="#1e293b" stroke="#34d399" stroke-width="1.5" />
-                <text x="0" y="3.5" fill="#34d399" font-size="9" font-weight="800" text-anchor="middle">✨ Convergencia</text>
-              </g>
-            `;
-          } else {
-            // Ya venían juntos: vía esmeralda unificada
-            tracksSvg += `
-              <line x1="${prevX}" y1="${yCenter}" x2="${curX}" y2="${yCenter}" stroke="${isSynced ? '#10b981' : '#f59e0b'}" stroke-width="6" stroke-linecap="round" ${isSynced ? '' : 'stroke-dasharray="6,4"'} />
-            `;
-            pillsSvg += `
-              <g transform="translate(${midX}, ${yCenter})" filter="url(#pvShadow)">
-                <rect x="-55" y="-13" width="110" height="26" rx="13" fill="${isSynced ? '#064e3b' : '#78350f'}" stroke="${isSynced ? '#34d399' : '#fbbf24'}" stroke-width="2" />
-                <text x="0" y="3.5" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">✈️ ${mJointFn} ${isSynced ? '(Juntos)' : '(Separados)'}</text>
-              </g>
-            `;
-          }
-
-          // Estación conjunta centrada
-          stationsSvg += `
-            <g transform="translate(${curX}, ${yCenter})" filter="url(#pvShadow)">
-              <circle r="15" fill="#065f46" stroke="#34d399" stroke-width="3.5" />
-              <text x="0" y="4" fill="#ffffff" font-size="11" font-weight="900" text-anchor="middle">📍</text>
-              <text x="0" y="-22" fill="#6ee7b7" font-size="11" font-weight="900" text-anchor="middle">${cleanName}</text>
-              <text x="0" y="28" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="middle">${wp.arrivalDate ? wp.arrivalDate.substring(5) : ''} al ${wp.departureDate ? wp.departureDate.substring(5) : ''}</text>
+        if (i === 0) {
+          // Primera Estancia: Punto de Encuentro / Convergencia desde orígenes
+          tracksSvg += `
+            <path d="M ${prevX} ${yMario} C ${midX} ${yMario}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvBlueToGreen)" stroke-width="4" stroke-linecap="round" />
+            <path d="M ${prevX} ${yYesica} C ${midX} ${yYesica}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvPinkToGreen)" stroke-width="4" stroke-linecap="round" />
+          `;
+          // Pills de vuelos de salida y badge de encuentro
+          pillsSvg += `
+            <g transform="translate(${Math.round(prevX + (curX - prevX) * 0.35)}, ${yMario - 5})" filter="url(#pvShadow)">
+              <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" />
+              <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">✈️ Salida ${p1Orig}</text>
+            </g>
+            <g transform="translate(${Math.round(prevX + (curX - prevX) * 0.35)}, ${yYesica + 5})" filter="url(#pvShadow)">
+              <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#831843" stroke="#f472b6" stroke-width="1.5" />
+              <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">✈️ Salida ${p2Orig}</text>
+            </g>
+            <g transform="translate(${Math.round(prevX + (curX - prevX) * 0.72)}, ${yCenter})" filter="url(#pvShadow)">
+              <rect x="-42" y="-11" width="84" height="22" rx="11" fill="#1e293b" stroke="#34d399" stroke-width="1.5" />
+              <text x="0" y="3.5" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle">✨ Encuentro</text>
             </g>
           `;
         } else {
-          // Tramo no conjunto (Vías paralelas)
+          // Estancias intermedias conjuntas: Vía verde continua
           tracksSvg += `
-            <line x1="${prevX}" y1="${prevIsJoint ? yCenter : yMario}" x2="${curX}" y2="${yMario}" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" />
-            <line x1="${prevX}" y1="${prevIsJoint ? yCenter : yYesica}" x2="${curX}" y2="${yYesica}" stroke="#ec4899" stroke-width="4" stroke-linecap="round" />
+            <line x1="${prevX}" y1="${yCenter}" x2="${curX}" y2="${yCenter}" stroke="${isSynced ? '#10b981' : '#f59e0b'}" stroke-width="6" stroke-linecap="round" ${isSynced ? '' : 'stroke-dasharray="6,4"'} />
           `;
-
-          // Estaciones separadas en Mario y Yesica
-          stationsSvg += `
-            <g transform="translate(${curX}, ${yMario})" filter="url(#pvShadow)">
-              <circle r="13" fill="#1e293b" stroke="#3b82f6" stroke-width="3" />
-              <text x="0" y="3.5" fill="#ffffff" font-size="9" font-weight="900" text-anchor="middle">📍</text>
-              <text x="0" y="-20" fill="#93c5fd" font-size="10.5" font-weight="800" text-anchor="middle">${cleanName}</text>
-              <text x="0" y="25" fill="#64748b" font-size="8.5" font-weight="700" text-anchor="middle">${wp.arrivalDate ? wp.arrivalDate.substring(5) : ''}</text>
-            </g>
-            <g transform="translate(${curX}, ${yYesica})" filter="url(#pvShadow)">
-              <circle r="13" fill="#1e293b" stroke="#ec4899" stroke-width="3" />
-              <text x="0" y="3.5" fill="#ffffff" font-size="9" font-weight="900" text-anchor="middle">📍</text>
-              <text x="0" y="-20" fill="#f472b6" font-size="10.5" font-weight="800" text-anchor="middle">${cleanName}</text>
-              <text x="0" y="25" fill="#64748b" font-size="8.5" font-weight="700" text-anchor="middle">${wp.arrivalDate ? wp.arrivalDate.substring(5) : ''}</text>
+          pillsSvg += `
+            <g transform="translate(${midX}, ${yCenter})" filter="url(#pvShadow)">
+              <rect x="-55" y="-13" width="110" height="26" rx="13" fill="${isSynced ? '#064e3b' : '#78350f'}" stroke="${isSynced ? '#34d399' : '#fbbf24'}" stroke-width="2" />
+              <text x="0" y="3.5" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">✈️ ${mJointFn} ${isSynced ? '(Juntos)' : '(Separados)'}</text>
             </g>
           `;
         }
 
-        prevIsJoint = isJoint;
+        // Estación conjunta centrada con badge
+        stationsSvg += `
+          <g transform="translate(${curX}, ${yCenter})" filter="url(#pvShadow)">
+            <circle r="15" fill="#065f46" stroke="#34d399" stroke-width="3.5" />
+            <text x="0" y="4" fill="#ffffff" font-size="11" font-weight="900" text-anchor="middle">📍</text>
+            <text x="0" y="-22" fill="#6ee7b7" font-size="11" font-weight="900" text-anchor="middle">${cleanName}</text>
+            <text x="0" y="28" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="middle">${wp.arrivalDate ? wp.arrivalDate.substring(5) : ''} al ${wp.departureDate ? wp.departureDate.substring(5) : ''}</text>
+          </g>
+        `;
+
+        prevIsJoint = true;
         prevX = curX;
       });
 
