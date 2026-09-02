@@ -1614,12 +1614,26 @@
                 <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'departureDate', this.value)" value="${wp.departureDate || ''}" class="w-full bg-white border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
               </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2 border-t border-slate-200/60">
-              <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">🛫 Orígenes de Salida Alternativos (Siguiente Tramo)</label>
-                <input type="text" onchange="updateWpField('${pKey}', ${idx}, 'departureOrigins', this.value)" value="${wp.departureOrigins || 'MAD, BCN'}" placeholder="Ej. MAD, BCN" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-700">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200/60">
+              <div class="space-y-1.5">
+                <label class="block text-[11px] font-bold text-slate-500">🛫 Orígenes de Salida (Siguiente Tramo · Hasta 2 Opciones)</label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <span class="block text-[10px] font-extrabold text-indigo-600 mb-0.5">Opción 1 (Principal):</span>
+                    <select id="wp-dep-orig1-${pKey}-${idx}" onchange="handleDepartureOriginChange('${pKey}', ${idx})" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                      ${renderAirportSelectOptions(country.airports, wp.departureOrigin1 || wp.cityCode || 'MAD')}
+                    </select>
+                  </div>
+                  <div>
+                    <span class="block text-[10px] font-extrabold text-slate-500 mb-0.5">Opción 2 (Alternativa):</span>
+                    <select id="wp-dep-orig2-${pKey}-${idx}" onchange="handleDepartureOriginChange('${pKey}', ${idx})" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                      <option value="" ${!wp.departureOrigin2 ? 'selected' : ''}>-- Ninguno (Solo 1 Origen) --</option>
+                      ${renderAirportSelectOptions(country.airports, wp.departureOrigin2 || '')}
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div class="flex items-center pt-4">
+              <div class="flex items-center pt-5">
                 <label class="flex items-center gap-2 text-xs font-bold text-indigo-900 cursor-pointer">
                   <input type="checkbox" onchange="updateWpField('${pKey}', ${idx}, 'jointFlight', this.checked)" ${wp.jointFlight ? 'checked' : ''} class="w-4 h-4 rounded text-indigo-600">
                   <span>🔗 Vuelo conjunto obligatorio con <span class="wp-other-name-${pKey}">${otherName}</span></span>
@@ -1630,6 +1644,18 @@
         `;
       });
       container.innerHTML = html;
+    }
+
+    function handleDepartureOriginChange(pKey, idx) {
+      const sel1 = document.getElementById(`wp-dep-orig1-${pKey}-${idx}`);
+      const sel2 = document.getElementById(`wp-dep-orig2-${pKey}-${idx}`);
+      if (!sel1) return;
+      const o1 = sel1.value;
+      const o2 = sel2 ? sel2.value : '';
+      
+      tripConfig[pKey].waypoints[idx].departureOrigin1 = o1;
+      tripConfig[pKey].waypoints[idx].departureOrigin2 = o2;
+      tripConfig[pKey].waypoints[idx].departureOrigins = o2 ? `${o1}, ${o2}` : o1;
     }
 
     function handleWpCountryChange(pKey, idx, newCountryCode) {
