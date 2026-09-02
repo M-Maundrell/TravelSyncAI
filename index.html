@@ -643,7 +643,7 @@
           ⬅ Volver a Pasajeros
         </button>
         <button onclick="startOptimizationAndSearch()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
-          <span>🚀 Buscar & Optimizar Vuelos</span>
+          <span>✈️ Confirmar Tramos & Ver Menú de Vuelos (Paso 3)</span>
           <span>➔</span>
         </button>
       </div>
@@ -1282,8 +1282,7 @@
         prefs: { bag: true, carry: true, seat: true },
         waypoints: [
           { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "2026-10-17", departureDate: "2026-10-21", departureOrigins: "MAD, BCN", jointFlight: false },
-          { country: "ES", cityCode: "BCN", name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", departureOrigins: "BCN, MAD", jointFlight: true },
-          { country: "CO", cityCode: "BOG", name: "Bogotá (BOG)", arrivalDate: "2026-10-24", departureDate: "2026-11-27", departureOrigins: "BOG", jointFlight: true }
+          { country: "MX", cityCode: "MEX", name: "Ciudad de México (MEX)", arrivalDate: "2026-10-27", departureDate: "2026-11-20", departureOrigins: "MEX", jointFlight: true }
         ]
       },
       p2: {
@@ -1296,107 +1295,142 @@
         prefs: { bag: true, carry: true, seat: true },
         waypoints: [
           { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "2026-10-16", departureDate: "2026-10-21", departureOrigins: "MAD, BCN", jointFlight: false },
-          { country: "ES", cityCode: "BCN", name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", departureOrigins: "BCN, MAD", jointFlight: true },
-          { country: "CO", cityCode: "BOG", name: "Bogotá (BOG)", arrivalDate: "2026-10-24", departureDate: "2026-11-27", departureOrigins: "BOG", jointFlight: true }
+          { country: "MX", cityCode: "MEX", name: "Ciudad de México (MEX)", arrivalDate: "2026-10-27", departureDate: "2026-11-20", departureOrigins: "MEX", jointFlight: true }
         ]
       }
     };
 
     // ─── ESTADO SELECCIONADO DE VUELOS ───
     let state = {
-      mario: { salida: "mex_bog_aeromexico_user", trans: "esp_col_avianca_bcn", bog_esp: "bog_esp_iberia_user" },
-      yesica: { salida: "yes_spc_mad_16_1815", trans: "yes_trans_iberia_user" }
+      mario: { salida: "mex_mad_iberia_152", trans: "esp_mex_iberia_6403", bog_esp: "bog_esp_iberia_user" },
+      yesica: { salida: "yes_spc_mad_16_1815", trans: "yes_trans_mex_iberia" }
     };
 
-    // ─── CATÁLOGO COMPLETO DE VUELOS CON OCUPACIÓN & DISPONIBILIDAD ───
+    // ─── CATÁLOGO COMPLETO DE VUELOS MULTI-AEROLÍNEA CON OCUPACIÓN & DISPONIBILIDAD ───
     let flightsCatalog = {
-      // MARIO: BOLETO 1
+      // ══════════════════════════════════════════════════
+      // TRAMO 1: MARIO · SALIDA CDMX (MEX) ➔ MADRID (MAD)
+      // ══════════════════════════════════════════════════
+      // IBERIA
       "mex_mad_iberia_152": {
         id: "mex_mad_iberia_152", traveler: "mario", segment: "transatlantico-inicio",
         title: "Iberia IB0152 (Directo Nocturno 20:05) ⭐",
-        airline: "iberia", price: 20000, occupancy: 78, seatsLeft: 5, aircraft: "Airbus A350-900",
-        description: "Vuelo directo nocturno IB0152 saliendo a las 20:05 de CDMX y llegando a las 14:00 del sábado 17 a Madrid Barajas T4S.",
+        airline: "iberia", price: 19800, occupancy: 78, seatsLeft: 5, aircraft: "Airbus A350-900",
+        description: "Vuelo directo nocturno IB0152 saliendo a las 20:05 de CDMX y llegando a las 14:00 (+1) a Madrid Barajas T4S.",
         outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "20:05 → 14:00 (+1)", flightNumber: "IB0152", date: "Viernes 16 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "23:00 → 05:00 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
         class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB152%20to%20MAD%20from%20MEX%20on%202026-10-16",
         bookingUrl: "https://www.iberia.com"
       },
-      "mex_bog_aeromexico_user": {
-        id: "mex_bog_aeromexico_user", traveler: "mario", segment: "transatlantico-inicio",
-        title: "Aeroméxico AM761 / AM762 ($7,209 MXN) ⭐ Plan Maestro",
-        airline: "aeromexico-iberia", price: 7209, occupancy: 65, seatsLeft: 9, aircraft: "Boeing 737 MAX 9",
-        description: "Vuelo redondo directo CDMX ➔ BOG con Aeroméxico (08:45 → 14:40). Retorno BOG ➔ CDMX (16:00 → 20:15) el 27 Nov.",
-        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG)", schedule: "08:45 → 14:40", flightNumber: "AM761", date: "Viernes 16 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ CDMX (MEX)", schedule: "16:00 → 20:15", flightNumber: "AM762", date: "Viernes 27 Nov 2026" },
+      "mex_mad_iberia_154": {
+        id: "mex_mad_iberia_154", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Iberia IB0154 (Directo Vespertino 12:45)",
+        airline: "iberia", price: 19200, occupancy: 71, seatsLeft: 8, aircraft: "Airbus A350-900",
+        description: "Vuelo diurno/vespertino saliendo 12:45 de CDMX y llegando 06:40 (+1) a Madrid T4S.",
+        outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "12:45 → 06:40 (+1)", flightNumber: "IB0154", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB154%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.iberia.com"
+      },
+      "mex_mad_iberia_156": {
+        id: "mex_mad_iberia_156", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Iberia IB0156 (Directo Medianoche 23:55)",
+        airline: "iberia", price: 20500, occupancy: 84, seatsLeft: 3, aircraft: "Airbus A350-900",
+        description: "Salida de medianoche 23:55 de CDMX, llegada a las 17:50 (+1) a Madrid Barajas.",
+        outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "23:55 → 17:50 (+1)", flightNumber: "IB0156", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB156%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.iberia.com"
+      },
+
+      // AEROMÉXICO
+      "mex_mad_aeromexico_am01": {
+        id: "mex_mad_aeromexico_am01", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Aeroméxico AM01 (Directo Dreamliner 18:30) ⭐",
+        airline: "aeromexico", price: 18900, occupancy: 73, seatsLeft: 7, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Vuelo directo Premier/Turista en Boeing 787-9 saliendo a las 18:30 de CDMX T2, llegada 12:30 (+1) a Madrid T1.",
+        outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "18:30 → 12:30 (+1)", flightNumber: "AM01", date: "Viernes 16 Oct 2026" },
         class: "Tarifa Clásica", bag: true, carry: true, seat: true, direct: true,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20AM761%20to%20BOG%20from%20MEX%20on%202026-10-16",
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20AM01%20to%20MAD%20from%20MEX%20on%202026-10-16",
         bookingUrl: "https://www.aeromexico.com"
       },
-      "mex_mad_united": {
-        id: "mex_mad_united", traveler: "mario", segment: "transatlantico-inicio",
-        title: "United Airlines (Escala Newark EWR) · $13,500 MXN",
-        airline: "air-europa", price: 13500, occupancy: 88, seatsLeft: 2, aircraft: "Boeing 787-10",
+      "mex_mad_aeromexico_am21": {
+        id: "mex_mad_aeromexico_am21", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Aeroméxico AM21 (Directo Nocturno 23:45)",
+        airline: "aeromexico", price: 19400, occupancy: 80, seatsLeft: 4, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Vuelo directo nocturno saliendo a las 23:45 de CDMX, llegada a las 17:45 (+1) a Madrid T1.",
+        outbound: { route: "CDMX (MEX) ➔ Madrid (MAD)", schedule: "23:45 → 17:45 (+1)", flightNumber: "AM21", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Clásica", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20AM21%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.aeromexico.com"
+      },
+
+      // AIR EUROPA
+      "mex_mad_aireuropa_ux064": {
+        id: "mex_mad_aireuropa_ux064", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Air Europa UX064 (Escala Técnica Santo Domingo) · $16,800 MXN",
+        airline: "air-europa", price: 16800, occupancy: 72, seatsLeft: 7, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Vuelo transatlántico en Dreamliner con escala corta técnica en Santo Domingo hacia Madrid T1.",
+        outbound: { route: "CDMX (MEX) ➔ Santo Domingo ➔ Madrid (MAD)", schedule: "13:45 → 10:30 (+1)", flightNumber: "UX064", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.aireuropa.com"
+      },
+
+      // KLM / AIR FRANCE
+      "mex_mad_klm_686": {
+        id: "mex_mad_klm_686", traveler: "mario", segment: "transatlantico-inicio",
+        title: "KLM KL686 (Escala Ámsterdam Schiphol) · $18,400 MXN",
+        airline: "klm-airfrance", price: 18400, occupancy: 83, seatsLeft: 3, aircraft: "Boeing 777-300ER",
+        description: "Salida nocturna de CDMX con escala de conexión en Ámsterdam hacia Madrid Barajas.",
+        outbound: { route: "CDMX (MEX) ➔ Ámsterdam (AMS) ➔ Madrid (MAD)", schedule: "21:55 → 18:20 (+1)", flightNumber: "KL686/KL1705", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Estándar SkyTeam", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20KLM%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.klm.com"
+      },
+      "mex_mad_airfrance_179": {
+        id: "mex_mad_airfrance_179", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Air France AF179 (Escala París Charles de Gaulle) · $18,700 MXN",
+        airline: "klm-airfrance", price: 18700, occupancy: 76, seatsLeft: 5, aircraft: "Boeing 777-300ER",
+        description: "Salida vespertina de CDMX con conexión ágil en París CDG Terminal 2E hacia Madrid.",
+        outbound: { route: "CDMX (MEX) ➔ París (CDG) ➔ Madrid (MAD)", schedule: "19:40 → 17:15 (+1)", flightNumber: "AF179/AF1400", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Estándar SkyTeam", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20France%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.airfrance.com"
+      },
+
+      // UNITED / OTRAS
+      "mex_mad_united_321": {
+        id: "mex_mad_united_321", traveler: "mario", segment: "transatlantico-inicio",
+        title: "United Airlines UA321/UA120 (Escala Newark EWR) · $13,500 MXN",
+        airline: "united", price: 13500, occupancy: 88, seatsLeft: 2, aircraft: "Boeing 787-10",
         description: "Escala en Newark (EWR). Requiere visa USA activa.",
         outbound: { route: "CDMX (MEX) ➔ Newark (EWR) ➔ Madrid (MAD)", schedule: "08:30 → 07:30 (+1)", flightNumber: "UA321/UA120", date: "Viernes 16 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ Newark (EWR) ➔ CDMX (MEX)", schedule: "16:00 → 22:30", flightNumber: "UA240", date: "Viernes 27 Nov 2026" },
         class: "Tarifa Clásica", bag: true, carry: true, seat: true, direct: false,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20United%20to%20MAD%20from%20MEX%20on%202026-10-16",
         bookingUrl: "https://www.united.com"
       },
 
-      // MARIO: BOLETO 2 ALTERNATIVO
-      "bog_esp_iberia_user": {
-        id: "bog_esp_iberia_user", traveler: "mario", segment: "alternativo-regreso",
-        title: "Iberia IB0152 / IB0153 ($24,482 MXN) ⭐ Plan Maestro",
-        airline: "iberia", price: 24482, occupancy: 82, seatsLeft: 4, aircraft: "Airbus A350-900",
-        description: "Ida BOG ➔ MAD en IB0152 el 16 Oct (17:20 → 10:00 +1). Regreso conjunto con Yesica el Domingo 25 Oct en IB0153 directo (16:30 → 20:55).",
-        outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "17:20 → 10:00 (+1)", flightNumber: "IB0152", date: "Viernes 16 Oct 2026" },
-        return: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:30 → 20:55", flightNumber: "IB0153", date: "Domingo 25 Oct 2026" },
-        class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, direct: true,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB0152%20from%20BOG%20to%20MAD%20on%202026-10-16",
-        bookingUrl: "https://www.iberia.com"
-      },
-      "bog_esp_avianca": {
-        id: "bog_esp_avianca", traveler: "mario", segment: "alternativo-regreso",
-        title: "Avianca (Ida BOG ➔ MAD / Regreso Directo BCN ➔ BOG AV19) · $19,500 MXN",
-        airline: "avianca", price: 19500, occupancy: 70, seatsLeft: 6, aircraft: "Boeing 787-8",
-        description: "Segundo boleto alternativo: Ida BOG→MAD (17 Oct) y Regreso BCN→BOG (24 Oct en AV19 coincidiendo con Yesica).",
-        outbound: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:00 → 14:15 (+1)", flightNumber: "AV26", date: "Sábado 17 Oct 2026" },
-        return: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
-        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: true,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20BOG%20on%202026-10-17",
+      // AVIANCA
+      "mex_mad_avianca_073": {
+        id: "mex_mad_avianca_073", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Avianca AV073 (Conexión Bogotá El Dorado) · $15,800 MXN",
+        airline: "avianca", price: 15800, occupancy: 69, seatsLeft: 8, aircraft: "Boeing 787-8",
+        description: "Salida matutina de CDMX con escala de conexión en Bogotá hacia Madrid Barajas.",
+        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG) ➔ Madrid (MAD)", schedule: "07:30 → 06:10 (+1)", flightNumber: "AV073/AV010", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20MEX%20on%202026-10-16",
         bookingUrl: "https://www.avianca.com"
       },
 
-      // MARIO: SALTO ESPAÑA ➔ COLOMBIA
-      "esp_col_avianca_bcn": {
-        id: "esp_col_avianca_bcn", traveler: "mario", segment: "espana-colombia",
-        title: "Avianca Directo BCN ➔ BOG (AV19, Vuelo Conjunto) · $14,000 MXN",
-        airline: "avianca", price: 14000, occupancy: 74, seatsLeft: 6, aircraft: "Boeing 787-8 Dreamliner",
-        description: "Vuelo transatlántico directo desde Barcelona el Sábado 24 Octubre (14:30 → 18:30).",
-        outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
-        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: true,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24",
-        bookingUrl: "https://www.avianca.com"
-      },
-      "esp_col_iberia_bcn": {
-        id: "esp_col_iberia_bcn", traveler: "mario", segment: "espana-colombia",
-        title: "Iberia BCN ➔ MAD ➔ BOG (Conexión Barajas) · $13,500 MXN",
-        airline: "iberia", price: 13500, occupancy: 80, seatsLeft: 3, aircraft: "A320 + A350",
-        description: "Enlace rápido desde Barcelona hacia Madrid Barajas y conexión en A350 a Bogotá.",
-        outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
-        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: false,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24",
-        bookingUrl: "https://www.iberia.com"
-      },
-
-      // YESICA: REGIONAL CANARIAS
+      // ══════════════════════════════════════════════════
+      // TRAMO 2: YESICA · SALIDA LA PALMA (SPC) ➔ MADRID (MAD)
+      // ══════════════════════════════════════════════════
       "yes_spc_mad_16": {
         id: "yes_spc_mad_16", traveler: "yesica", segment: "transatlantico-inicio",
-        title: "Iberia Express (Retorno 16:45) ⭐ Escala Óptima 2h 15m · $3,646 MXN",
+        title: "Iberia Express I23841 (Retorno 16:45) ⭐ Escala Óptima · $3,646 MXN",
         airline: "iberia", price: 3646, occupancy: 60, seatsLeft: 12, aircraft: "Airbus A320neo",
-        description: "Vuelo directo SPC ➔ MAD el 16 Oct (19:30). Retorno el 28 Nov a las 16:45 con 2h 15m de margen.",
+        description: "Vuelo directo SPC ➔ MAD el 16 Oct (19:30 → 23:15).",
         outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
         return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "16:45 → 19:35", flightNumber: "IB3842", date: "Sábado 28 Nov 2026" },
         class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
@@ -1405,100 +1439,44 @@
       },
       "yes_spc_mad_16_1815": {
         id: "yes_spc_mad_16_1815", traveler: "yesica", segment: "transatlantico-inicio",
-        title: "Iberia Express (Retorno Tarde 18:15) · $3,646 MXN",
+        title: "Iberia Express I23841 (Retorno Tarde 18:15) · $3,646 MXN",
         airline: "iberia", price: 3646, occupancy: 55, seatsLeft: 14, aircraft: "Airbus A320neo",
-        description: "Vuelo directo SPC ➔ MAD el 16 Oct. Retorno en la tarde (18:15 → 22:00) con 3h 45m de escala en Madrid T4.",
+        description: "Vuelo directo SPC ➔ MAD el 16 Oct (19:30 → 23:15). Retorno en la tarde (18:15).",
         outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "19:30 → 23:15", flightNumber: "I23841", date: "Viernes 16 Oct 2026" },
         return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "18:15 → 22:00", flightNumber: "I23844", date: "Sábado 28 Nov 2026" },
         class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16",
         bookingUrl: "https://www.iberiaexpress.com"
       },
-
-      // YESICA: SALTO ESPAÑA ➔ COLOMBIA
-      "yes_trans_iberia_user": {
-        id: "yes_trans_iberia_user", traveler: "yesica", segment: "espana-colombia",
-        title: "Iberia IB0153 / IB156 ($21,423 MXN) ⭐ Plan Maestro",
-        airline: "iberia", price: 21423, occupancy: 85, seatsLeft: 3, aircraft: "Airbus A350-900",
-        description: "Ida directa conjunta con Mario el Domingo 25 Oct en IB0153 (16:30 → 20:55). Regreso directo BOG ➔ MAD el 27 Nov en IB156 (14:00 → 05:50 +1).",
-        outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "16:30 → 20:55", flightNumber: "IB0153", date: "Domingo 25 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "14:00 → 05:50 (+1)", flightNumber: "IB156", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, direct: true,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB0153%20from%20MAD%20to%20BOG%20on%202026-10-25",
-        bookingUrl: "https://www.iberia.com"
+      "yes_spc_mad_morning": {
+        id: "yes_spc_mad_morning", traveler: "yesica", segment: "transatlantico-inicio",
+        title: "Iberia Express I23843 (Vuelo Matutino 09:30) · $3,890 MXN",
+        airline: "iberia", price: 3890, occupancy: 68, seatsLeft: 6, aircraft: "Airbus A320neo",
+        description: "Salida por la mañana de La Palma, llegando a las 13:15 a Madrid Barajas T4.",
+        outbound: { route: "La Palma (SPC) ➔ Madrid (MAD)", schedule: "09:30 → 13:15", flightNumber: "I23843", date: "Viernes 16 Oct 2026" },
+        return: { route: "Madrid (MAD) ➔ La Palma (SPC)", schedule: "16:45 → 19:35", flightNumber: "IB3842", date: "Sábado 28 Nov 2026" },
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20to%20MAD%20from%20SPC%20on%202026-10-16",
+        bookingUrl: "https://www.iberiaexpress.com"
       },
-      "yes_trans_avianca": {
-        id: "yes_trans_avianca", traveler: "yesica", segment: "espana-colombia",
-        title: "Avianca (BCN ➔ BOG directo AV19 / Retorno AV10) · $25,000 MXN",
-        airline: "avianca", price: 25000, occupancy: 74, seatsLeft: 6, aircraft: "Boeing 787-8",
-        description: "Vuelo directo BCN-BOG el 24 Oct (AV19 14:30, coincide con Mario). Regreso directo nocturno BOG-MAD el 27 Nov en AV10.",
-        outbound: { route: "Barcelona (BCN) ➔ Bogotá (BOG)", schedule: "14:30 → 18:30", flightNumber: "AV19", date: "Sábado 24 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "20:00 → 11:30 (+1)", flightNumber: "AV10", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: true,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20BOG%20from%20BCN%20on%202026-10-24",
-        bookingUrl: "https://www.avianca.com"
-      },
-      "yes_trans_iberia": {
-        id: "yes_trans_iberia", traveler: "yesica", segment: "espana-colombia",
-        title: "Iberia (BCN ➔ MAD ➔ BOG / Retorno IB6586) · $22,881 MXN",
-        airline: "iberia", price: 22881, occupancy: 79, seatsLeft: 5, aircraft: "A320 + A350",
-        description: "Ida con escala rápida en Madrid el 24 Oct (IB3001/IB6585). Regreso directo nocturno Bogotá → Madrid el 27 Nov.",
-        outbound: { route: "Barcelona (BCN) ➔ Madrid (MAD) ➔ Bogotá (BOG)", schedule: "12:00 → 18:30", flightNumber: "IB3001/IB6585", date: "Sábado 24 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:00 → 14:30 (+1)", flightNumber: "IB6586", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24",
-        bookingUrl: "https://www.iberia.com"
-      },
-      // ─── MARIO: ALTERNATIVAS ADICIONALES (AIR EUROPA / KLM / LATAM) ───
-      "mex_mad_aireuropa": {
-        id: "mex_mad_aireuropa", traveler: "mario", segment: "transatlantico-inicio",
-        title: "Air Europa UX064 (Escala Santo Domingo SDQ) · $16,800 MXN",
-        airline: "air-europa", price: 16800, occupancy: 72, seatsLeft: 7, aircraft: "Boeing 787-9 Dreamliner",
-        description: "Vuelo transatlántico en Dreamliner con escala corta técnica en Santo Domingo hacia Madrid T1.",
-        outbound: { route: "CDMX (MEX) ➔ Santo Domingo ➔ Madrid (MAD)", schedule: "13:45 → 10:30 (+1)", flightNumber: "UX064", date: "Viernes 16 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ Madrid ➔ CDMX (MEX)", schedule: "19:00 → 12:45 (+1)", flightNumber: "UX194", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: false,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20MAD%20from%20MEX%20on%202026-10-16",
-        bookingUrl: "https://www.aireuropa.com"
-      },
-      "mex_mad_klm_airfrance": {
-        id: "mex_mad_klm_airfrance", traveler: "mario", segment: "transatlantico-inicio",
-        title: "KLM / Air France (Escala Ámsterdam AMS) · $18,400 MXN",
-        airline: "air-europa", price: 18400, occupancy: 83, seatsLeft: 3, aircraft: "Boeing 777-300ER",
-        description: "Salida nocturna de CDMX con escala de conexión en Ámsterdam Schiphol hacia Madrid Barajas.",
-        outbound: { route: "CDMX (MEX) ➔ Ámsterdam (AMS) ➔ Madrid (MAD)", schedule: "21:55 → 18:20 (+1)", flightNumber: "KL686/KL1705", date: "Viernes 16 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ París (CDG) ➔ CDMX (MEX)", schedule: "23:55 → 18:00 (+1)", flightNumber: "AF423", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Estándar SkyTeam", bag: true, carry: true, seat: true, direct: false,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20KLM%20to%20MAD%20from%20MEX%20on%202026-10-16",
-        bookingUrl: "https://www.klm.com"
+      "yes_spc_mad_binter": {
+        id: "yes_spc_mad_binter", traveler: "yesica", segment: "transatlantico-inicio",
+        title: "Binter Canarias NT640 (Conexión Tenerife Norte TFN) · $3,450 MXN",
+        airline: "air-europa", price: 3450, occupancy: 62, seatsLeft: 9, aircraft: "ATR 72 + Embraer E195-E2",
+        description: "Salto interinsular con Binter y conexión en reactor Embraer E2 directo a Madrid Barajas T2.",
+        outbound: { route: "La Palma (SPC) ➔ Tenerife (TFN) ➔ Madrid (MAD)", schedule: "08:00 → 14:20", flightNumber: "NT640/NT5012", date: "Viernes 16 Oct 2026" },
+        return: { route: "Madrid (MAD) ➔ Tenerife ➔ La Palma (SPC)", schedule: "15:00 → 19:40", flightNumber: "NT5013/NT641", date: "Sábado 28 Nov 2026" },
+        class: "Tarifa Binter", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Binter%20to%20MAD%20from%20SPC%20on%202026-10-16",
+        bookingUrl: "https://www.bintercanarias.com"
       },
 
-      // ─── SALTO CONJUNTO ADICIONAL (AIR EUROPA MAD ➔ BOG) ───
-      "esp_col_aireuropa_mad": {
-        id: "esp_col_aireuropa_mad", traveler: "mario", segment: "espana-colombia",
-        title: "Air Europa UX193 Directo MAD ➔ BOG (Boeing 787) · $15,200 MXN",
-        airline: "air-europa", price: 15200, occupancy: 68, seatsLeft: 8, aircraft: "Boeing 787-9 Dreamliner",
-        description: "Salida directa desde Madrid Barajas T1 hacia Bogotá el Domingo 25 Oct (15:00 → 19:20).",
-        outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "15:00 → 19:20", flightNumber: "UX193", date: "Domingo 25 Oct 2026" },
-        class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: true,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20UX193%20from%20MAD%20to%20BOG%20on%202026-10-25",
-        bookingUrl: "https://www.aireuropa.com"
-      },
-      "yes_trans_aireuropa_mad": {
-        id: "yes_trans_aireuropa_mad", traveler: "yesica", segment: "espana-colombia",
-        title: "Air Europa UX193 Directo MAD ➔ BOG (Vuelo Conjunto) · $22,100 MXN",
-        airline: "air-europa", price: 22100, occupancy: 68, seatsLeft: 8, aircraft: "Boeing 787-9 Dreamliner",
-        description: "Vuelo directo Madrid ➔ Bogotá el Domingo 25 Oct (15:00 → 19:20) coincidiendo con Mario. Retorno nocturno el 27 Nov.",
-        outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "15:00 → 19:20", flightNumber: "UX193", date: "Domingo 25 Oct 2026" },
-        return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:30 → 13:30 (+1)", flightNumber: "UX194", date: "Viernes 27 Nov 2026" },
-        class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: true,
-        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20UX193%20from%20MAD%20to%20BOG%20on%202026-10-25",
-        bookingUrl: "https://www.aireuropa.com"
-      },
-      // ─── SALTO CONJUNTO ESPAÑA ➔ MÉXICO (CUANDO EL DESTINO ES MÉXICO) ───
+      // ══════════════════════════════════════════════════
+      // TRAMO 3: SALTO CONJUNTO ESPAÑA ➔ MÉXICO (MAD ➔ MEX)
+      // ══════════════════════════════════════════════════
       "esp_mex_iberia_6403": {
         id: "esp_mex_iberia_6403", traveler: "mario", segment: "espana-mexico",
-        title: "Iberia IB6403 Directo Madrid ➔ CDMX (Airbus A350) · $14,500 MXN",
+        title: "Iberia IB6403 Directo Madrid ➔ CDMX (Airbus A350) ⭐ · $14,500 MXN",
         airline: "iberia", price: 14500, occupancy: 78, seatsLeft: 5, aircraft: "Airbus A350-900",
         description: "Vuelo transatlántico directo de Madrid Barajas T4S a CDMX Benito Juárez (13:15 → 18:30).",
         outbound: { route: "Madrid (MAD) ➔ CDMX (MEX)", schedule: "13:15 → 18:30", flightNumber: "IB6403", date: "Martes 27 Oct 2026" },
@@ -1506,15 +1484,55 @@
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20from%20MAD%20to%20MEX%20on%202026-10-27",
         bookingUrl: "https://www.iberia.com"
       },
+      "esp_mex_iberia_6409": {
+        id: "esp_mex_iberia_6409", traveler: "mario", segment: "espana-mexico",
+        title: "Iberia IB6409 Directo Nocturno Madrid ➔ CDMX · $14,800 MXN",
+        airline: "iberia", price: 14800, occupancy: 82, seatsLeft: 3, aircraft: "Airbus A350-900",
+        description: "Vuelo directo nocturno saliendo 23:55 de Madrid T4S y llegando 05:10 (+1) a CDMX T1.",
+        outbound: { route: "Madrid (MAD) ➔ CDMX (MEX)", schedule: "23:55 → 05:10 (+1)", flightNumber: "IB6409", date: "Martes 27 Oct 2026" },
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20IB6409%20from%20MAD%20to%20MEX%20on%202026-10-27",
+        bookingUrl: "https://www.iberia.com"
+      },
       "esp_mex_aeromexico_02": {
         id: "esp_mex_aeromexico_02", traveler: "mario", segment: "espana-mexico",
         title: "Aeroméxico AM02 Directo Madrid ➔ CDMX (Dreamliner) · $15,200 MXN",
-        airline: "aeromexico-iberia", price: 15200, occupancy: 70, seatsLeft: 8, aircraft: "Boeing 787-9 Dreamliner",
-        description: "Vuelo nocturno directo Madrid ➔ CDMX (23:45 → 05:15 +1).",
-        outbound: { route: "Madrid (MAD) ➔ CDMX (MEX)", schedule: "23:45 → 05:15 (+1)", flightNumber: "AM02", date: "Martes 27 Oct 2026" },
+        airline: "aeromexico", price: 15200, occupancy: 70, seatsLeft: 8, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Vuelo directo diurno Madrid T1 a CDMX T2 (14:40 → 19:50).",
+        outbound: { route: "Madrid (MAD) ➔ CDMX (MEX)", schedule: "14:40 → 19:50", flightNumber: "AM02", date: "Martes 27 Oct 2026" },
         class: "Tarifa Clásica", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20from%20MAD%20to%20MEX%20on%202026-10-27",
         bookingUrl: "https://www.aeromexico.com"
+      },
+      "esp_mex_aeromexico_22": {
+        id: "esp_mex_aeromexico_22", traveler: "mario", segment: "espana-mexico",
+        title: "Aeroméxico AM22 Directo Nocturno Madrid ➔ CDMX · $15,500 MXN",
+        airline: "aeromexico", price: 15500, occupancy: 75, seatsLeft: 6, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Vuelo nocturno directo Madrid ➔ CDMX (23:45 → 05:15 +1).",
+        outbound: { route: "Madrid (MAD) ➔ CDMX (MEX)", schedule: "23:45 → 05:15 (+1)", flightNumber: "AM22", date: "Martes 27 Oct 2026" },
+        class: "Tarifa Clásica", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20AM22%20from%20MAD%20to%20MEX%20on%202026-10-27",
+        bookingUrl: "https://www.aeromexico.com"
+      },
+      "esp_mex_aireuropa_ux063": {
+        id: "esp_mex_aireuropa_ux063", traveler: "mario", segment: "espana-mexico",
+        title: "Air Europa UX063 (Escala Santo Domingo SDQ) · $13,200 MXN",
+        airline: "air-europa", price: 13200, occupancy: 85, seatsLeft: 3, aircraft: "Boeing 787-9",
+        description: "Salida de Madrid T1 con escala técnica en Santo Domingo hacia CDMX.",
+        outbound: { route: "Madrid (MAD) ➔ Santo Domingo ➔ CDMX (MEX)", schedule: "15:00 → 22:30", flightNumber: "UX063", date: "Martes 27 Oct 2026" },
+        class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20from%20MAD%20to%20MEX%20on%202026-10-27",
+        bookingUrl: "https://www.aireuropa.com"
+      },
+      "esp_mex_klm_1704": {
+        id: "esp_mex_klm_1704", traveler: "mario", segment: "espana-mexico",
+        title: "KLM / Air France (Escala Ámsterdam Schiphol) · $16,900 MXN",
+        airline: "klm-airfrance", price: 16900, occupancy: 74, seatsLeft: 5, aircraft: "Boeing 777-300ER",
+        description: "Salida matutina de Madrid con conexión en Ámsterdam Schiphol hacia CDMX.",
+        outbound: { route: "Madrid (MAD) ➔ Ámsterdam (AMS) ➔ CDMX (MEX)", schedule: "06:00 → 19:35", flightNumber: "KL1704/KL685", date: "Martes 27 Oct 2026" },
+        class: "Tarifa Estándar SkyTeam", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20KLM%20from%20MAD%20to%20MEX%20on%202026-10-27",
+        bookingUrl: "https://www.klm.com"
       },
       "yes_trans_mex_iberia": {
         id: "yes_trans_mex_iberia", traveler: "yesica", segment: "espana-mexico",
@@ -1560,8 +1578,9 @@
     }
 
     function startOptimizationAndSearch() {
+      step3Filters = {};
       goToStep(3);
-      showToast('🚀 Rutas analizadas y alternativas de vuelos listas', 'success');
+      showToast('🚀 Rutas analizadas y alternativas de vuelos listas en el menú', 'success');
     }
 
     function switchStep3Tab(traveler) {
@@ -1684,9 +1703,11 @@
       const airlinesList = [
         { code: 'all', label: 'Todas las Aerolíneas' },
         { code: 'iberia', label: 'Iberia' },
+        { code: 'aeromexico', label: 'Aeroméxico' },
+        { code: 'air-europa', label: 'Air Europa' },
+        { code: 'klm-airfrance', label: 'KLM / Air France' },
         { code: 'avianca', label: 'Avianca' },
-        { code: 'aeromexico-iberia', label: 'Aeroméxico' },
-        { code: 'air-europa', label: 'Air Europa / KLM' }
+        { code: 'united', label: 'United Airlines' }
       ];
 
       container.innerHTML = legs.map((leg) => {
