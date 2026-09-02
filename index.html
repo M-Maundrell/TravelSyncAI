@@ -663,7 +663,7 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
           <div id="live-api-status-badge" class="flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold shadow-2xs">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="api-status-text">API Live: Aviationstack · <strong>92/100 requests</strong> · Sincronizado hace unos momentos (2 updates/día)</span>
+            <span id="api-status-text">Google Flights Live API (SerpApi) · <strong>249/250 búsquedas</strong> · Sincronizado hace unos momentos (1 update/día · 24h)</span>
           </div>
           <button onclick="applyPreset('maestro_usuario'); renderStep3();" class="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 text-white font-black text-xs rounded-xl shadow-sm transition">
             ⭐ Auto-Elegir Plan Óptimo ($56,760 MXN)
@@ -2956,7 +2956,7 @@
               const diffMinutes = Math.max(1, Math.round((new Date() - lastChecked) / 60000));
               let timeText = diffMinutes < 60 ? `hace ${diffMinutes} min` : `hace ${Math.round(diffMinutes/60)}h`;
               
-              badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span><span>API Live: Aviationstack · <strong>${json.apiMetadata.quotaRemaining || 92}/${json.apiMetadata.quotaLimit || 100} requests</strong> · Sincronizado ${timeText} (Cadencia: 2 updates/día)</span>`;
+              badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Google Flights Live API (SerpApi) · <strong>${json.apiMetadata.quotaRemaining || 249}/${json.apiMetadata.quotaLimit || 250} búsquedas</strong> · Sincronizado ${timeText} (Cadencia: 1 update/día · 24h)</span>`;
             }
           }
           renderStep3();
