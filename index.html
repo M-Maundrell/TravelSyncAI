@@ -1411,13 +1411,55 @@
         bookingUrl: "https://www.united.com"
       },
 
-      // AVIANCA
-      "mex_mad_avianca_073": {
-        id: "mex_mad_avianca_073", traveler: "mario", segment: "transatlantico-inicio",
-        title: "Avianca AV073 (Conexión Bogotá El Dorado) · $15,800 MXN",
-        airline: "avianca", price: 15800, occupancy: 69, seatsLeft: 8, aircraft: "Boeing 787-8",
-        description: "Salida matutina de CDMX con escala de conexión en Bogotá hacia Madrid Barajas.",
-        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG) ➔ Madrid (MAD)", schedule: "07:30 → 06:10 (+1)", flightNumber: "AV073/AV010", date: "Viernes 16 Oct 2026" },
+      // ══════════════════════════════════════════════════
+      // AVIANCA (VÍA BOGOTÁ EL DORADO BOG)
+      // ══════════════════════════════════════════════════
+      "mex_mad_avianca_0455": {
+        id: "mex_mad_avianca_0455", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Avianca 04:55 a.m. (Escala Óptima 3h 5m BOG) ⭐ Mejor Precio · $13,100 MXN ($664 USD)",
+        airline: "avianca", price: 13100, occupancy: 82, seatsLeft: 4, aircraft: "A320neo + Boeing 787-8",
+        description: "Salida de madrugada de CDMX (04:55), escala cómoda de 3h 5m en Bogotá El Dorado y salto directo en Boeing 787 a Madrid llegando a las 06:10 (+1).",
+        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG) ➔ Madrid (MAD)", schedule: "04:55 → 06:10 (+1)", flightNumber: "AV045/AV010", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.avianca.com"
+      },
+      "mex_mad_avianca_2320": {
+        id: "mex_mad_avianca_2320", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Avianca 11:20 p.m. (Nocturno, Escala 2h 50m BOG) ⭐ Mejor Precio · $13,100 MXN ($664 USD)",
+        airline: "avianca", price: 13100, occupancy: 75, seatsLeft: 7, aircraft: "A320neo + Boeing 787-8",
+        description: "Vuelo nocturno saliendo a las 23:20 de CDMX, escala corta de 2h 50m en Bogotá y llegada a Madrid a las 00:20.",
+        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG) ➔ Madrid (MAD)", schedule: "23:20 → 00:20 (+2)", flightNumber: "AV023/AV182", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.avianca.com"
+      },
+      "mex_mad_avianca_0040_quick": {
+        id: "mex_mad_avianca_0040_quick", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Avianca 12:40 a.m. (Escala Rápida 1h 30m BOG) · $16,400 MXN ($832 USD)",
+        airline: "avianca", price: 16400, occupancy: 85, seatsLeft: 4, aircraft: "A320neo + Boeing 787-8",
+        description: "Salida de medianoche de CDMX (00:40) con la escala más corta (1h 30m en BOG), llegada a Madrid a las 06:10.",
+        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG) ➔ Madrid (MAD)", schedule: "00:40 → 06:10 (+1)", flightNumber: "AV073/AV010", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.avianca.com"
+      },
+      "mex_mad_avianca_1400": {
+        id: "mex_mad_avianca_1400", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Avianca 02:00 p.m. (Vespertino, Escala 2h BOG) · $18,500 MXN ($939 USD)",
+        airline: "avianca", price: 18500, occupancy: 68, seatsLeft: 8, aircraft: "A320neo + Boeing 787-8",
+        description: "Salida diurna de CDMX (14:00), conexión ágil de 2h en Bogotá y llegada a Madrid a las 14:05 (+1).",
+        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG) ➔ Madrid (MAD)", schedule: "14:00 → 14:05 (+1)", flightNumber: "AV047/AV026", date: "Viernes 16 Oct 2026" },
+        class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.avianca.com"
+      },
+      "mex_mad_avianca_0455_late": {
+        id: "mex_mad_avianca_0455_late", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Avianca 04:55 a.m. (Escala 5h 55m BOG, Llegada 09:05) · $16,400 MXN ($832 USD)",
+        airline: "avianca", price: 16400, occupancy: 65, seatsLeft: 10, aircraft: "A320neo + Boeing 787-8",
+        description: "Salida 04:55 de CDMX, tiempo para almorzar en el lounge de Bogotá El Dorado y llegada a Madrid a las 09:05 (+1).",
+        outbound: { route: "CDMX (MEX) ➔ Bogotá (BOG) ➔ Madrid (MAD)", schedule: "04:55 → 09:05 (+1)", flightNumber: "AV045/AV014", date: "Viernes 16 Oct 2026" },
         class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Avianca%20to%20MAD%20from%20MEX%20on%202026-10-16",
         bookingUrl: "https://www.avianca.com"
