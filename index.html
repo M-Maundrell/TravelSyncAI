@@ -909,53 +909,350 @@
     // Estado activo para el Modal de Selección de Vuelo
     let activeModalContext = { traveler: null, segmentKey: null, selectedAirline: 'all' };
 
-    // ─── CATÁLOGO GEOGRÁFICO DE PAÍSES Y AEROPUERTOS ───
+    // ─── CATÁLOGO GEOGRÁFICO EXHAUSTIVO DE PAÍSES, HUBS Y AEROPUERTOS REGIONALES ───
     const geoCatalog = {
-      MX: {
-        name: "🇲🇽 México",
-        airports: [
-          { code: "MEX", name: "MEX — Ciudad de México (Benito Juárez / AIFA)" },
-          { code: "GDL", name: "GDL — Guadalajara Miguel Hidalgo" },
-          { code: "MTY", name: "MTY — Monterrey Mariano Escobedo" },
-          { code: "CUN", name: "CUN — Cancún Internacional" }
-        ]
-      },
       ES: {
         name: "🇪🇸 España",
         airports: [
-          { code: "MAD", name: "MAD — Madrid Barajas Adolfo Suárez" },
-          { code: "BCN", name: "BCN — Barcelona El Prat" },
-          { code: "SPC", name: "SPC — La Palma, Islas Canarias" },
-          { code: "TFN", name: "TFN — Tenerife Norte" },
-          { code: "LPA", name: "LPA — Gran Canaria" }
+          // Hubs Peninsulares
+          { code: "MAD", name: "MAD — Madrid Barajas Adolfo Suárez (Hub T4/T4S)", group: "Hubs Principales" },
+          { code: "BCN", name: "BCN — Barcelona El Prat Josep Tarradellas", group: "Hubs Principales" },
+          { code: "AGP", name: "AGP — Málaga-Costa del Sol", group: "Península & Regionales" },
+          { code: "ALC", name: "ALC — Alicante-Elche Miguel Hernández", group: "Península & Regionales" },
+          { code: "VLC", name: "VLC — Valencia Manises", group: "Península & Regionales" },
+          { code: "SVQ", name: "SVQ — Sevilla San Pablo", group: "Península & Regionales" },
+          { code: "BIO", name: "BIO — Bilbao Loiu", group: "Península & Regionales" },
+          { code: "SCQ", name: "SCQ — Santiago de Compostela Rosalía de Castro", group: "Península & Regionales" },
+          { code: "LCG", name: "LCG — A Coruña Alvedro", group: "Península & Regionales" },
+          { code: "VGO", name: "VGO — Vigo Peinador", group: "Península & Regionales" },
+          { code: "OVD", name: "OVD — Asturias Ranón", group: "Península & Regionales" },
+          { code: "SDR", name: "SDR — Santander Seve Ballesteros", group: "Península & Regionales" },
+          { code: "EAS", name: "EAS — San Sebastián Hondarribia", group: "Península & Regionales" },
+          { code: "ZAZ", name: "ZAZ — Zaragoza", group: "Península & Regionales" },
+          { code: "GRO", name: "GRO — Girona-Costa Brava", group: "Península & Regionales" },
+          { code: "REU", name: "REU — Reus / Tarragona", group: "Península & Regionales" },
+          { code: "GRX", name: "GRX — Granada-Jaén Federico García Lorca", group: "Península & Regionales" },
+          { code: "XRY", name: "XRY — Jerez de la Frontera", group: "Península & Regionales" },
+          { code: "LEI", name: "LEI — Almería", group: "Península & Regionales" },
+          { code: "RMU", name: "RMU — Región de Murcia Intl", group: "Península & Regionales" },
+          { code: "VLL", name: "VLL — Valladolid Villanubla", group: "Península & Regionales" },
+          { code: "PNA", name: "PNA — Pamplona Noáin", group: "Península & Regionales" },
+          { code: "VIT", name: "VIT — Vitoria Foronda", group: "Península & Regionales" },
+          // Islas Canarias (Todas)
+          { code: "SPC", name: "SPC — La Palma (Santa Cruz de La Palma, Canarias)", group: "Islas Canarias" },
+          { code: "TFN", name: "TFN — Tenerife Norte Ciudad de La Laguna", group: "Islas Canarias" },
+          { code: "TFS", name: "TFS — Tenerife Sur Reina Sofía", group: "Islas Canarias" },
+          { code: "LPA", name: "LPA — Gran Canaria (Las Palmas / Gando)", group: "Islas Canarias" },
+          { code: "ACE", name: "ACE — Lanzarote César Manrique", group: "Islas Canarias" },
+          { code: "FUE", name: "FUE — Fuerteventura El Matorral", group: "Islas Canarias" },
+          { code: "VDE", name: "VDE — El Hierro Valverde", group: "Islas Canarias" },
+          { code: "GMZ", name: "GMZ — La Gomera", group: "Islas Canarias" },
+          // Islas Baleares
+          { code: "PMI", name: "PMI — Palma de Mallorca Son Sant Joan", group: "Islas Baleares" },
+          { code: "IBZ", name: "IBZ — Ibiza Es Codolar", group: "Islas Baleares" },
+          { code: "MAH", name: "MAH — Menorca Mahón", group: "Islas Baleares" }
+        ]
+      },
+      MX: {
+        name: "🇲🇽 México",
+        airports: [
+          // Hubs y Zona Metropolitana
+          { code: "MEX", name: "MEX — Ciudad de México (AICM Benito Juárez)", group: "Metropolitano & Hubs" },
+          { code: "NLU", name: "NLU — Ciudad de México (AIFA Felipe Ángeles)", group: "Metropolitano & Hubs" },
+          { code: "TLC", name: "TLC — Toluca Lic. Adolfo López Mateos", group: "Metropolitano & Hubs" },
+          { code: "GDL", name: "GDL — Guadalajara Miguel Hidalgo", group: "Hubs Principales" },
+          { code: "MTY", name: "MTY — Monterrey Mariano Escobedo", group: "Hubs Principales" },
+          { code: "CUN", name: "CUN — Cancún Internacional", group: "Hubs & Turísticos" },
+          { code: "TIJ", name: "TIJ — Tijuana / Cross Border Xpress", group: "Frontera & Norte" },
+          // Regionales & Turísticos
+          { code: "SJD", name: "SJD — Los Cabos / San José del Cabo", group: "Playas & Turísticos" },
+          { code: "PVR", name: "PVR — Puerto Vallarta Lic. Gustavo Díaz Ordaz", group: "Playas & Turísticos" },
+          { code: "MID", name: "MID — Mérida Manuel Crescencio Rejón", group: "Península Yucatán & Sur" },
+          { code: "TQO", name: "TQO — Tulum Felipe Carrillo Puerto", group: "Península Yucatán & Sur" },
+          { code: "CZM", name: "CZM — Cozumel", group: "Península Yucatán & Sur" },
+          { code: "CTM", name: "CTM — Chetumal", group: "Península Yucatán & Sur" },
+          { code: "BJX", name: "BJX — León / Bajío Guanajuato", group: "Centro & Bajío" },
+          { code: "QRO", name: "QRO — Querétaro Intercontinental", group: "Centro & Bajío" },
+          { code: "PBC", name: "PBC — Puebla Hermanos Serdán", group: "Centro & Bajío" },
+          { code: "AGU", name: "AGU — Aguascalientes Jesús Terán", group: "Centro & Bajío" },
+          { code: "SLP", name: "SLP — San Luis Potosí Ponciano Arriaga", group: "Centro & Bajío" },
+          { code: "MLM", name: "MLM — Morelia Francisco J. Mújica", group: "Centro & Bajío" },
+          { code: "OAX", name: "OAX — Oaxaca Xoxocotlán", group: "Sur & Pacífico" },
+          { code: "HUX", name: "HUX — Huatulco Bahías", group: "Sur & Pacífico" },
+          { code: "PXM", name: "PXM — Puerto Escondido", group: "Sur & Pacífico" },
+          { code: "TGZ", name: "TGZ — Tuxtla Gutiérrez Ángel Albino Corzo", group: "Sur & Pacífico" },
+          { code: "VSA", name: "VSA — Villahermosa Carlos Rovirosa", group: "Golfo & Sur" },
+          { code: "VER", name: "VER — Veracruz Heriberto Jara", group: "Golfo & Sur" },
+          { code: "TAM", name: "TAM — Tampico Francisco Javier Mina", group: "Golfo & Sur" },
+          { code: "ACA", name: "ACA — Acapulco General Juan N. Álvarez", group: "Playas & Turísticos" },
+          { code: "ZIH", name: "ZIH — Ixtapa-Zihuatanejo", group: "Playas & Turísticos" },
+          { code: "HMO", name: "HMO — Hermosillo Ignacio Pesqueira", group: "Norte & Pacífico" },
+          { code: "CUL", name: "CUL — Culiacán Federal de Bachigualato", group: "Norte & Pacífico" },
+          { code: "MZT", name: "MZT — Mazatlán General Rafael Buelna", group: "Norte & Pacífico" },
+          { code: "CUU", name: "CUU — Chihuahua General Roberto Fierro", group: "Norte & Frontera" },
+          { code: "CJS", name: "CJS — Ciudad Juárez Abraham González", group: "Norte & Frontera" },
+          { code: "MXL", name: "MXL — Mexicali General Rodolfo Sánchez", group: "Norte & Frontera" },
+          { code: "LAP", name: "LAP — La Paz Manuel Márquez de León", group: "Baja California" },
+          { code: "LMM", name: "LMM — Los Mochis Valle del Fuerte", group: "Norte & Pacífico" },
+          { code: "CEN", name: "CEN — Ciudad Obregón", group: "Norte & Pacífico" },
+          { code: "TRC", name: "TRC — Torreón Francisco Sarabia", group: "Norte & Centro" },
+          { code: "DGO", name: "DGO — Durango General Guadalupe Victoria", group: "Norte & Centro" },
+          { code: "TAP", name: "TAP — Tapachula", group: "Frontera Sur" },
+          { code: "MTT", name: "MTT — Minatitlán / Coatzacoalcos", group: "Golfo & Sur" }
         ]
       },
       CO: {
         name: "🇨🇴 Colombia",
         airports: [
-          { code: "BOG", name: "BOG — Bogotá El Dorado" },
-          { code: "MDE", name: "MDE — Medellín José María Córdova" },
-          { code: "CTG", name: "CTG — Cartagena Rafael Núñez" }
+          // Hubs Principales
+          { code: "BOG", name: "BOG — Bogotá El Dorado (Hub Principal)", group: "Hubs Principales" },
+          { code: "MDE", name: "MDE — Medellín Rionegro (José María Córdova)", group: "Hubs & Principales" },
+          { code: "EOH", name: "EOH — Medellín Ciudad (Olaya Herrera Regional)", group: "Regionales Centro" },
+          { code: "CLO", name: "CLO — Cali Alfonso Bonilla Aragón", group: "Hubs & Principales" },
+          { code: "CTG", name: "CTG — Cartagena Rafael Núñez", group: "Costa Caribe" },
+          { code: "BAQ", name: "BAQ — Barranquilla Ernesto Cortissoz", group: "Costa Caribe" },
+          { code: "SMR", name: "SMR — Santa Marta Simón Bolívar", group: "Costa Caribe" },
+          // Regionales Eje Cafetero & Andes
+          { code: "PEI", name: "PEI — Pereira Matecaña (Eje Cafetero)", group: "Eje Cafetero & Andes" },
+          { code: "AXM", name: "AXM — Armenia El Edén (Eje Cafetero)", group: "Eje Cafetero & Andes" },
+          { code: "MZL", name: "MZL — Manizales La Nubia", group: "Eje Cafetero & Andes" },
+          { code: "BGA", name: "BGA — Bucaramanga Palonegro", group: "Santanderes & Oriente" },
+          { code: "CUC", name: "CUC — Cúcuta Camilo Daza", group: "Santanderes & Oriente" },
+          { code: "IBE", name: "IBE — Ibagué Perales", group: "Andes & Centro" },
+          { code: "NVA", name: "NVA — Neiva Benito Salas", group: "Sur & Andes" },
+          { code: "PSO", name: "PSO — Pasto Antonio Nariño", group: "Sur & Andes" },
+          { code: "PPN", name: "PPN — Popayán Guillermo León Valencia", group: "Sur & Andes" },
+          { code: "VVC", name: "VVC — Villavicencio Vanguardia", group: "Llanos & Amazonía" },
+          { code: "EYP", name: "EYP — Yopal El Alcaraván", group: "Llanos & Amazonía" },
+          { code: "FLA", name: "FLA — Florencia Gustavo Artunduaga", group: "Llanos & Amazonía" },
+          { code: "LET", name: "LET — Leticia Alfredo Vásquez Cobo (Amazonas)", group: "Amazonas & Insular" },
+          { code: "ADZ", name: "ADZ — San Andrés Isla Gustavo Rojas Pinilla", group: "Amazonas & Insular" },
+          { code: "MTR", name: "MTR — Montería Los Garzones", group: "Costa Caribe" },
+          { code: "VUP", name: "VUP — Valledupar Alfonso López", group: "Costa Caribe" },
+          { code: "RCH", name: "RCH — Riohacha Almirante Padilla", group: "Costa Caribe" },
+          { code: "UIB", name: "UIB — Quibdó El Caraño", group: "Pacífico" },
+          { code: "TCO", name: "TCO — Tumaco La Florida", group: "Pacífico" },
+          { code: "APO", name: "APO — Apartadó Antonio Roldán", group: "Urabá" }
         ]
       },
       US: {
         name: "🇺🇸 Estados Unidos",
         airports: [
-          { code: "JFK", name: "JFK — Nueva York John F. Kennedy" },
-          { code: "MIA", name: "MIA — Miami Internacional" },
-          { code: "EWR", name: "EWR — Newark Liberty" }
+          // Nueva York & Tri-State
+          { code: "JFK", name: "JFK — Nueva York John F. Kennedy", group: "Nueva York & Este" },
+          { code: "EWR", name: "EWR — Newark Liberty (New Jersey)", group: "Nueva York & Este" },
+          { code: "LGA", name: "LGA — Nueva York LaGuardia", group: "Nueva York & Este" },
+          { code: "BOS", name: "BOS — Boston Logan", group: "Nueva York & Este" },
+          { code: "PHL", name: "PHL — Filadelfia Internacional", group: "Nueva York & Este" },
+          { code: "IAD", name: "IAD — Washington Dulles", group: "Washington DC" },
+          { code: "DCA", name: "DCA — Washington Ronald Reagan", group: "Washington DC" },
+          { code: "BWI", name: "BWI — Baltimore / Washington", group: "Washington DC" },
+          // Florida & Sureste
+          { code: "MIA", name: "MIA — Miami Internacional", group: "Florida & Sureste" },
+          { code: "FLL", name: "FLL — Fort Lauderdale-Hollywood", group: "Florida & Sureste" },
+          { code: "MCO", name: "MCO — Orlando Internacional", group: "Florida & Sureste" },
+          { code: "TPA", name: "TPA — Tampa Internacional", group: "Florida & Sureste" },
+          { code: "PBI", name: "PBI — West Palm Beach", group: "Florida & Sureste" },
+          { code: "ATL", name: "ATL — Atlanta Hartsfield-Jackson (Mega Hub)", group: "Florida & Sureste" },
+          { code: "CLT", name: "CLT — Charlotte Douglas", group: "Florida & Sureste" },
+          { code: "BNA", name: "BNA — Nashville", group: "Florida & Sureste" },
+          { code: "MSY", name: "MSY — Nueva Orleans Louis Armstrong", group: "Florida & Sureste" },
+          // Midwest & Texas
+          { code: "ORD", name: "ORD — Chicago O'Hare", group: "Midwest & Texas" },
+          { code: "MDW", name: "MDW — Chicago Midway", group: "Midwest & Texas" },
+          { code: "DFW", name: "DFW — Dallas/Fort Worth", group: "Midwest & Texas" },
+          { code: "DAL", name: "DAL — Dallas Love Field", group: "Midwest & Texas" },
+          { code: "IAH", name: "IAH — Houston George Bush Intercontinental", group: "Midwest & Texas" },
+          { code: "HOU", name: "HOU — Houston William P. Hobby", group: "Midwest & Texas" },
+          { code: "AUS", name: "AUS — Austin-Bergstrom", group: "Midwest & Texas" },
+          { code: "SAT", name: "SAT — San Antonio", group: "Midwest & Texas" },
+          { code: "DEN", name: "DEN — Denver Internacional", group: "Midwest & Montañas" },
+          { code: "MSP", name: "MSP — Minneapolis-Saint Paul", group: "Midwest & Texas" },
+          { code: "DTW", name: "DTW — Detroit Metropolitan", group: "Midwest & Texas" },
+          // Costa Oeste & Pacífico
+          { code: "LAX", name: "LAX — Los Ángeles Internacional", group: "Costa Oeste" },
+          { code: "SFO", name: "SFO — San Francisco Internacional", group: "Costa Oeste" },
+          { code: "OAK", name: "OAK — Oakland Bahía de San Francisco", group: "Costa Oeste" },
+          { code: "SJC", name: "SJC — San José Silicon Valley", group: "Costa Oeste" },
+          { code: "SAN", name: "SAN — San Diego Internacional", group: "Costa Oeste" },
+          { code: "SEA", name: "SEA — Seattle-Tacoma", group: "Costa Oeste" },
+          { code: "PDX", name: "PDX — Portland Internacional", group: "Costa Oeste" },
+          { code: "LAS", name: "LAS — Las Vegas Harry Reid", group: "Costa Oeste & Suroeste" },
+          { code: "PHX", name: "PHX — Phoenix Sky Harbor", group: "Costa Oeste & Suroeste" },
+          { code: "SLC", name: "SLC — Salt Lake City", group: "Costa Oeste & Suroeste" }
         ]
       },
       FR: {
         name: "🇫🇷 Francia",
         airports: [
-          { code: "CDG", name: "CDG — París Charles de Gaulle" }
+          { code: "CDG", name: "CDG — París Charles de Gaulle (Hub Principal)", group: "París" },
+          { code: "ORY", name: "ORY — París Orly", group: "París" },
+          { code: "NCE", name: "NCE — Niza Costa Azul", group: "Regionales Francia" },
+          { code: "LYS", name: "LYS — Lyon Saint-Exupéry", group: "Regionales Francia" },
+          { code: "MRS", name: "MRS — Marsella Provenza", group: "Regionales Francia" },
+          { code: "TLS", name: "TLS — Toulouse Blagnac", group: "Regionales Francia" },
+          { code: "BOD", name: "BOD — Burdeos Mérignac", group: "Regionales Francia" },
+          { code: "NTE", name: "NTE — Nantes Atlantique", group: "Regionales Francia" },
+          { code: "BIQ", name: "BIQ — Biarritz País Vasco", group: "Regionales Francia" }
+        ]
+      },
+      GB: {
+        name: "🇬🇧 Reino Unido",
+        airports: [
+          { code: "LHR", name: "LHR — Londres Heathrow (Hub)", group: "Londres" },
+          { code: "LGW", name: "LGW — Londres Gatwick", group: "Londres" },
+          { code: "STN", name: "STN — Londres Stansted", group: "Londres" },
+          { code: "LTN", name: "LTN — Londres Luton", group: "Londres" },
+          { code: "LCY", name: "LCY — Londres City", group: "Londres" },
+          { code: "MAN", name: "MAN — Mánchester", group: "Regionales UK" },
+          { code: "EDI", name: "EDI — Edimburgo (Escocia)", group: "Escocia & Irlanda" },
+          { code: "GLA", name: "GLA — Glasgow", group: "Escocia & Irlanda" },
+          { code: "BHX", name: "BHX — Birmingham", group: "Regionales UK" },
+          { code: "BRS", name: "BRS — Bristol", group: "Regionales UK" },
+          { code: "BFS", name: "BFS — Belfast Internacional", group: "Escocia & Irlanda" }
+        ]
+      },
+      DE: {
+        name: "🇩🇪 Alemania",
+        airports: [
+          { code: "FRA", name: "FRA — Fráncfort del Meno (Hub Lufthansa)", group: "Hubs Principales" },
+          { code: "MUC", name: "MUC — Múnich Franz Josef Strauss", group: "Hubs Principales" },
+          { code: "BER", name: "BER — Berlín Brandeburgo", group: "Regionales Alemania" },
+          { code: "DUS", name: "DUS — Düsseldorf", group: "Regionales Alemania" },
+          { code: "HAM", name: "HAM — Hamburgo Helmut Schmidt", group: "Regionales Alemania" },
+          { code: "CGN", name: "CGN — Colonia/Bonn", group: "Regionales Alemania" },
+          { code: "STR", name: "STR — Stuttgart", group: "Regionales Alemania" }
+        ]
+      },
+      IT: {
+        name: "🇮🇹 Italia",
+        airports: [
+          { code: "FCO", name: "FCO — Roma Fiumicino Leonardo da Vinci", group: "Roma & Centro" },
+          { code: "CIA", name: "CIA — Roma Ciampino", group: "Roma & Centro" },
+          { code: "MXP", name: "MXP — Milán Malpensa", group: "Milán & Norte" },
+          { code: "LIN", name: "LIN — Milán Linate", group: "Milán & Norte" },
+          { code: "BGY", name: "BGY — Milán Bérgamo Orio al Serio", group: "Milán & Norte" },
+          { code: "VCE", name: "VCE — Venecia Marco Polo", group: "Norte" },
+          { code: "NAP", name: "NAP — Nápoles Capodichino", group: "Sur & Islas" },
+          { code: "BLQ", name: "BLQ — Bolonia Guglielmo Marconi", group: "Norte" },
+          { code: "FLR", name: "FLR — Florencia Peretola", group: "Toscana" },
+          { code: "CTA", name: "CTA — Catania Fontanarossa (Sicilia)", group: "Sur & Islas" },
+          { code: "PMO", name: "PMO — Palermo Falcone-Borsellino (Sicilia)", group: "Sur & Islas" }
+        ]
+      },
+      PT: {
+        name: "🇵🇹 Portugal",
+        airports: [
+          { code: "LIS", name: "LIS — Lisboa Humberto Delgado (Hub TAP)", group: "Continental" },
+          { code: "OPO", name: "OPO — Oporto Francisco Sá Carneiro", group: "Continental" },
+          { code: "FAO", name: "FAO — Faro Algarve", group: "Continental" },
+          { code: "FNC", name: "FNC — Funchal Madeira Cristiano Ronaldo", group: "Islas Atlántico" },
+          { code: "PDL", name: "PDL — Ponta Delgada (Azores)", group: "Islas Atlántico" }
         ]
       },
       NL: {
         name: "🇳🇱 Países Bajos",
         airports: [
-          { code: "AMS", name: "AMS — Ámsterdam Schiphol" }
+          { code: "AMS", name: "AMS — Ámsterdam Schiphol (Hub KLM)", group: "Hub Principal" },
+          { code: "EIN", name: "EIN — Eindhoven", group: "Regionales" },
+          { code: "RTM", name: "RTM — Róterdam La Haya", group: "Regionales" }
+        ]
+      },
+      PA: {
+        name: "🇵🇦 Panamá",
+        airports: [
+          { code: "PTY", name: "PTY — Panamá Tocumen (Hub de las Américas Copa)", group: "Hub Principal" },
+          { code: "PAC", name: "PAC — Panamá Albrook Marcos A. Gelabert", group: "Regional" },
+          { code: "DAV", name: "DAV — David Enrique Malek (Chiriquí)", group: "Regional" }
+        ]
+      },
+      PE: {
+        name: "🇵🇪 Perú",
+        airports: [
+          { code: "LIM", name: "LIM — Lima Jorge Chávez (Hub LATAM)", group: "Hub Principal" },
+          { code: "CUZ", name: "CUZ — Cusco Alejandro Velasco Astete", group: "Regionales & Turismo" },
+          { code: "AQP", name: "AQP — Arequipa Alfredo Rodríguez Ballón", group: "Regionales & Turismo" },
+          { code: "TRU", name: "TRU — Trujillo Capitán Carlos Martínez", group: "Regionales" },
+          { code: "IQT", name: "IQT — Iquitos Coronel FAP Francisco Secada", group: "Selva & Amazonía" },
+          { code: "PIU", name: "PIU — Piura Capitán Guillermo Concha", group: "Norte" }
+        ]
+      },
+      AR: {
+        name: "🇦🇷 Argentina",
+        airports: [
+          { code: "EZE", name: "EZE — Buenos Aires Ezeiza Ministro Pistarini", group: "Buenos Aires" },
+          { code: "AEP", name: "AEP — Buenos Aires Aeroparque Jorge Newbery", group: "Buenos Aires" },
+          { code: "COR", name: "COR — Córdoba Ingeniero Ambrosio Taravella", group: "Provincias" },
+          { code: "MDZ", name: "MDZ — Mendoza El Plumerillo", group: "Provincias" },
+          { code: "BRC", name: "BRC — Bariloche Teniente Luis Candelaria", group: "Patagonia & Turismo" },
+          { code: "SLA", name: "SLA — Salta Martín Miguel de Güemes", group: "Norte" },
+          { code: "IGR", name: "IGR — Iguazú Mayor D. Carlos Eduardo Krause", group: "Patagonia & Turismo" },
+          { code: "USH", name: "USH — Ushuaia Malvinas Argentinas", group: "Patagonia & Turismo" }
+        ]
+      },
+      CL: {
+        name: "🇨🇱 Chile",
+        airports: [
+          { code: "SCL", name: "SCL — Santiago Arturo Merino Benítez", group: "Hub Principal" },
+          { code: "CJC", name: "CJC — Calama / San Pedro de Atacama", group: "Norte & Minero" },
+          { code: "ANF", name: "ANF — Antofagasta Andrés Sabella", group: "Norte & Minero" },
+          { code: "PMC", name: "PMC — Puerto Montt El Tepual", group: "Sur & Patagonia" },
+          { code: "PUQ", name: "PUQ — Punta Arenas Presidente Carlos Ibáñez", group: "Sur & Patagonia" },
+          { code: "IPC", name: "IPC — Isla de Pascua Mataveri", group: "Insular" }
+        ]
+      },
+      BR: {
+        name: "🇧🇷 Brasil",
+        airports: [
+          { code: "GRU", name: "GRU — São Paulo Guarulhos (Hub LATAM/Gol)", group: "São Paulo" },
+          { code: "CGH", name: "CGH — São Paulo Congonhas", group: "São Paulo" },
+          { code: "GIG", name: "GIG — Río de Janeiro Galeão Tom Jobim", group: "Río de Janeiro" },
+          { code: "SDU", name: "SDU — Río de Janeiro Santos Dumont", group: "Río de Janeiro" },
+          { code: "BSB", name: "BSB — Brasilia Presidente Juscelino Kubitschek", group: "Centro" },
+          { code: "SSA", name: "SSA — Salvador de Bahía Deputado Luís Eduardo", group: "Nordeste" },
+          { code: "CNF", name: "CNF — Belo Horizonte Confins (Hub Azul)", group: "Minas Gerais" },
+          { code: "REC", name: "REC — Recife Guararapes", group: "Nordeste" },
+          { code: "FOR", name: "FOR — Fortaleza Pinto Martins", group: "Nordeste" },
+          { code: "POA", name: "POA — Porto Alegre Salgado Filho", group: "Sur" }
+        ]
+      },
+      CA: {
+        name: "🇨🇦 Canadá",
+        airports: [
+          { code: "YYZ", name: "YYZ — Toronto Pearson (Hub Air Canada)", group: "Este" },
+          { code: "YVR", name: "YVR — Vancouver Internacional", group: "Oeste" },
+          { code: "YUL", name: "YUL — Montreal Pierre Elliott Trudeau", group: "Este" },
+          { code: "YYC", name: "YYC — Calgary Internacional", group: "Oeste" },
+          { code: "YOW", name: "YOW — Ottawa Macdonald-Cartier", group: "Este" }
+        ]
+      },
+      CR: {
+        name: "🇨🇷 Costa Rica",
+        airports: [
+          { code: "SJO", name: "SJO — San José Juan Santamaría", group: "Principal" },
+          { code: "LIR", name: "LIR — Liberia Guanacaste", group: "Playas & Pacífico" }
+        ]
+      },
+      DO: {
+        name: "🇩🇴 Rep. Dominicana",
+        airports: [
+          { code: "PUJ", name: "PUJ — Punta Cana Internacional", group: "Turismo" },
+          { code: "SDQ", name: "SDQ — Santo Domingo Las Américas", group: "Capital" },
+          { code: "STI", name: "STI — Santiago de los Caballeros Cibao", group: "Norte" }
+        ]
+      },
+      EC: {
+        name: "🇪🇨 Ecuador",
+        airports: [
+          { code: "UIO", name: "UIO — Quito Mariscal Sucre", group: "Sierra" },
+          { code: "GYE", name: "GYE — Guayaquil José Joaquín de Olmedo", group: "Costa" },
+          { code: "GPS", name: "GPS — Islas Galápagos Baltra", group: "Galápagos" }
+        ]
+      },
+      GLOBAL: {
+        name: "🌐 Otro / Entrada Libre (Cualquier Aeropuerto)",
+        airports: [
+          { code: "GLOBAL_CUSTOM", name: "✏️ Cualquier Aeropuerto / Código IATA Personalizado", group: "Libre" }
         ]
       }
     };
@@ -1178,6 +1475,20 @@
       });
     }
 
+    function renderAirportSelectOptions(airports, selectedVal) {
+      const groups = {};
+      airports.forEach(a => {
+        const g = a.group || 'Aeropuertos';
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(a);
+      });
+      return Object.entries(groups).map(([gName, items]) => `
+        <optgroup label="── ${gName} ──">
+          ${items.map(a => `<option value="${a.name}" ${(selectedVal === a.name || selectedVal === a.code) ? 'selected' : ''}>${a.name}</option>`).join('')}
+        </optgroup>
+      `).join('');
+    }
+
     function updateAirportOptions(pKey) {
       const cSelect = document.getElementById(`${pKey}-country-select`);
       const aSelect = document.getElementById(`${pKey}-cfg-origin`);
@@ -1185,9 +1496,7 @@
       const countryCode = cSelect.value;
       tripConfig[pKey].country = countryCode;
       const airports = geoCatalog[countryCode]?.airports || [];
-      aSelect.innerHTML = airports.map(a => 
-        `<option value="${a.name}" ${tripConfig[pKey].origin === a.name ? 'selected' : ''}>${a.name}</option>`
-      ).join('');
+      aSelect.innerHTML = renderAirportSelectOptions(airports, tripConfig[pKey].origin);
       tripConfig[pKey].origin = aSelect.value;
     }
 
@@ -1249,9 +1558,7 @@
         const countryOptions = Object.entries(geoCatalog).map(([k, c]) => 
           `<option value="${k}" ${countryKey === k ? 'selected' : ''}>${c.name}</option>`
         ).join('');
-        const cityOptions = country.airports.map(a => 
-          `<option value="${a.code}" ${wp.cityCode === a.code ? 'selected' : ''}>${a.name}</option>`
-        ).join('');
+        const cityOptions = renderAirportSelectOptions(country.airports, wp.cityCode);
 
         html += `
           <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
