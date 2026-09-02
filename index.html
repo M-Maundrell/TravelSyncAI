@@ -1497,6 +1497,38 @@
         class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: true,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20UX193%20from%20MAD%20to%20BOG%20on%202026-10-25",
         bookingUrl: "https://www.aireuropa.com"
+      },
+      // ─── SALTO CONJUNTO ESPAÑA ➔ MÉXICO (CUANDO EL DESTINO ES MÉXICO) ───
+      "esp_mex_iberia_6403": {
+        id: "esp_mex_iberia_6403", traveler: "mario", segment: "espana-mexico",
+        title: "Iberia IB6403 Directo Madrid ➔ CDMX (Airbus A350) · $14,500 MXN",
+        airline: "iberia", price: 14500, occupancy: 78, seatsLeft: 5, aircraft: "Airbus A350-900",
+        description: "Vuelo transatlántico directo de Madrid Barajas T4S a CDMX Benito Juárez (13:15 → 18:30).",
+        outbound: { route: "Madrid (MAD) ➔ CDMX (MEX)", schedule: "13:15 → 18:30", flightNumber: "IB6403", date: "Martes 27 Oct 2026" },
+        class: "Tarifa Óptima", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20from%20MAD%20to%20MEX%20on%202026-10-27",
+        bookingUrl: "https://www.iberia.com"
+      },
+      "esp_mex_aeromexico_02": {
+        id: "esp_mex_aeromexico_02", traveler: "mario", segment: "espana-mexico",
+        title: "Aeroméxico AM02 Directo Madrid ➔ CDMX (Dreamliner) · $15,200 MXN",
+        airline: "aeromexico-iberia", price: 15200, occupancy: 70, seatsLeft: 8, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Vuelo nocturno directo Madrid ➔ CDMX (23:45 → 05:15 +1).",
+        outbound: { route: "Madrid (MAD) ➔ CDMX (MEX)", schedule: "23:45 → 05:15 (+1)", flightNumber: "AM02", date: "Martes 27 Oct 2026" },
+        class: "Tarifa Clásica", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Aeromexico%20from%20MAD%20to%20MEX%20on%202026-10-27",
+        bookingUrl: "https://www.aeromexico.com"
+      },
+      "yes_trans_mex_iberia": {
+        id: "yes_trans_mex_iberia", traveler: "yesica", segment: "espana-mexico",
+        title: "Iberia IB6403 / IB6400 ($21,423 MXN) · Vuelo Conjunto a México",
+        airline: "iberia", price: 21423, occupancy: 80, seatsLeft: 4, aircraft: "Airbus A350-900",
+        description: "Ida conjunta con Mario en IB6403 (MAD ➔ MEX 13:15 → 18:30). Retorno MEX ➔ MAD en IB6400 (20:30 → 14:00 +1) conectando a La Palma en IB3842.",
+        outbound: { route: "Madrid (MAD) ➔ CDMX (MEX)", schedule: "13:15 → 18:30", flightNumber: "IB6403", date: "Martes 27 Oct 2026" },
+        return: { route: "CDMX (MEX) ➔ Madrid (MAD) ➔ La Palma (SPC)", schedule: "20:30 → 19:35 (+1)", flightNumber: "IB6400/IB3842", date: "Viernes 20 Nov 2026" },
+        class: "Tarifa Classic Directo", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20from%20MAD%20to%20MEX%20on%202026-10-27",
+        bookingUrl: "https://www.iberia.com"
       }
     };
 
@@ -1525,6 +1557,11 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function isMarioAlt() {
+      const hasBogota = tripConfig.p1.waypoints?.some(w => w.cityCode === 'BOG' || w.name?.includes('BOG') || w.name?.includes('Bogotá'));
+      return Boolean(hasBogota && state.mario.salida && state.mario.salida.startsWith('mex_bog'));
+    }
+
     function startOptimizationAndSearch() {
       goToStep(3);
       showToast('🚀 Rutas analizadas y alternativas de vuelos listas', 'success');
@@ -1549,26 +1586,21 @@
       if (nameP1El) nameP1El.innerText = n1;
       if (nameP2El) nameP2El.innerText = n2;
 
+      // Auto-asignar vuelos según el destino configurado si no coinciden
+      const isMexicoDest = tripConfig.p1.waypoints?.some(w => w.cityCode === 'MEX' || w.country === 'MX');
+      if (isMexicoDest) {
+        if (!state.mario.salida || state.mario.salida.startsWith('mex_bog')) state.mario.salida = 'mex_mad_iberia_152';
+        if (!state.mario.trans || state.mario.trans.startsWith('esp_col')) state.mario.trans = 'esp_mex_iberia_6403';
+        if (!state.yesica.trans || state.yesica.trans.startsWith('yes_trans_avianca') || state.yesica.trans.startsWith('yes_trans_iberia')) state.yesica.trans = 'yes_trans_mex_iberia';
+      }
+
       ['mario', 'yesica'].forEach(traveler => {
         const container = document.getElementById(`step3-panel-${traveler}`);
         if (!container) return;
-        const isMario = traveler === 'mario';
-        const segments = isMario
-          ? (isMarioAlt()
-              ? [
-                  { key: 'salida', segment: 'transatlantico-inicio', label: '1. Vuelo Inicial México ➔ Bogotá (Aeroméxico)' },
-                  { key: 'bog_esp', segment: 'alternativo-regreso', label: '2. Vuelo Bogotá ➔ Madrid / Retorno Conjunto IB0153' }
-                ]
-              : [
-                  { key: 'salida', segment: 'transatlantico-inicio', label: '1. Vuelo Transatlántico CDMX ➔ Madrid (Directo)' },
-                  { key: 'trans', segment: 'espana-colombia', label: '2. Salto Conjunto España ➔ Colombia' }
-                ])
-          : [
-              { key: 'salida', segment: 'transatlantico-inicio', label: '1. Regional Canarias ➔ Madrid (Iberia Express)' },
-              { key: 'trans', segment: 'espana-colombia', label: '2. Salto Conjunto España ➔ Colombia' }
-            ];
 
+        const segments = getSegments(traveler).filter(s => s.type === 'select');
         let html = '';
+
         segments.forEach(seg => {
           const currentFlightId = state[traveler][seg.key];
           const flight = getCatalogBrick(currentFlightId);
@@ -1607,14 +1639,29 @@
                     <span class="text-slate-500 font-bold">${flight?.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
                     <span class="text-slate-500 font-bold">${flight?.seat ? '✓ Asiento' : ''}</span>
                   </div>
-                  <a href="${flight?.googleFlightsUrl || '#'}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold">
-                    🔍 Google Flights ↗
-                  </a>
+                  <div class="flex items-center gap-3">
+                    <a href="${flight?.googleFlightsUrl || '#'}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold">
+                      🔍 Google Flights ↗
+                    </a>
+                    <a href="${flight?.bookingUrl || '#'}" target="_blank" class="text-emerald-700 hover:text-emerald-900 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      💳 Comprar ↗
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
           `;
         });
+
+        html += `
+          <div class="pt-4 flex justify-end">
+            <button onclick="goToStep(4)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
+              <span>Continuar al Resumen Final & Itinerario (Paso 4)</span>
+              <span>➔</span>
+            </button>
+          </div>
+        `;
+
         container.innerHTML = html;
       });
     }
@@ -2347,7 +2394,8 @@
             sub: `Tren de Alta Velocidad AVE (${curWp.departureDate || '21 Oct'}) · ~2h 45min`
           });
         } else {
-          // Vuelo internacional (ej. Madrid ➔ Bogotá o Madrid ➔ México)
+          // Vuelo internacional (ej. Madrid ➔ México o Madrid ➔ Bogotá)
+          const targetSegment = (toCountry === 'MX' || nextWp.cityCode === 'MEX') ? 'espana-mexico' : 'espana-colombia';
           if (traveler === 'mario' && isMarioAlt()) {
             segments.push({
               key: 'bog_esp_ret', step: String(stepCounter++),
@@ -2359,8 +2407,8 @@
             segments.push({
               key: 'trans', step: String(stepCounter++),
               label: `${nextWp.jointFlight ? '🔗 Salto Conjunto' : 'Vuelo'}: ${fromCity} ➔ ${toCity}`,
-              type: 'select', segment: 'espana-colombia',
-              sub: `Vuelo del ${curWp.departureDate || '24 Oct'} al ${nextWp.departureDate || '27 Nov'}`
+              type: 'select', segment: targetSegment,
+              sub: `Vuelo del ${curWp.departureDate || '27 Oct'} al ${nextWp.departureDate || '20 Nov'}`
             });
           }
         }
