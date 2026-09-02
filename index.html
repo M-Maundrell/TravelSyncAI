@@ -651,14 +651,14 @@
 
 
     <!-- ══════════════════════════════════════════════════
-         PASO 3: SELECCIÓN DE VUELOS POR TRAMO (EXPERIENCIA OTA CON FILTROS & OCUPACIÓN)
+         PASO 3: MENÚ INTERACTIVO DE VUELOS POR TRAMO (WIZARD OTA GUIADO)
          ══════════════════════════════════════════════════ -->
     <div id="step-container-3" class="bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm space-y-6 hidden">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-100 gap-3">
         <div>
-          <span class="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Paso 3 de 4 · Selección de Vuelos</span>
-          <h3 class="text-lg md:text-xl font-black text-slate-900 mt-1">Compara Alternativas y Elige tus Vuelos (Estilo OTA)</h3>
-          <p class="text-xs text-slate-500">Selecciona o cambia los vuelos para cada pasajero. Visualiza ocupación, tarifas y enlaces directos a Google Flights.</p>
+          <span class="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Paso 3 de 4 · Menú de Vuelos OTA</span>
+          <h3 class="text-lg md:text-xl font-black text-slate-900 mt-1">Elige tus Vuelos Tramo por Tramo</h3>
+          <p class="text-xs text-slate-500">Selecciona tu aerolínea preferida, compara ocupación y tarifas, y asegura compatibilidad 100% en vuelos conjuntos.</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="applyPreset('maestro_usuario'); renderStep3();" class="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 text-white font-black text-xs rounded-xl shadow-sm transition">
@@ -667,37 +667,26 @@
         </div>
       </div>
 
-      <!-- TABS DE PASAJEROS EN EL PASO 3 -->
-      <div class="flex border-b border-slate-200 gap-2">
-        <button id="step3-tab-p1" onclick="switchStep3Tab('mario')" class="px-5 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-extrabold text-xs flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
-          <span>Vuelos de <span id="step3-tab-name-p1">Mario</span></span>
-        </button>
-        <button id="step3-tab-p2" onclick="switchStep3Tab('yesica')" class="px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-extrabold text-xs flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-pink-600"></span>
-          <span>Vuelos de <span id="step3-tab-name-p2">Yesica</span></span>
-        </button>
+      <!-- CONTENEDOR DINÁMICO DEL MENÚ DE TRAMOS -->
+      <div id="step3-legs-wizard-container" class="space-y-6">
+        <!-- Renderizado dinámicamente por renderStep3() -->
       </div>
 
-      <!-- CONTENEDOR DE TRAMOS DE PASAJERO 1 -->
-      <div id="step3-panel-mario" class="space-y-4">
-        <!-- Generado dinámicamente por renderStep3() -->
-      </div>
-
-      <!-- CONTENEDOR DE TRAMOS DE PASAJERO 2 -->
-      <div id="step3-panel-yesica" class="space-y-4 hidden">
-        <!-- Generado dinámicamente por renderStep3() -->
-      </div>
-
-      <!-- BOTONES DE NAVEGACIÓN -->
-      <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+      <!-- BARRA DE TOTAL ACUMULADO Y NAVEGACIÓN -->
+      <div class="flex flex-col sm:flex-row justify-between items-center pt-5 border-t border-slate-200 gap-4">
         <button onclick="goToStep(2)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
-          ⬅ Volver a Estancias
+          ⬅ Volver a Estancias (Paso 2)
         </button>
-        <button onclick="goToStep(4)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
-          <span>Ver Itinerario Completo & Path Map</span>
-          <span>➔</span>
-        </button>
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <div class="text-xs text-slate-400 font-bold">Total Vuelos Seleccionados:</div>
+            <div id="step3-total-cost-display" class="text-lg font-black text-indigo-600">$0 MXN</div>
+          </div>
+          <button onclick="goToStep(4)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
+            <span>Ver Resumen Final & Itinerario (Paso 4)</span>
+            <span>➔</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1586,92 +1575,251 @@
         : 'px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-extrabold text-xs flex items-center gap-2';
     }
 
+    // ─── ESTADO Y CONTROL DEL MENÚ DE VUELOS DEL PASO 3 ───
+    let step3Filters = {};
+
+    function setStep3AirlineFilter(legId, airline) {
+      step3Filters[legId] = airline;
+      renderStep3();
+    }
+
+    function selectStep3Flight(traveler, stateKey, flightId, isJoint) {
+      if (isJoint) {
+        state.mario.trans = flightId;
+        if (flightId === 'esp_mex_iberia_6403') {
+          state.yesica.trans = 'yes_trans_mex_iberia';
+        } else if (flightId === 'esp_col_avianca_bcn') {
+          state.yesica.trans = 'yes_trans_avianca';
+        } else if (flightId === 'esp_col_iberia_bcn' || flightId === 'bog_esp_iberia_user') {
+          state.yesica.trans = 'yes_trans_iberia_user';
+        } else {
+          state.yesica.trans = 'yes_trans_mex_iberia';
+        }
+        showToast('✓ Vuelo Conjunto Sincronizado para Mario y Yesica', 'success');
+      } else {
+        state[traveler][stateKey] = flightId;
+        showToast('✓ Vuelo seleccionado con éxito', 'success');
+      }
+      renderStep3();
+      render();
+    }
+
     function renderStep3() {
+      const container = document.getElementById('step3-legs-wizard-container');
+      if (!container) return;
+
       const n1 = tripConfig.p1.name || 'Mario';
       const n2 = tripConfig.p2.name || 'Yesica';
-      const nameP1El = document.getElementById('step3-tab-name-p1');
-      const nameP2El = document.getElementById('step3-tab-name-p2');
-      if (nameP1El) nameP1El.innerText = n1;
-      if (nameP2El) nameP2El.innerText = n2;
+      const orig1 = tripConfig.p1.origin?.split('—')[0]?.trim() || 'MEX';
+      const orig2 = tripConfig.p2.origin?.split('—')[0]?.trim() || 'SPC';
+      const wps = tripConfig.p1.waypoints || [];
 
-      // Auto-asignar vuelos según el destino configurado si no coinciden
-      const isMexicoDest = tripConfig.p1.waypoints?.some(w => w.cityCode === 'MEX' || w.country === 'MX');
+      // Destino internacional detectado
+      const isMexicoDest = wps.some(w => w.cityCode === 'MEX' || w.country === 'MX');
+      const targetSegment = isMexicoDest ? 'espana-mexico' : 'espana-colombia';
+
+      // Auto-asignación segura inicial si faltaba
       if (isMexicoDest) {
         if (!state.mario.salida || state.mario.salida.startsWith('mex_bog')) state.mario.salida = 'mex_mad_iberia_152';
         if (!state.mario.trans || state.mario.trans.startsWith('esp_col')) state.mario.trans = 'esp_mex_iberia_6403';
-        if (!state.yesica.trans || state.yesica.trans.startsWith('yes_trans_avianca') || state.yesica.trans.startsWith('yes_trans_iberia')) state.yesica.trans = 'yes_trans_mex_iberia';
+        if (!state.yesica.trans || state.yesica.trans.startsWith('yes_trans_avianca')) state.yesica.trans = 'yes_trans_mex_iberia';
       }
 
-      ['mario', 'yesica'].forEach(traveler => {
-        const container = document.getElementById(`step3-panel-${traveler}`);
-        if (!container) return;
+      // Definir los tramos lógicos del menú
+      const legs = [
+        {
+          id: 'leg_p1_salida',
+          traveler: 'mario',
+          stateKey: 'salida',
+          segmentKey: 'transatlantico-inicio',
+          title: `🛫 Tramo 1: Salida de ${n1} (${orig1} ➔ Madrid MAD)`,
+          desc: `Vuelo transatlántico individual desde ${orig1} hacia la 1ra estancia en Madrid.`,
+          passengerBadge: `👤 ${n1} (${orig1})`,
+          badgeClass: 'bg-blue-100 text-blue-800 border-blue-200 font-bold',
+          isJoint: false
+        },
+        {
+          id: 'leg_p2_salida',
+          traveler: 'yesica',
+          stateKey: 'salida',
+          segmentKey: 'transatlantico-inicio',
+          title: `🛫 Tramo 2: Salida de ${n2} (${orig2} ➔ Madrid MAD)`,
+          desc: `Vuelo de conexión desde Canarias (${orig2}) hacia el punto de encuentro en Madrid.`,
+          passengerBadge: `👤 ${n2} (${orig2})`,
+          badgeClass: 'bg-pink-100 text-pink-800 border-pink-200 font-bold',
+          isJoint: false
+        },
+        {
+          id: 'leg_joint',
+          traveler: 'mario',
+          stateKey: 'trans',
+          segmentKey: targetSegment,
+          title: `🔗 Tramo Conjunto Compartido: Madrid ➔ ${isMexicoDest ? 'Ciudad de México (MEX)' : 'Bogotá (BOG)'}`,
+          desc: `✨ Vuelo en conjunto obligatorio: ${n1} y ${n2} viajarán en el mismo vuelo y horario. Se configura una sola vez para ambos.`,
+          passengerBadge: `👥 ${n1} & ${n2} (Mismo Vuelo)`,
+          badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300 font-black',
+          isJoint: true
+        }
+      ];
 
-        const segments = getSegments(traveler).filter(s => s.type === 'select');
-        let html = '';
+      // Si Yesica tiene retorno a Canarias desde México/Bogotá
+      if (orig2 !== (isMexicoDest ? 'MEX' : 'BOG')) {
+        legs.push({
+          id: 'leg_p2_retorno',
+          traveler: 'yesica',
+          stateKey: 'trans',
+          segmentKey: targetSegment,
+          title: `🛬 Retorno Final a Casa: ${isMexicoDest ? 'Ciudad de México (MEX)' : 'Bogotá (BOG)'} ➔ Canarias (${orig2})`,
+          desc: `Vuelo de regreso de ${n2} incluido en su boleto multidestino o conexión a Canarias.`,
+          passengerBadge: `👤 ${n2} (${orig2})`,
+          badgeClass: 'bg-pink-100 text-pink-800 border-pink-200 font-bold',
+          isIncluded: true
+        });
+      }
 
-        segments.forEach(seg => {
-          const currentFlightId = state[traveler][seg.key];
-          const flight = getCatalogBrick(currentFlightId);
-          const totalOptions = Object.values(flightsCatalog).filter(f => f.traveler === traveler && f.segment === seg.segment).length;
+      let totalCost = calculateTravelerCost('mario') + calculateTravelerCost('yesica');
+      const totalDisplay = document.getElementById('step3-total-cost-display');
+      if (totalDisplay) totalDisplay.innerText = formatMXN(totalCost);
 
-          const occ = flight ? (flight.occupancy || 70) : 70;
-          const occBadge = occ >= 80 
-            ? `<span class="text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">🔥 ${occ}% Vendido · Quedan ${flight?.seatsLeft || 3} asientos</span>`
-            : (occ >= 60 
-              ? `<span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">🟡 ${occ}% Ocupación</span>`
-              : `<span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">🟢 ${occ}% Ocupación · Alta disponibilidad</span>`);
+      const airlinesList = [
+        { code: 'all', label: 'Todas las Aerolíneas' },
+        { code: 'iberia', label: 'Iberia' },
+        { code: 'avianca', label: 'Avianca' },
+        { code: 'aeromexico-iberia', label: 'Aeroméxico' },
+        { code: 'air-europa', label: 'Air Europa / KLM' }
+      ];
 
-          html += `
-            <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-3">
-              <div class="flex justify-between items-center pb-2 border-b border-slate-200/70">
-                <span class="text-xs font-black uppercase text-slate-800 tracking-wider">${seg.label}</span>
-                <span class="text-xs font-black text-slate-900">${flight ? formatMXN(flight.price) : '$0'}</span>
-              </div>
+      container.innerHTML = legs.map((leg) => {
+        const activeFilter = step3Filters[leg.id] || 'all';
+        const currentFlightId = leg.isJoint ? state.mario.trans : state[leg.traveler][leg.stateKey];
+        const selectedFlight = getCatalogBrick(currentFlightId);
 
-              <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2.5">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        if (leg.isIncluded) {
+          return `
+            <div class="bg-emerald-50/50 border border-emerald-200 rounded-3xl p-5 md:p-6 space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-xl">🛬</span>
                   <div>
-                    <div class="text-sm font-black text-slate-900">${flight ? flight.title : 'Seleccionar Vuelo'}</div>
-                    <div class="text-xs text-slate-500 font-semibold mt-0.5">
-                      ${flight ? `🛫 ${flight.outbound?.route} (${flight.outbound?.flightNumber}) · 🕒 ${flight.outbound?.schedule}` : 'No seleccionado'}
-                    </div>
-                  </div>
-                  <button onclick="openFlightPickerModal('${traveler}', '${seg.segment}')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl shadow-sm transition shrink-0 flex items-center gap-1.5">
-                    <span>✈️ Explorar / Cambiar (${totalOptions} Alternativas)</span>
-                  </button>
-                </div>
-
-                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
-                  <div class="flex items-center gap-2">
-                    ${occBadge}
-                    <span class="text-slate-500 font-bold">${flight?.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
-                    <span class="text-slate-500 font-bold">${flight?.seat ? '✓ Asiento' : ''}</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    <a href="${flight?.googleFlightsUrl || '#'}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold">
-                      🔍 Google Flights ↗
-                    </a>
-                    <a href="${flight?.bookingUrl || '#'}" target="_blank" class="text-emerald-700 hover:text-emerald-900 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      💳 Comprar ↗
-                    </a>
+                    <h4 class="text-sm md:text-base font-black text-emerald-950">${leg.title}</h4>
+                    <p class="text-xs text-emerald-800">${leg.desc}</p>
                   </div>
                 </div>
+                <span class="px-3 py-1 text-xs rounded-full border ${leg.badgeClass}">${leg.passengerBadge}</span>
+              </div>
+              <div class="bg-white p-4 rounded-2xl border border-emerald-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <span class="text-xs font-black text-slate-800">${selectedFlight?.return?.route || 'Retorno Transatlántico + Conexión'}</span>
+                  <div class="text-xs text-slate-500 mt-0.5">🕒 Horario: ${selectedFlight?.return?.schedule || 'Horario Nocturno'} · 📅 ${selectedFlight?.return?.date || 'Viernes 20 Nov'} · <strong>${selectedFlight?.return?.flightNumber || 'IB6400/IB3842'}</strong></div>
+                </div>
+                <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-black rounded-xl self-start sm:self-auto">✓ Cubierto por Boleto Conjunto</span>
               </div>
             </div>
           `;
-        });
+        }
 
-        html += `
-          <div class="pt-4 flex justify-end">
-            <button onclick="goToStep(4)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
-              <span>Continuar al Resumen Final & Itinerario (Paso 4)</span>
-              <span>➔</span>
-            </button>
+        let options = Object.values(flightsCatalog).filter(f => f.traveler === leg.traveler && f.segment === leg.segmentKey);
+        if (activeFilter !== 'all') {
+          options = options.filter(f => f.airline === activeFilter);
+        }
+        options.sort((a, b) => a.price - b.price);
+
+        const filterChips = airlinesList.map(a => `
+          <button onclick="setStep3AirlineFilter('${leg.id}', '${a.code}')" class="px-3 py-1 rounded-xl text-xs font-extrabold transition shrink-0 ${activeFilter === a.code ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'}">
+            ${a.label}
+          </button>
+        `).join('');
+
+        return `
+          <div class="bg-slate-50 border border-slate-200 rounded-3xl p-5 md:p-6 space-y-4 shadow-2xs">
+            <!-- ENCABEZADO DEL TRAMO -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-slate-200/80">
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-2">
+                  <h4 class="text-sm md:text-base font-black text-slate-900">${leg.title}</h4>
+                </div>
+                <p class="text-xs text-slate-500">${leg.desc}</p>
+              </div>
+              <span class="px-3 py-1 text-xs rounded-full border ${leg.badgeClass} self-start sm:self-auto">${leg.passengerBadge}</span>
+            </div>
+
+            <!-- FILTRO DE AEROLÍNEA COMO MENÚ -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1">
+              <span class="text-[11px] font-black uppercase text-slate-400 mr-1 shrink-0">Aerolínea:</span>
+              ${filterChips}
+            </div>
+
+            <!-- MENÚ DE OPCIONES DE VUELOS DISPONIBLES -->
+            <div class="grid grid-cols-1 gap-3">
+              ${options.map(f => {
+                const isSelected = f.id === currentFlightId;
+                const occ = f.occupancy || 70;
+                const occBadge = occ >= 80 
+                  ? `<span class="text-[11px] font-extrabold text-rose-700 bg-rose-50 px-2.5 py-0.5 rounded-lg border border-rose-200">🔥 ${occ}% Vendido · Quedan ${f.seatsLeft || 3} asientos</span>`
+                  : (occ >= 60 
+                    ? `<span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200">🟡 ${occ}% Ocupación</span>`
+                    : `<span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200">🟢 ${occ}% Ocupación · Alta disponibilidad</span>`);
+
+                return `
+                  <div class="bg-white border-2 ${isSelected ? 'border-indigo-600 ring-2 ring-indigo-100 bg-indigo-50/10' : 'border-slate-200 hover:border-slate-300'} rounded-2xl p-4 transition space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                      <div>
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-black text-slate-900">${f.title}</span>
+                          ${isSelected ? '<span class="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md border border-emerald-300">✓ Seleccionado</span>' : ''}
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                          ${occBadge}
+                          <span class="text-[11px] text-slate-500 font-semibold">✈️ ${f.aircraft || 'Aeronave de Cabina Ancha'}</span>
+                        </div>
+                      </div>
+                      <div class="text-left sm:text-right">
+                        <div class="text-base sm:text-lg font-black text-slate-900">${formatMXN(f.price)}</div>
+                        <div class="text-xs font-bold text-slate-400">${formatEUR(f.price)}</div>
+                      </div>
+                    </div>
+
+                    <!-- ITINERARIO DEL VUELO -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs space-y-1.5">
+                      <div class="flex justify-between items-center">
+                        <span class="font-extrabold text-slate-800">🛫 ${f.outbound?.route}</span>
+                        <span class="font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">${f.outbound?.flightNumber}</span>
+                      </div>
+                      <div class="flex justify-between text-slate-600 text-[11px]">
+                        <span>🕒 Horario: <strong>${f.outbound?.schedule}</strong></span>
+                        <span>📅 ${f.outbound?.date}</span>
+                      </div>
+                      ${f.return ? `
+                        <div class="pt-1.5 border-t border-slate-200/60 flex justify-between text-slate-600 text-[11px]">
+                          <span>🛬 Regreso: <strong>${f.return.route}</strong> (${f.return.flightNumber})</span>
+                          <span>${f.return.schedule} · ${f.return.date}</span>
+                        </div>
+                      ` : ''}
+                    </div>
+
+                    <!-- SERVICIOS INCLUIDOS Y BOTÓN DE SELECCIÓN -->
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
+                      <div class="flex items-center gap-2.5 text-[11px] text-slate-600 font-bold">
+                        <span>${f.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
+                        <span>${f.carry ? '✓ Carry-On' : ''}</span>
+                        <span>${f.seat ? '✓ Asiento reservado' : ''}</span>
+                      </div>
+                      <div class="flex items-center gap-2">
+                        <a href="${f.googleFlightsUrl}" target="_blank" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                          🔍 Google Flights ↗
+                        </a>
+                        <button onclick="selectStep3Flight('${leg.traveler}', '${leg.stateKey}', '${f.id}', ${leg.isJoint})" class="px-4 py-1.5 text-xs font-black rounded-xl transition shadow-xs ${isSelected ? 'bg-emerald-600 text-white cursor-default' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}">
+                          ${isSelected ? '✓ Vuelo Elegido' : 'Elegir este Vuelo'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
           </div>
         `;
-
-        container.innerHTML = html;
-      });
+      }).join('');
     }
 
     // ─── SELECTORES DE PAÍS & CIUDAD EN CASCADA ───
