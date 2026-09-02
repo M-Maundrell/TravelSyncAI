@@ -651,38 +651,52 @@
 
 
     <!-- ══════════════════════════════════════════════════
-         PASO 3: MOTOR DE BÚSQUEDA EXHAUSTIVA & OPTIMIZACIÓN
+         PASO 3: SELECCIÓN DE VUELOS POR TRAMO (EXPERIENCIA OTA CON FILTROS & OCUPACIÓN)
          ══════════════════════════════════════════════════ -->
-    <div id="step-container-3" class="bg-white border border-slate-200/80 rounded-3xl p-8 md:p-12 shadow-sm text-center space-y-6 hidden">
-      <div class="w-20 h-20 bg-indigo-50 border-2 border-indigo-200 rounded-full flex items-center justify-center text-3xl mx-auto radar-pulse">
-        ✈️
-      </div>
-      <div>
-        <h3 class="text-xl md:text-2xl font-black text-slate-900">Analizando Rutas y Combinaciones Comerciales...</h3>
-        <p class="text-xs md:text-sm text-slate-500 mt-1 max-w-md mx-auto">
-          Escaneando itinerarios en Iberia, Avianca, Aeroméxico, Air Europa, LATAM y Binter Canarias.
-        </p>
-      </div>
-
-      <!-- CHECKPOINTS VISUALES -->
-      <div class="max-w-md mx-auto text-left space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-slate-200 text-xs font-bold text-slate-700">
-        <div id="chk-1" class="flex items-center gap-2 text-emerald-600">
-          <span>✓</span> <span>Validación de pasaportes y visados migratorios</span>
+    <div id="step-container-3" class="bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm space-y-6 hidden">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-100 gap-3">
+        <div>
+          <span class="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Paso 3 de 4 · Selección de Vuelos</span>
+          <h3 class="text-lg md:text-xl font-black text-slate-900 mt-1">Compara Alternativas y Elige tus Vuelos (Estilo OTA)</h3>
+          <p class="text-xs text-slate-500">Selecciona o cambia los vuelos para cada pasajero. Visualiza ocupación, tarifas y enlaces directos a Google Flights.</p>
         </div>
-        <div id="chk-2" class="flex items-center gap-2 text-emerald-600">
-          <span>✓</span> <span>Sincronización de vuelo conjunto (España ➔ Colombia)</span>
-        </div>
-        <div id="chk-3" class="flex items-center gap-2 text-emerald-600">
-          <span>✓</span> <span>Garantía de escalas seguras en Madrid T4 (≥ 90 min)</span>
-        </div>
-        <div id="chk-4" class="flex items-center gap-2 text-indigo-600 animate-pulse">
-          <span>⏳</span> <span>Consolidando presupuestos combinados vs Límite</span>
+        <div class="flex items-center gap-2">
+          <button onclick="applyPreset('maestro_usuario'); renderStep3();" class="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 text-white font-black text-xs rounded-xl shadow-sm transition">
+            ⭐ Auto-Elegir Plan Óptimo ($56,760 MXN)
+          </button>
         </div>
       </div>
 
-      <div class="pt-4">
-        <button onclick="goToStep(4)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm rounded-2xl shadow-lg transition">
-          Ver Planes de Vuelo Generados ➔
+      <!-- TABS DE PASAJEROS EN EL PASO 3 -->
+      <div class="flex border-b border-slate-200 gap-2">
+        <button id="step3-tab-p1" onclick="switchStep3Tab('mario')" class="px-5 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-extrabold text-xs flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+          <span>Vuelos de <span id="step3-tab-name-p1">Mario</span></span>
+        </button>
+        <button id="step3-tab-p2" onclick="switchStep3Tab('yesica')" class="px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-extrabold text-xs flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-pink-600"></span>
+          <span>Vuelos de <span id="step3-tab-name-p2">Yesica</span></span>
+        </button>
+      </div>
+
+      <!-- CONTENEDOR DE TRAMOS DE PASAJERO 1 -->
+      <div id="step3-panel-mario" class="space-y-4">
+        <!-- Generado dinámicamente por renderStep3() -->
+      </div>
+
+      <!-- CONTENEDOR DE TRAMOS DE PASAJERO 2 -->
+      <div id="step3-panel-yesica" class="space-y-4 hidden">
+        <!-- Generado dinámicamente por renderStep3() -->
+      </div>
+
+      <!-- BOTONES DE NAVEGACIÓN -->
+      <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+        <button onclick="goToStep(2)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+          ⬅ Volver a Estancias
+        </button>
+        <button onclick="goToStep(4)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
+          <span>Ver Itinerario Completo & Path Map</span>
+          <span>➔</span>
         </button>
       </div>
     </div>
@@ -1437,6 +1451,52 @@
         class: "Tarifa Classic", bag: true, carry: true, seat: true, direct: false,
         googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Iberia%20to%20BOG%20from%20BCN%20on%202026-10-24",
         bookingUrl: "https://www.iberia.com"
+      },
+      // ─── MARIO: ALTERNATIVAS ADICIONALES (AIR EUROPA / KLM / LATAM) ───
+      "mex_mad_aireuropa": {
+        id: "mex_mad_aireuropa", traveler: "mario", segment: "transatlantico-inicio",
+        title: "Air Europa UX064 (Escala Santo Domingo SDQ) · $16,800 MXN",
+        airline: "air-europa", price: 16800, occupancy: 72, seatsLeft: 7, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Vuelo transatlántico en Dreamliner con escala corta técnica en Santo Domingo hacia Madrid T1.",
+        outbound: { route: "CDMX (MEX) ➔ Santo Domingo ➔ Madrid (MAD)", schedule: "13:45 → 10:30 (+1)", flightNumber: "UX064", date: "Viernes 16 Oct 2026" },
+        return: { route: "Bogotá (BOG) ➔ Madrid ➔ CDMX (MEX)", schedule: "19:00 → 12:45 (+1)", flightNumber: "UX194", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.aireuropa.com"
+      },
+      "mex_mad_klm_airfrance": {
+        id: "mex_mad_klm_airfrance", traveler: "mario", segment: "transatlantico-inicio",
+        title: "KLM / Air France (Escala Ámsterdam AMS) · $18,400 MXN",
+        airline: "air-europa", price: 18400, occupancy: 83, seatsLeft: 3, aircraft: "Boeing 777-300ER",
+        description: "Salida nocturna de CDMX con escala de conexión en Ámsterdam Schiphol hacia Madrid Barajas.",
+        outbound: { route: "CDMX (MEX) ➔ Ámsterdam (AMS) ➔ Madrid (MAD)", schedule: "21:55 → 18:20 (+1)", flightNumber: "KL686/KL1705", date: "Viernes 16 Oct 2026" },
+        return: { route: "Bogotá (BOG) ➔ París (CDG) ➔ CDMX (MEX)", schedule: "23:55 → 18:00 (+1)", flightNumber: "AF423", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Estándar SkyTeam", bag: true, carry: true, seat: true, direct: false,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20KLM%20to%20MAD%20from%20MEX%20on%202026-10-16",
+        bookingUrl: "https://www.klm.com"
+      },
+
+      // ─── SALTO CONJUNTO ADICIONAL (AIR EUROPA MAD ➔ BOG) ───
+      "esp_col_aireuropa_mad": {
+        id: "esp_col_aireuropa_mad", traveler: "mario", segment: "espana-colombia",
+        title: "Air Europa UX193 Directo MAD ➔ BOG (Boeing 787) · $15,200 MXN",
+        airline: "air-europa", price: 15200, occupancy: 68, seatsLeft: 8, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Salida directa desde Madrid Barajas T1 hacia Bogotá el Domingo 25 Oct (15:00 → 19:20).",
+        outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "15:00 → 19:20", flightNumber: "UX193", date: "Domingo 25 Oct 2026" },
+        class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20UX193%20from%20MAD%20to%20BOG%20on%202026-10-25",
+        bookingUrl: "https://www.aireuropa.com"
+      },
+      "yes_trans_aireuropa_mad": {
+        id: "yes_trans_aireuropa_mad", traveler: "yesica", segment: "espana-colombia",
+        title: "Air Europa UX193 Directo MAD ➔ BOG (Vuelo Conjunto) · $22,100 MXN",
+        airline: "air-europa", price: 22100, occupancy: 68, seatsLeft: 8, aircraft: "Boeing 787-9 Dreamliner",
+        description: "Vuelo directo Madrid ➔ Bogotá el Domingo 25 Oct (15:00 → 19:20) coincidiendo con Mario. Retorno nocturno el 27 Nov.",
+        outbound: { route: "Madrid (MAD) ➔ Bogotá (BOG)", schedule: "15:00 → 19:20", flightNumber: "UX193", date: "Domingo 25 Oct 2026" },
+        return: { route: "Bogotá (BOG) ➔ Madrid (MAD)", schedule: "21:30 → 13:30 (+1)", flightNumber: "UX194", date: "Viernes 27 Nov 2026" },
+        class: "Tarifa Económica", bag: true, carry: true, seat: true, direct: true,
+        googleFlightsUrl: "https://www.google.com/travel/flights?q=Flights%20Air%20Europa%20UX193%20from%20MAD%20to%20BOG%20on%202026-10-25",
+        bookingUrl: "https://www.aireuropa.com"
       }
     };
 
@@ -1457,10 +1517,106 @@
       } else if (stepNumber === 2) {
         renderWaypointsList('p1');
         renderWaypointsList('p2');
+      } else if (stepNumber === 3) {
+        renderStep3();
       } else if (stepNumber === 4) {
         render();
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startOptimizationAndSearch() {
+      goToStep(3);
+      showToast('🚀 Rutas analizadas y alternativas de vuelos listas', 'success');
+    }
+
+    function switchStep3Tab(traveler) {
+      document.getElementById('step3-panel-mario').classList.toggle('hidden', traveler !== 'mario');
+      document.getElementById('step3-panel-yesica').classList.toggle('hidden', traveler !== 'yesica');
+      document.getElementById('step3-tab-p1').className = traveler === 'mario'
+        ? 'px-5 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-extrabold text-xs flex items-center gap-2'
+        : 'px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-extrabold text-xs flex items-center gap-2';
+      document.getElementById('step3-tab-p2').className = traveler === 'yesica'
+        ? 'px-5 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-extrabold text-xs flex items-center gap-2'
+        : 'px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-extrabold text-xs flex items-center gap-2';
+    }
+
+    function renderStep3() {
+      const n1 = tripConfig.p1.name || 'Mario';
+      const n2 = tripConfig.p2.name || 'Yesica';
+      const nameP1El = document.getElementById('step3-tab-name-p1');
+      const nameP2El = document.getElementById('step3-tab-name-p2');
+      if (nameP1El) nameP1El.innerText = n1;
+      if (nameP2El) nameP2El.innerText = n2;
+
+      ['mario', 'yesica'].forEach(traveler => {
+        const container = document.getElementById(`step3-panel-${traveler}`);
+        if (!container) return;
+        const isMario = traveler === 'mario';
+        const segments = isMario
+          ? (isMarioAlt()
+              ? [
+                  { key: 'salida', segment: 'transatlantico-inicio', label: '1. Vuelo Inicial México ➔ Bogotá (Aeroméxico)' },
+                  { key: 'bog_esp', segment: 'alternativo-regreso', label: '2. Vuelo Bogotá ➔ Madrid / Retorno Conjunto IB0153' }
+                ]
+              : [
+                  { key: 'salida', segment: 'transatlantico-inicio', label: '1. Vuelo Transatlántico CDMX ➔ Madrid (Directo)' },
+                  { key: 'trans', segment: 'espana-colombia', label: '2. Salto Conjunto España ➔ Colombia' }
+                ])
+          : [
+              { key: 'salida', segment: 'transatlantico-inicio', label: '1. Regional Canarias ➔ Madrid (Iberia Express)' },
+              { key: 'trans', segment: 'espana-colombia', label: '2. Salto Conjunto España ➔ Colombia' }
+            ];
+
+        let html = '';
+        segments.forEach(seg => {
+          const currentFlightId = state[traveler][seg.key];
+          const flight = getCatalogBrick(currentFlightId);
+          const totalOptions = Object.values(flightsCatalog).filter(f => f.traveler === traveler && f.segment === seg.segment).length;
+
+          const occ = flight ? (flight.occupancy || 70) : 70;
+          const occBadge = occ >= 80 
+            ? `<span class="text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">🔥 ${occ}% Vendido · Quedan ${flight?.seatsLeft || 3} asientos</span>`
+            : (occ >= 60 
+              ? `<span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">🟡 ${occ}% Ocupación</span>`
+              : `<span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">🟢 ${occ}% Ocupación · Alta disponibilidad</span>`);
+
+          html += `
+            <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-3">
+              <div class="flex justify-between items-center pb-2 border-b border-slate-200/70">
+                <span class="text-xs font-black uppercase text-slate-800 tracking-wider">${seg.label}</span>
+                <span class="text-xs font-black text-slate-900">${flight ? formatMXN(flight.price) : '$0'}</span>
+              </div>
+
+              <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2.5">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div>
+                    <div class="text-sm font-black text-slate-900">${flight ? flight.title : 'Seleccionar Vuelo'}</div>
+                    <div class="text-xs text-slate-500 font-semibold mt-0.5">
+                      ${flight ? `🛫 ${flight.outbound?.route} (${flight.outbound?.flightNumber}) · 🕒 ${flight.outbound?.schedule}` : 'No seleccionado'}
+                    </div>
+                  </div>
+                  <button onclick="openFlightPickerModal('${traveler}', '${seg.segment}')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl shadow-sm transition shrink-0 flex items-center gap-1.5">
+                    <span>✈️ Explorar / Cambiar (${totalOptions} Alternativas)</span>
+                  </button>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs">
+                  <div class="flex items-center gap-2">
+                    ${occBadge}
+                    <span class="text-slate-500 font-bold">${flight?.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
+                    <span class="text-slate-500 font-bold">${flight?.seat ? '✓ Asiento' : ''}</span>
+                  </div>
+                  <a href="${flight?.googleFlightsUrl || '#'}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold">
+                    🔍 Google Flights ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = html;
+      });
     }
 
     // ─── SELECTORES DE PAÍS & CIUDAD EN CASCADA ───
@@ -1908,8 +2064,9 @@
       const stateKey = segmentKey === 'transatlantico-inicio' ? 'salida' : (segmentKey === 'alternativo-regreso' ? 'bog_esp' : 'trans');
       state[traveler][stateKey] = flightId;
       closeFlightPickerModal();
+      if (currentStep === 3) renderStep3();
       render();
-      showToast('✓ Vuelo actualizado en el itinerario', 'success');
+      showToast('✓ Vuelo seleccionado y actualizado en el itinerario', 'success');
     }
 
     // ─── PATH VISUALIZATION RENDERER (100% DINÁMICO BASADO EN DATOS REALES) ───
