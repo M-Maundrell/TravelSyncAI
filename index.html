@@ -449,7 +449,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
-              <input type="text" id="p1-cfg-name" value="Mario" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+              <input type="text" id="p1-cfg-name" value="Mario" placeholder="Ej. Mario" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
@@ -517,7 +517,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
-              <input type="text" id="p2-cfg-name" value="Yesica" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+              <input type="text" id="p2-cfg-name" value="Yesica" placeholder="Ej. Yesica" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
@@ -597,10 +597,10 @@
       <!-- TABS DE WAYPOINTS POR PASAJERO -->
       <div class="border-b border-slate-200 flex gap-2">
         <button id="wp-tab-btn-p1" onclick="switchWpTab('p1')" class="px-4 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-bold text-xs flex items-center gap-1.5">
-          <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> Paradas de Mario
+          <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span> Paradas de <span id="tab-name-p1">Mario</span>
         </button>
         <button id="wp-tab-btn-p2" onclick="switchWpTab('p2')" class="px-4 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-bold text-xs flex items-center gap-1.5">
-          <span class="w-2.5 h-2.5 rounded-full bg-pink-600"></span> Paradas de Yesica
+          <span class="w-2.5 h-2.5 rounded-full bg-pink-600"></span> Paradas de <span id="tab-name-p2">Yesica</span>
         </button>
       </div>
 
@@ -608,7 +608,7 @@
       <div id="wp-panel-p1" class="space-y-4">
         <div id="p1-waypoints-list" class="space-y-3"></div>
         <button type="button" onclick="addWaypoint('p1')" class="w-full py-2.5 bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-300 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1.5">
-          <span>+ Añadir Otra Parada / Estancia para Mario</span>
+          <span>+ Añadir Otra Parada / Estancia para <span id="add-btn-name-p1">Mario</span></span>
         </button>
       </div>
 
@@ -616,7 +616,7 @@
       <div id="wp-panel-p2" class="space-y-4 hidden">
         <div id="p2-waypoints-list" class="space-y-3"></div>
         <button type="button" onclick="addWaypoint('p2')" class="w-full py-2.5 bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-300 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-1.5">
-          <span>+ Añadir Otra Parada / Estancia para Yesica</span>
+          <span>+ Añadir Otra Parada / Estancia para <span id="add-btn-name-p2">Yesica</span></span>
         </button>
       </div>
 
@@ -627,7 +627,7 @@
           <h4 class="text-sm font-black text-emerald-900">Regla Maestra de Sincronización de Vuelo Conjunto</h4>
         </div>
         <p class="text-xs text-emerald-800">
-          Mario y Yesica deben realizar el salto transatlántico a Colombia en el <strong>mismo vuelo y mismo horario</strong> (24 Oct en Avianca AV19 o 25 Oct en Iberia IB0153).
+          <span id="rule-name-p1" class="font-bold">Mario</span> y <span id="rule-name-p2" class="font-bold">Yesica</span> deben realizar el salto transatlántico a Colombia en el <strong>mismo vuelo y mismo horario</strong> (24 Oct en Avianca AV19 o 25 Oct en Iberia IB0153).
         </p>
         <div class="flex items-center gap-3">
           <label class="flex items-center gap-2 text-xs font-bold text-emerald-900 cursor-pointer">
@@ -1484,9 +1484,33 @@
       });
       return Object.entries(groups).map(([gName, items]) => `
         <optgroup label="── ${gName} ──">
-          ${items.map(a => `<option value="${a.name}" ${(selectedVal === a.name || selectedVal === a.code) ? 'selected' : ''}>${a.name}</option>`).join('')}
+          ${items.map(a => `<option value="${a.code}" ${(selectedVal === a.code || selectedVal === a.name) ? 'selected' : ''}>${a.name}</option>`).join('')}
         </optgroup>
       `).join('');
+    }
+
+    function syncPassengerNamesLive() {
+      const p1Input = document.getElementById('p1-cfg-name');
+      const p2Input = document.getElementById('p2-cfg-name');
+      if (p1Input && p1Input.value.trim()) tripConfig.p1.name = p1Input.value.trim();
+      if (p2Input && p2Input.value.trim()) tripConfig.p2.name = p2Input.value.trim();
+
+      const n1 = tripConfig.p1.name || 'Pasajero 1';
+      const n2 = tripConfig.p2.name || 'Pasajero 2';
+
+      // Actualizar tabs y botones de Paso 2
+      const tab1 = document.getElementById('tab-name-p1');
+      if (tab1) tab1.innerText = n1;
+      const tab2 = document.getElementById('tab-name-p2');
+      if (tab2) tab2.innerText = n2;
+      const add1 = document.getElementById('add-btn-name-p1');
+      if (add1) add1.innerText = n1;
+      const add2 = document.getElementById('add-btn-name-p2');
+      if (add2) add2.innerText = n2;
+      const r1 = document.getElementById('rule-name-p1');
+      if (r1) r1.innerText = n1;
+      const r2 = document.getElementById('rule-name-p2');
+      if (r2) r2.innerText = n2;
     }
 
     function updateAirportOptions(pKey) {
@@ -1501,7 +1525,7 @@
     }
 
     function saveStep1AndNext() {
-      tripConfig.p1.name = document.getElementById('p1-cfg-name').value || "Mario";
+      syncPassengerNamesLive();
       tripConfig.p1.startDate = document.getElementById('p1-cfg-date').value || "2026-10-16";
       tripConfig.p1.origin = document.getElementById('p1-cfg-origin').value;
       tripConfig.p1.nationality = document.getElementById('p1-cfg-nat').value;
@@ -1511,7 +1535,6 @@
       tripConfig.p1.prefs.seat = document.getElementById('p1-pref-seat').checked;
 
       if (tripConfig.passengerCount >= 2) {
-        tripConfig.p2.name = document.getElementById('p2-cfg-name').value || "Yesica";
         tripConfig.p2.startDate = document.getElementById('p2-cfg-date').value || "2026-10-16";
         tripConfig.p2.origin = document.getElementById('p2-cfg-origin').value;
         tripConfig.p2.nationality = document.getElementById('p2-cfg-nat').value;
@@ -1548,8 +1571,9 @@
     function renderWaypointsList(pKey) {
       const container = document.getElementById(`${pKey}-waypoints-list`);
       if (!container) return;
+      syncPassengerNamesLive();
       const wps = tripConfig[pKey].waypoints || [];
-      const otherName = pKey === 'p1' ? tripConfig.p2.name : tripConfig.p1.name;
+      const otherName = pKey === 'p1' ? (tripConfig.p2.name || 'Acompañante') : (tripConfig.p1.name || 'Titular');
 
       let html = '';
       wps.forEach((wp, idx) => {
@@ -1598,7 +1622,7 @@
               <div class="flex items-center pt-4">
                 <label class="flex items-center gap-2 text-xs font-bold text-indigo-900 cursor-pointer">
                   <input type="checkbox" onchange="updateWpField('${pKey}', ${idx}, 'jointFlight', this.checked)" ${wp.jointFlight ? 'checked' : ''} class="w-4 h-4 rounded text-indigo-600">
-                  <span>🔗 Vuelo conjunto obligatorio con ${otherName}</span>
+                  <span>🔗 Vuelo conjunto obligatorio con <span class="wp-other-name-${pKey}">${otherName}</span></span>
                 </label>
               </div>
             </div>
@@ -1612,21 +1636,40 @@
       tripConfig[pKey].waypoints[idx].country = newCountryCode;
       const airports = geoCatalog[newCountryCode]?.airports || [];
       if (airports.length > 0) {
-        tripConfig[pKey].waypoints[idx].cityCode = airports[0].code;
-        tripConfig[pKey].waypoints[idx].name = airports[0].name.split('—')[1]?.trim() || airports[0].name;
+        const firstAirport = airports[0];
+        tripConfig[pKey].waypoints[idx].cityCode = firstAirport.code;
+        
+        let cleanName = firstAirport.name;
+        if (firstAirport.name.includes('—')) {
+          const parts = firstAirport.name.split('—');
+          const codePart = parts[0].trim();
+          const rest = parts[1].trim().split('(')[0].trim();
+          cleanName = `${rest} (${codePart})`;
+        }
+        tripConfig[pKey].waypoints[idx].name = cleanName;
       }
       renderWaypointsList(pKey);
     }
 
-    function handleWpCityChange(pKey, idx, newCityCode) {
+    function handleWpCityChange(pKey, idx, selectedVal) {
       const countryCode = tripConfig[pKey].waypoints[idx].country || 'ES';
-      const airport = geoCatalog[countryCode]?.airports.find(a => a.code === newCityCode);
-      if (airport) {
-        tripConfig[pKey].waypoints[idx].cityCode = airport.code;
-        tripConfig[pKey].waypoints[idx].name = airport.name.split('—')[1]?.trim() || airport.name;
-        // Actualizar título reactivo
-        const titleEl = document.getElementById(`wp-title-${pKey}-${idx}`);
-        if (titleEl) titleEl.innerText = `📍 Estancia ${idx + 1}: ${tripConfig[pKey].waypoints[idx].name}`;
+      const airport = geoCatalog[countryCode]?.airports.find(a => a.code === selectedVal || a.name === selectedVal) || { code: selectedVal, name: selectedVal };
+      
+      tripConfig[pKey].waypoints[idx].cityCode = airport.code;
+
+      let cleanName = airport.name;
+      if (airport.name.includes('—')) {
+        const parts = airport.name.split('—');
+        const codePart = parts[0].trim();
+        const rest = parts[1].trim().split('(')[0].trim();
+        cleanName = `${rest} (${codePart})`;
+      }
+      tripConfig[pKey].waypoints[idx].name = cleanName;
+
+      // Actualizar inmediatamente el título de la tarjeta
+      const titleEl = document.getElementById(`wp-title-${pKey}-${idx}`);
+      if (titleEl) {
+        titleEl.innerText = `📍 Estancia ${idx + 1}: ${cleanName}`;
       }
     }
 
