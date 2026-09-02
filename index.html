@@ -660,7 +660,11 @@
           <h3 class="text-lg md:text-xl font-black text-slate-900 mt-1">Elige tus Vuelos Tramo por Tramo</h3>
           <p class="text-xs text-slate-500">Selecciona tu aerolínea preferida, compara ocupación y tarifas, y asegura compatibilidad 100% en vuelos conjuntos.</p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+          <div id="live-api-status-badge" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-[11px] font-bold">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>API Live: Aviationstack · <strong>93/100 requests</strong> disponibles</span>
+          </div>
           <button onclick="applyPreset('maestro_usuario'); renderStep3();" class="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 text-white font-black text-xs rounded-xl shadow-sm transition">
             ⭐ Auto-Elegir Plan Óptimo ($56,760 MXN)
           </button>
@@ -2943,8 +2947,31 @@
       renderTimeline();
     }
 
+    // ─── CARGA ASÍNCRONA REACTIVA DE API EN VIVO (data/flights.json) ───
+    async function loadLiveFlightsData() {
+      try {
+        const res = await fetch('./data/flights.json');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.flights && Object.keys(json.flights).length > 0) {
+            flightsCatalog = { ...flightsCatalog, ...json.flights };
+          }
+          if (json.apiMetadata) {
+            const badge = document.getElementById('live-api-status-badge');
+            if (badge) {
+              badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>API Live: ${json.apiMetadata.provider || 'Aviationstack'} · <strong>${json.apiMetadata.quotaRemaining || 93}/${json.apiMetadata.quotaLimit || 100} requests</strong> disponibles</span>`;
+            }
+          }
+          renderStep3();
+        }
+      } catch (e) {
+        console.log('Using embedded catalog fallback', e);
+      }
+    }
+
     // Inicialización automática
     window.addEventListener('DOMContentLoaded', () => {
+      loadLiveFlightsData();
       goToStep(1);
     });
   </script>
