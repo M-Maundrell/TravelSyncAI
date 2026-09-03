@@ -362,23 +362,41 @@
   <!-- TOAST NOTIFICATIONS -->
   <div id="toast-container"></div>
 
-  <!-- MODAL GUARDAR SESIÓN / PLAN -->
+  <!-- MODAL GUARDAR SESIÓN / PLAN (GITHUB SYNC) -->
   <div id="save-session-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-60 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700/80 rounded-3xl p-6 md:p-7 max-w-md w-full shadow-2xl text-white space-y-4">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-3xl p-6 md:p-7 max-w-lg w-full shadow-2xl text-white space-y-4">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <span>💾 Guardar Plan de Viaje</span>
-        </h3>
+        <div class="flex items-center gap-2">
+          <span class="text-base">🐙</span>
+          <h3 class="text-base font-bold text-white">Guardar Plan en GitHub</h3>
+        </div>
         <button onclick="closeSaveSessionModal()" class="w-7 h-7 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm">✕</button>
       </div>
-      <p class="text-xs text-slate-400">Guarda esta configuración de pasajeros, fechas y vuelos seleccionados con un nombre personalizado.</p>
-      <div>
-        <label class="text-xs font-semibold text-slate-300 block mb-1.5">Nombre del Plan:</label>
-        <input type="text" id="session-name-input" placeholder="Ej. Plan Maestro Iberia Octubre 2026" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+      <p class="text-xs text-slate-400">Guarda la configuración de pasajeros, fechas y vuelos en tu repositorio <strong class="text-slate-200">M-Maundrell/viaje-octubre-2026</strong> (en <code class="text-indigo-400 font-mono">data/sessions.json</code>).</p>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1.5">Nombre del Plan:</label>
+          <input type="text" id="session-name-input" placeholder="Ej. Plan Maestro Iberia Octubre 2026" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
+        </div>
+
+        <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800 space-y-2">
+          <div class="flex justify-between items-center">
+            <label class="text-[11px] font-bold text-indigo-300 flex items-center gap-1.5">
+              <span>🔑 GitHub Personal Access Token (Opcional para Commits directos):</span>
+            </label>
+            <a href="https://github.com/settings/tokens" target="_blank" class="text-[10px] text-indigo-400 hover:underline">Crear Token ↗</a>
+          </div>
+          <input type="password" id="github-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (Se guarda solo en tu navegador)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-slate-200 outline-none focus:border-indigo-500">
+          <p class="text-[10px] text-slate-500">Con un token (permiso <code>contents:write</code>), el navegador hace un commit directo a tu rama <code>main</code> cada vez que guardas.</p>
+        </div>
       </div>
+
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="closeSaveSessionModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Cancelar</button>
-        <button onclick="saveCurrentSessionWithName()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-sm">Guardar Plan</button>
+        <button onclick="saveCurrentSessionWithName()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5">
+          <span>💾 Guardar Plan</span>
+        </button>
       </div>
     </div>
   </div>
@@ -2208,22 +2226,43 @@
       if (p2Card) p2Card.classList.toggle('hidden', tripConfig.passengerCount < 2);
     }
 
-    // ─── GESTOR DE SESIONES Y PLANES DE VIAJE (LOCALSTORAGE & SHARE) ───
-    const STORAGE_KEY = 'travelsync_saved_sessions_v2';
+    // ─── GESTOR DE SESIONES Y PLANES DE VIAJE EN GITHUB (data/sessions.json) ───
+    const GITHUB_REPO = 'M-Maundrell/viaje-octubre-2026';
+    const GITHUB_SESSIONS_PATH = 'data/sessions.json';
+    const GITHUB_TOKEN_KEY = 'travelsync_github_pat_token';
+    const LOCAL_SESSIONS_KEY = 'travelsync_saved_sessions_v2';
+
     let travelSessions = {};
     let activeSessionId = 'plan_maestro';
+    let gitHubFileSha = null;
 
-    function initSessionsManager() {
+    async function initSessionsManager() {
+      // 1. Intentar cargar planes directamente desde GitHub (data/sessions.json)
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          travelSessions = JSON.parse(saved);
+        const res = await fetch('./data/sessions.json?v=' + Date.now());
+        if (res.ok) {
+          const remoteData = await res.json();
+          if (remoteData.plans && Object.keys(remoteData.plans).length > 0) {
+            travelSessions = remoteData.plans;
+            if (remoteData.activePlanId && travelSessions[remoteData.activePlanId]) {
+              activeSessionId = remoteData.activePlanId;
+            }
+            console.log('✓ Planes cargados directamente desde GitHub (data/sessions.json)');
+          }
         }
       } catch (e) {
-        console.error('Error loading sessions from localStorage', e);
+        console.log('Using local/cached sessions fallback', e);
       }
 
-      // Si no hay sesiones guardadas, crear el Plan Oficial Maestro por defecto
+      // 2. Si no había conexión o vino vacío, usar fallback de localStorage
+      if (!travelSessions || Object.keys(travelSessions).length === 0) {
+        try {
+          const saved = localStorage.getItem(LOCAL_SESSIONS_KEY);
+          if (saved) travelSessions = JSON.parse(saved);
+        } catch (e) {}
+      }
+
+      // 3. Fallback de fábrica
       if (!travelSessions || Object.keys(travelSessions).length === 0) {
         travelSessions = {
           "plan_maestro": {
@@ -2232,28 +2271,25 @@
             createdAt: new Date().toISOString(),
             tripConfig: JSON.parse(JSON.stringify(tripConfig)),
             state: JSON.parse(JSON.stringify(state))
-          },
-          "plan_avianca": {
-            id: "plan_avianca",
-            name: "Plan Alternativo: Avianca BOG ($54,200 MXN)",
-            createdAt: new Date().toISOString(),
-            tripConfig: JSON.parse(JSON.stringify(tripConfig)),
-            state: {
-              mario: { salida: "mex_mad_iberia_152", trans: "esp_col_avianca_bcn", bog_esp: "bog_esp_avianca" },
-              yesica: { salida: "yes_spc_mad_16_1815", trans: "yes_trans_avianca" }
-            }
           }
         };
-        saveSessionsToStorage();
+      }
+
+      // 4. Si el usuario ya tenía un plan activo seleccionado, aplicarlo
+      if (travelSessions[activeSessionId]) {
+        const s = travelSessions[activeSessionId];
+        if (s.tripConfig) tripConfig = JSON.parse(JSON.stringify(s.tripConfig));
+        if (s.state) state = JSON.parse(JSON.stringify(s.state));
       }
 
       checkUrlHashSession();
       renderSessionsDropdown();
+      syncDomFromTripConfig();
     }
 
     function saveSessionsToStorage() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(travelSessions));
+        localStorage.setItem(LOCAL_SESSIONS_KEY, JSON.stringify(travelSessions));
       } catch (e) {
         console.error('Error saving sessions to localStorage', e);
       }
@@ -2302,6 +2338,9 @@
     function openSaveSessionModal() {
       const currentName = travelSessions[activeSessionId]?.name || 'Plan de Viaje Octubre 2026';
       document.getElementById('session-name-input').value = currentName;
+      const savedToken = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
+      const tokenInput = document.getElementById('github-token-input');
+      if (tokenInput && savedToken) tokenInput.value = savedToken;
       document.getElementById('save-session-modal').classList.remove('hidden');
     }
 
@@ -2309,10 +2348,19 @@
       document.getElementById('save-session-modal').classList.add('hidden');
     }
 
-    function saveCurrentSessionWithName() {
+    async function saveCurrentSessionWithName() {
       const input = document.getElementById('session-name-input');
+      const tokenInput = document.getElementById('github-token-input');
       const name = (input.value || '').trim() || 'Plan de Viaje ' + new Date().toLocaleDateString();
-      const newId = 'session_' + Date.now();
+      const newId = 'plan_' + Date.now();
+
+      // Guardar token si el usuario lo ingresó
+      let patToken = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
+      if (tokenInput && tokenInput.value.trim()) {
+        patToken = tokenInput.value.trim();
+        localStorage.setItem(GITHUB_TOKEN_KEY, patToken);
+      }
+
       travelSessions[newId] = {
         id: newId,
         name: name,
@@ -2323,8 +2371,73 @@
       activeSessionId = newId;
       saveSessionsToStorage();
       renderSessionsDropdown();
+
+      // Si hay GitHub PAT Token, hacer commit directo a GitHub
+      if (patToken) {
+        showToast('🐙 Creando commit en GitHub (M-Maundrell/viaje-octubre-2026)...', 'info');
+        try {
+          await commitSessionsToGitHub(patToken, name);
+          showToast(`✓ Plan "${name}" guardado y commiteado a GitHub con éxito`, 'success');
+        } catch (err) {
+          showToast(`⚠️ Guardado en navegador. Error en GitHub: ${err.message}`, 'warn');
+        }
+      } else {
+        showToast(`✓ Plan "${name}" guardado localmente`, 'success');
+      }
+
       closeSaveSessionModal();
-      showToast(`✓ Plan "${name}" guardado exitosamente`, 'success');
+    }
+
+    async function commitSessionsToGitHub(patToken, planName) {
+      const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_SESSIONS_PATH}`;
+      let sha = gitHubFileSha;
+      try {
+        const getRes = await fetch(getUrl, {
+          headers: {
+            'Authorization': `Bearer ${patToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        if (getRes.ok) {
+          const getData = await getRes.json();
+          sha = getData.sha;
+          gitHubFileSha = sha;
+        }
+      } catch (e) {}
+
+      const payload = {
+        lastUpdated: new Date().toISOString(),
+        repository: GITHUB_REPO,
+        activePlanId: activeSessionId,
+        plans: travelSessions
+      };
+      const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+
+      const body = {
+        message: `Save travel plan: ${planName} via TravelSync AI`,
+        content: contentBase64,
+        branch: 'main'
+      };
+      if (sha) body.sha = sha;
+
+      const putRes = await fetch(getUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${patToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (!putRes.ok) {
+        const errJson = await putRes.json();
+        throw new Error(errJson.message || 'Error al guardar en GitHub');
+      }
+      const resData = await putRes.json();
+      if (resData.content && resData.content.sha) {
+        gitHubFileSha = resData.content.sha;
+      }
     }
 
     function shareCurrentPlan() {
