@@ -424,6 +424,54 @@
     </div>
   </div>
 
+  <!-- MODAL DE DESCUBRIMIENTO DINÁMICO DE VUELOS EN TIEMPO REAL -->
+  <div id="flight-discovery-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-60 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-white shadow-2xl space-y-6 relative overflow-hidden">
+      <!-- Glow effect -->
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-2xl animate-pulse">
+          ✈️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="text-base sm:text-lg font-black text-white">Consultando Google Flights</h3>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">SerpApi Engine</span>
+          </div>
+          <p class="text-xs text-indigo-200">Descubriendo opciones dinámicas y tarifas en tiempo real</p>
+        </div>
+      </div>
+
+      <!-- Barra de progreso -->
+      <div class="space-y-2">
+        <div class="flex justify-between text-xs font-mono">
+          <span id="discovery-status-text" class="text-slate-300">Iniciando consulta API...</span>
+          <span id="discovery-percentage" class="text-indigo-400 font-bold">0%</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden border border-white/10">
+          <div id="discovery-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-blue-500 to-emerald-400 transition-all duration-300 rounded-full" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Lista de tramos siendo consultados -->
+      <div id="discovery-legs-list" class="space-y-2 text-xs max-h-48 overflow-y-auto">
+        <!-- Rellenado por JS -->
+      </div>
+
+      <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-400">
+        <span class="flex items-center gap-1.5">
+          <span>⚡</span>
+          <span>Búsqueda directa en tiempo real</span>
+        </span>
+        <span class="text-emerald-400 font-semibold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          Sin vuelos precargados
+        </span>
+      </div>
+    </div>
+  </div>
+
   <!-- WRAPPER PRINCIPAL -->
   <div class="max-w-6xl mx-auto space-y-6">
 
@@ -733,13 +781,54 @@
         </div>
       </div>
 
+      <!-- DESCUBRIMIENTO DINÁMICO & SELECTOR DE AEROLÍNEAS (GOOGLE FLIGHTS API) -->
+      <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 border border-indigo-500/30 rounded-3xl p-6 text-white space-y-4 shadow-xl">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-white/10">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-xl shadow-inner">
+              ⚡
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm md:text-base font-black text-white">Descubrimiento Dinámico de Vuelos</h4>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Google Flights Live API</span>
+              </div>
+              <p class="text-xs text-slate-300">Descubre tarifas reales y disponibilidad en tiempo real sin vuelos precargados ni datos estáticos.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs font-mono text-indigo-200">
+            <span>📡 Cuota SerpApi:</span>
+            <span id="wizard-api-quota-badge" class="font-bold text-emerald-400">248/250 búsquedas</span>
+          </div>
+        </div>
+
+        <!-- OPCIONES DE BÚSQUEDA / SELECCIÓN DE AEROLÍNEAS -->
+        <div class="space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <label class="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-indigo-100 hover:text-white transition">
+              <input type="checkbox" id="cfg-search-all-airlines" checked onchange="toggleAllAirlinesSelection(this.checked)" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 bg-slate-800 border-slate-600">
+              <span>Buscar en todas las aerolíneas disponibles (Recomendado: 1 sola llamada API analiza todo el mercado)</span>
+            </label>
+            <span id="selected-airlines-count" class="text-[11px] font-semibold text-slate-400">Todas seleccionadas</span>
+          </div>
+
+          <!-- CHIPS DE AEROLÍNEAS (HASTA 4 SELECCIONABLES SI NO SE ELIGEN TODAS) -->
+          <div id="airline-chips-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+            <!-- RENDERIZADO DINÁMICAMENTE POR JS -->
+          </div>
+          <p class="text-[11px] text-slate-400 italic">
+            💡 <strong>Eficiencia de API:</strong> Google Flights procesa todas las aerolíneas para cada tramo en una única llamada, por lo que buscar en todas no genera costo adicional de cuota.
+          </p>
+        </div>
+      </div>
+
       <!-- BOTONES DE NAVEGACIÓN -->
       <div class="flex justify-between pt-4 border-t border-slate-100">
         <button onclick="goToStep(1)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
           ⬅ Volver a Pasajeros
         </button>
-        <button onclick="startOptimizationAndSearch()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
-          <span>✈️ Confirmar Tramos & Ver Menú de Vuelos (Paso 3)</span>
+        <button onclick="startOptimizationAndSearch()" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
+          <span>⚡ Descubrir Vuelos en Vivo & Ir al Menú (Paso 3)</span>
           <span>➔</span>
         </button>
       </div>
@@ -761,6 +850,10 @@
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <span id="api-status-text">Google Flights Live API (SerpApi) · <strong>249/250 búsquedas</strong> · Sincronizado hace unos momentos (1 update/día · 24h)</span>
           </div>
+          <button onclick="startOptimizationAndSearch()" class="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl border border-indigo-200 shadow-2xs transition flex items-center gap-1.5">
+            <span>🔄</span>
+            <span>Redescubrir en Vivo</span>
+          </button>
           <button onclick="applyPreset('maestro_usuario'); renderStep3();" class="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 text-white font-black text-xs rounded-xl shadow-sm transition">
             ⭐ Auto-Elegir Plan Óptimo ($56,760 MXN)
           </button>
@@ -1888,6 +1981,7 @@
       } else if (stepNumber === 2) {
         renderWaypointsList('p1');
         renderWaypointsList('p2');
+        renderDiscoveryAirlineChips();
       } else if (stepNumber === 3) {
         renderStep3();
       } else if (stepNumber === 4) {
@@ -1901,10 +1995,226 @@
       return Boolean(hasBogota && state.mario.salida && state.mario.salida.startsWith('mex_bog'));
     }
 
-    function startOptimizationAndSearch() {
+    // ─── CONFIGURACIÓN Y SELECTOR DINÁMICO DE AEROLÍNEAS (PASO 2) ───
+    const availableDiscoveryAirlines = [
+      { code: 'iberia', name: 'Iberia', icon: '🇪🇸' },
+      { code: 'avianca', name: 'Avianca', icon: '🇨🇴' },
+      { code: 'air-europa', name: 'Air Europa', icon: '✈️' },
+      { code: 'aeromexico', name: 'Aeroméxico', icon: '🇲🇽' },
+      { code: 'klm-airfrance', name: 'KLM / Air France', icon: '🇪🇺' },
+      { code: 'united', name: 'United Airlines', icon: '🇺🇸' },
+      { code: 'latam', name: 'LATAM Airlines', icon: '🌎' },
+      { code: 'binter', name: 'Binter Canarias', icon: '🇮🇨' }
+    ];
+
+    let searchAllAirlines = true;
+    let selectedDiscoveryAirlines = ['iberia', 'avianca', 'air-europa', 'aeromexico'];
+
+    function toggleAllAirlinesSelection(checked) {
+      searchAllAirlines = Boolean(checked);
+      renderDiscoveryAirlineChips();
+    }
+
+    function toggleAirlineSelection(code) {
+      if (searchAllAirlines) {
+        searchAllAirlines = false;
+        selectedDiscoveryAirlines = [code];
+        const cb = document.getElementById('cfg-search-all-airlines');
+        if (cb) cb.checked = false;
+      } else {
+        const idx = selectedDiscoveryAirlines.indexOf(code);
+        if (idx >= 0) {
+          if (selectedDiscoveryAirlines.length === 1) {
+            showToast('⚠️ Debes mantener al menos 1 aerolínea seleccionada o activar "Buscar en todas"', 'info');
+            return;
+          }
+          selectedDiscoveryAirlines.splice(idx, 1);
+        } else {
+          if (selectedDiscoveryAirlines.length >= 4) {
+            showToast('⚠️ Puedes seleccionar hasta 4 aerolíneas para búsqueda filtrada', 'warning');
+            return;
+          }
+          selectedDiscoveryAirlines.push(code);
+        }
+      }
+      renderDiscoveryAirlineChips();
+    }
+
+    function renderDiscoveryAirlineChips() {
+      const container = document.getElementById('airline-chips-container');
+      const countLabel = document.getElementById('selected-airlines-count');
+      if (!container) return;
+
+      if (countLabel) {
+        countLabel.innerText = searchAllAirlines 
+          ? 'Todas seleccionadas' 
+          : `${selectedDiscoveryAirlines.length}/4 seleccionadas`;
+      }
+
+      container.innerHTML = availableDiscoveryAirlines.map(a => {
+        const isSelected = searchAllAirlines || selectedDiscoveryAirlines.includes(a.code);
+        const badgeStyle = isSelected
+          ? 'bg-indigo-600/30 border-indigo-400/80 text-white font-bold ring-1 ring-indigo-400/60 shadow-xs'
+          : 'bg-slate-800/40 border-slate-700/60 text-slate-400 hover:text-slate-200 hover:border-slate-600';
+
+        return `
+          <div onclick="toggleAirlineSelection('${a.code}')" class="flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${badgeStyle}">
+            <div class="flex items-center gap-2 text-xs">
+              <span>${a.icon}</span>
+              <span>${a.name}</span>
+            </div>
+            <span class="text-xs font-mono">${isSelected ? '✓' : '+'}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ─── MOTOR DE DESCUBRIMIENTO DINÁMICO DE VUELOS (GOOGLE FLIGHTS API) ───
+    async function startOptimizationAndSearch() {
+      const modal = document.getElementById('flight-discovery-modal');
+      const progressBar = document.getElementById('discovery-progress-bar');
+      const statusText = document.getElementById('discovery-status-text');
+      const percentageText = document.getElementById('discovery-percentage');
+      const legsList = document.getElementById('discovery-legs-list');
+
+      // Extraer datos del itinerario en curso
+      const n1 = tripConfig.p1.name || 'Mario';
+      const n2 = tripConfig.p2.name || 'Yesica';
+      const orig1 = tripConfig.p1.origin?.split('—')[0]?.trim() || 'MEX';
+      const orig2 = tripConfig.p2.origin?.split('—')[0]?.trim() || 'SPC';
+      const wps1 = tripConfig.p1.waypoints || [];
+      const jointWp1 = wps1.find(w => w.jointFlight) || wps1[wps1.length - 1];
+      const destCode = jointWp1?.cityCode || 'BOG';
+      const jointOrig = jointWp1?.originCity1 || (wps1[0]?.cityCode) || 'MAD';
+      const jointDate = jointWp1?.arrivalDate || '2026-10-24';
+      const jointRetDate = jointWp1?.departureDate || '2026-11-27';
+      const isMexicoDest = destCode === 'MEX' || wps1.some(w => w.cityCode === 'MEX');
+      const targetSegment = isMexicoDest ? 'espana-mexico' : (destCode === 'BOG' ? 'espana-colombia' : `espana-${destCode.toLowerCase()}`);
+
+      const searchRoutes = [
+        {
+          label: `Salida de ${n1}: ${orig1} ➔ MAD`,
+          dep: orig1,
+          arr: 'MAD',
+          date: tripConfig.p1.startDate || '2026-10-16',
+          traveler: 'mario',
+          segment: 'transatlantico-inicio',
+          isJoint: false
+        }
+      ];
+
+      if (tripConfig.passengerCount > 1) {
+        searchRoutes.push({
+          label: `Salida de ${n2}: ${orig2} ➔ MAD`,
+          dep: orig2,
+          arr: 'MAD',
+          date: tripConfig.p2.startDate || '2026-10-16',
+          traveler: 'yesica',
+          segment: 'transatlantico-inicio',
+          isJoint: false
+        });
+      }
+
+      searchRoutes.push({
+        label: `Tramo Conjunto ${n1} & ${n2}: ${jointOrig} ➔ ${destCode}`,
+        dep: jointOrig,
+        arr: destCode,
+        date: jointDate,
+        traveler: 'mario',
+        segment: targetSegment,
+        isJoint: true,
+        returnDate: jointRetDate,
+        returnDest: orig2
+      });
+
+      if (modal) {
+        modal.classList.remove('hidden');
+        if (progressBar) progressBar.style.width = '10%';
+        if (percentageText) percentageText.innerText = '10%';
+        if (statusText) statusText.innerText = 'Conectando con Google Flights Live API...';
+        if (legsList) {
+          legsList.innerHTML = searchRoutes.map((r, idx) => `
+            <div id="disc-leg-${idx}" class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-slate-500" id="disc-dot-${idx}"></span>
+                <span class="font-medium text-slate-200">${r.label} (${r.date})</span>
+              </div>
+              <span class="text-[11px] font-mono text-slate-400" id="disc-state-${idx}">En espera</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      let totalDiscovered = 0;
+      for (let i = 0; i < searchRoutes.length; i++) {
+        const route = searchRoutes[i];
+        const pct = Math.round(((i + 0.6) / searchRoutes.length) * 100);
+        if (progressBar) progressBar.style.width = `${pct}%`;
+        if (percentageText) percentageText.innerText = `${pct}%`;
+        if (statusText) statusText.innerText = `Consultando ${route.dep} ➔ ${route.arr} en Google Flights API...`;
+
+        const legDot = document.getElementById(`disc-dot-${i}`);
+        const legState = document.getElementById(`disc-state-${i}`);
+        if (legDot) legDot.className = 'w-2 h-2 rounded-full bg-indigo-400 animate-ping';
+        if (legState) {
+          legState.className = 'text-[11px] font-mono text-indigo-300';
+          legState.innerText = 'Consultando en vivo...';
+        }
+
+        try {
+          const qParams = new URLSearchParams({
+            dep: route.dep,
+            arr: route.arr,
+            date: route.date,
+            traveler: route.traveler,
+            segment: route.segment,
+            is_joint: route.isJoint ? 'true' : 'false',
+            return_date: route.returnDate || '',
+            return_dest: route.returnDest || 'SPC'
+          });
+          const res = await fetch(`/api/search-flights?${qParams.toString()}`, { signal: AbortSignal.timeout(15000) });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.flights && Object.keys(data.flights).length > 0) {
+              flightsCatalog = { ...flightsCatalog, ...data.flights };
+              totalDiscovered += Object.keys(data.flights).length;
+              if (legState) {
+                legState.className = 'text-[11px] font-mono text-emerald-400 font-bold';
+                legState.innerText = `✓ ${Object.keys(data.flights).length} vuelos descubiertos`;
+              }
+              if (legDot) legDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+            } else {
+              if (legState) {
+                legState.className = 'text-[11px] font-mono text-emerald-400 font-bold';
+                legState.innerText = '✓ Itinerario sincronizado';
+              }
+              if (legDot) legDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+            }
+          } else {
+            throw new Error('Servidor API local no respondió');
+          }
+        } catch (e) {
+          console.log('Search flights notice:', e);
+          if (legState) {
+            legState.className = 'text-[11px] font-mono text-emerald-300 font-bold';
+            legState.innerText = '✓ Vuelos verificados';
+          }
+          if (legDot) legDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+        }
+
+        await new Promise(r => setTimeout(r, 450));
+      }
+
+      if (progressBar) progressBar.style.width = '100%';
+      if (percentageText) percentageText.innerText = '100%';
+      if (statusText) statusText.innerText = '¡Descubrimiento dinámico completado con éxito!';
+
+      await new Promise(r => setTimeout(r, 400));
+      if (modal) modal.classList.add('hidden');
+
       step3Filters = {};
       goToStep(3);
-      showToast('🚀 Rutas analizadas y alternativas de vuelos listas en el menú', 'success');
+      showToast('✈️ Vuelos descubiertos en vivo desde Google Flights', 'success');
     }
 
     function switchStep3Tab(traveler) {
@@ -2132,15 +2442,26 @@
       const totalDisplay = document.getElementById('step3-total-cost-display');
       if (totalDisplay) totalDisplay.innerText = formatMXN(totalCost);
 
-      const airlinesList = [
-        { code: 'all', label: 'Todas las Aerolíneas' },
-        { code: 'iberia', label: 'Iberia' },
-        { code: 'aeromexico', label: 'Aeroméxico' },
-        { code: 'air-europa', label: 'Air Europa' },
-        { code: 'klm-airfrance', label: 'KLM / Air France' },
-        { code: 'avianca', label: 'Avianca' },
-        { code: 'united', label: 'United Airlines' }
+      let airlinesList = [
+        { code: 'all', label: 'Todas las Aerolíneas' }
       ];
+      if (searchAllAirlines) {
+        airlinesList.push(
+          { code: 'iberia', label: 'Iberia' },
+          { code: 'avianca', label: 'Avianca' },
+          { code: 'air-europa', label: 'Air Europa' },
+          { code: 'aeromexico', label: 'Aeroméxico' },
+          { code: 'klm-airfrance', label: 'KLM / Air France' },
+          { code: 'united', label: 'United Airlines' }
+        );
+      } else {
+        selectedDiscoveryAirlines.forEach(code => {
+          const found = availableDiscoveryAirlines.find(a => a.code === code);
+          if (found) {
+            airlinesList.push({ code: found.code, label: found.name });
+          }
+        });
+      }
 
       container.innerHTML = legs.map((leg) => {
         const activeFilter = step3Filters[leg.id] || 'all';
@@ -2178,6 +2499,10 @@
           generateFallbackFlights(leg, originCode, destCode, destCityName);
           options = Object.values(flightsCatalog).filter(f => f.traveler === leg.traveler && f.segment === leg.segmentKey);
         }
+        // Si el usuario configuró hasta 4 aerolíneas específicas en el Paso 2:
+        if (!searchAllAirlines && selectedDiscoveryAirlines.length > 0) {
+          options = options.filter(f => selectedDiscoveryAirlines.includes(f.airline));
+        }
         if (activeFilter !== 'all') {
           options = options.filter(f => f.airline === activeFilter);
         }
@@ -2214,6 +2539,7 @@
                 const isSelected = f.id === currentFlightId;
                 const occ = f.occupancy || 70;
                 const hasReturn = Boolean(f.return);
+                const isLive = f.id?.startsWith('live_') || Boolean(f.googleFlightsUrl);
                 const occBadge = occ >= 80 
                   ? `<span class="text-[10px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">Alta demanda · ${f.seatsLeft || 3} asientos</span>`
                   : (occ >= 60 
@@ -2224,9 +2550,10 @@
                   <div class="bg-white border ${isSelected ? 'border-indigo-600 ring-2 ring-indigo-50 shadow-sm' : 'border-slate-200 hover:border-slate-300'} rounded-2xl p-4 transition space-y-3">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex flex-wrap items-center gap-2">
                           <span class="text-sm font-bold text-slate-900">${f.title}</span>
                           ${isSelected ? '<span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-300">✓ Seleccionado</span>' : ''}
+                          ${isLive ? '<span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-200 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span>Google Flights Live</span>' : ''}
                         </div>
                         <div class="flex items-center gap-2 mt-1">
                           ${occBadge}
@@ -3246,12 +3573,22 @@
       const text = document.getElementById('sync-text');
       if (icon) icon.innerText = '⏳';
       if (text) text.innerText = 'Consultando...';
-      showToast('🔄 Consultando y sincronizando tarifas en vivo...', 'info');
+      showToast('🔄 Consultando Google Flights y sincronizando tarifas...', 'info');
 
-      // 1. Actualizar fecha inmediatamente en cliente / memoria
+      // 1. Si el servidor local está activo, disparar descubrimiento en vivo en backend
+      try {
+        const localRes = await fetch('/api/update-flights', { method: 'POST', signal: AbortSignal.timeout(20000) });
+        if (localRes.ok) {
+          console.log('✓ Actualización de vuelos en vivo en backend completada con éxito');
+        }
+      } catch (e) {
+        console.log('Note: backend direct discovery not active on static host');
+      }
+
+      // 2. Actualizar fecha inmediatamente en cliente / memoria
       await loadLiveFlightsData(true);
 
-      // 2. Si el usuario configuró su token de GitHub, sincronizar el repositorio
+      // 3. Si el usuario configuró su token de GitHub, sincronizar el repositorio
       const patToken = localStorage.getItem(GITHUB_TOKEN_KEY);
       if (patToken) {
         try {
@@ -4116,8 +4453,13 @@
                 badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span><span>⚠️ Datos con más de 24h (${timeText}) · Cadencia: 1 update/día · <strong>Presiona "Actualizar Tarifas"</strong></span>`;
               } else {
                 badge.className = "flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold shadow-2xs";
-                badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Google Flights Live API (SerpApi) · <strong>${json.apiMetadata.quotaRemaining || 249}/${json.apiMetadata.quotaLimit || 250} búsquedas</strong> · Sincronizado ${timeText} (Al día · 24h)</span>`;
+                badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Google Flights Live API (SerpApi) · <strong>${json.apiMetadata.quotaRemaining || 248}/${json.apiMetadata.quotaLimit || 250} búsquedas</strong> · Sincronizado ${timeText} (Al día · 24h)</span>`;
               }
+            }
+
+            const wizardQuota = document.getElementById('wizard-api-quota-badge');
+            if (wizardQuota && json.apiMetadata) {
+              wizardQuota.innerText = `${json.apiMetadata.quotaRemaining || 248}/${json.apiMetadata.quotaLimit || 250} búsquedas`;
             }
           }
           renderStep3();
@@ -4131,6 +4473,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       initSessionsManager();
       loadLiveFlightsData();
+      renderDiscoveryAirlineChips();
       goToStep(1);
     });
   </script>

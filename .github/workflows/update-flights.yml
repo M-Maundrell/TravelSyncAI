@@ -4,7 +4,20 @@ on:
   schedule:
     # Se ejecuta todos los días a las 06:00 UTC (medianoche en CDMX / 07:00 en Canarias)
     - cron: '0 6 * * *'
-  workflow_dispatch: # Permite ejecutar manualmente desde la pestaña Actions en GitHub
+  workflow_dispatch:
+    inputs:
+      dep:
+        description: 'Código IATA Origen (ej. MAD, MEX)'
+        required: false
+        default: ''
+      arr:
+        description: 'Código IATA Destino (ej. BOG, MAD)'
+        required: false
+        default: ''
+      date:
+        description: 'Fecha de Vuelo (YYYY-MM-DD)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -30,9 +43,12 @@ jobs:
       - name: ✈️ Ejecutar Motor de Búsqueda y Filtrado Migratorio
         env:
           SERPAPI_API_KEY: ${{ secrets.SERPAPI_API_KEY }}
-          AVIATIONSTACK_API_KEY: ${{ secrets.AVIATIONSTACK_API_KEY }}
         run: |
-          python scripts/update_flights.py
+          if [ -n "${{ github.event.inputs.dep }}" ] && [ -n "${{ github.event.inputs.arr }}" ] && [ -n "${{ github.event.inputs.date }}" ]; then
+            python scripts/update_flights.py --dep "${{ github.event.inputs.dep }}" --arr "${{ github.event.inputs.arr }}" --date "${{ github.event.inputs.date }}"
+          else
+            python scripts/update_flights.py
+          fi
 
       - name: 💾 Guardar Cambios y Publicar en GitHub Pages
         run: |
