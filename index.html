@@ -2027,7 +2027,7 @@
       });
       return Object.entries(groups).map(([gName, items]) => `
         <optgroup label="── ${gName} ──">
-          ${items.map(a => `<option value="${a.code}" ${(selectedVal === a.code || selectedVal === a.name) ? 'selected' : ''}>${a.name}</option>`).join('')}
+          ${items.map(a => `<option value="${a.name}" ${(selectedVal === a.code || selectedVal === a.name || selectedVal?.startsWith(a.code)) ? 'selected' : ''}>${a.name}</option>`).join('')}
         </optgroup>
       `).join('');
     }
@@ -2064,29 +2064,64 @@
       tripConfig[pKey].country = countryCode;
       const airports = geoCatalog[countryCode]?.airports || [];
       aSelect.innerHTML = renderAirportSelectOptions(airports, tripConfig[pKey].origin);
-      tripConfig[pKey].origin = aSelect.value;
+      if (aSelect.value) tripConfig[pKey].origin = aSelect.value;
+    }
+
+    function collectTripConfigFromDom() {
+      if (!tripConfig) tripConfig = getBlankTripConfig();
+      if (!tripConfig.p1) tripConfig.p1 = {};
+      if (!tripConfig.p2) tripConfig.p2 = {};
+      if (!tripConfig.p1.visas) tripConfig.p1.visas = {};
+      if (!tripConfig.p1.prefs) tripConfig.p1.prefs = {};
+      if (!tripConfig.p2.visas) tripConfig.p2.visas = {};
+      if (!tripConfig.p2.prefs) tripConfig.p2.prefs = {};
+
+      // Pasajero 1
+      const p1Name = document.getElementById('p1-cfg-name');
+      tripConfig.p1.name = p1Name ? p1Name.value.trim() : '';
+      const p1Date = document.getElementById('p1-cfg-date');
+      tripConfig.p1.startDate = p1Date ? p1Date.value : '';
+      const p1Country = document.getElementById('p1-country-select');
+      tripConfig.p1.country = p1Country ? p1Country.value : 'MX';
+      const p1Origin = document.getElementById('p1-cfg-origin');
+      tripConfig.p1.origin = p1Origin ? p1Origin.value : '';
+      const p1Nat = document.getElementById('p1-cfg-nat');
+      tripConfig.p1.nationality = p1Nat ? p1Nat.value : 'MX';
+      const p1VisaUsa = document.getElementById('p1-cfg-visa-usa');
+      tripConfig.p1.visas.usa = p1VisaUsa ? p1VisaUsa.checked : false;
+      const p1Bag = document.getElementById('p1-pref-bag');
+      tripConfig.p1.prefs.bag = p1Bag ? p1Bag.checked : false;
+      const p1Carry = document.getElementById('p1-pref-carry');
+      tripConfig.p1.prefs.carry = p1Carry ? p1Carry.checked : false;
+      const p1Seat = document.getElementById('p1-pref-seat');
+      tripConfig.p1.prefs.seat = p1Seat ? p1Seat.checked : false;
+
+      // Pasajero 2
+      const p2Name = document.getElementById('p2-cfg-name');
+      tripConfig.p2.name = p2Name ? p2Name.value.trim() : '';
+      const p2Date = document.getElementById('p2-cfg-date');
+      tripConfig.p2.startDate = p2Date ? p2Date.value : '';
+      const p2Country = document.getElementById('p2-country-select');
+      tripConfig.p2.country = p2Country ? p2Country.value : 'ES';
+      const p2Origin = document.getElementById('p2-cfg-origin');
+      tripConfig.p2.origin = p2Origin ? p2Origin.value : '';
+      const p2Nat = document.getElementById('p2-cfg-nat');
+      tripConfig.p2.nationality = p2Nat ? p2Nat.value : 'ES';
+      const p2Residencia = document.getElementById('p2-cfg-residencia');
+      tripConfig.p2.visas.residencia = p2Residencia ? p2Residencia.checked : false;
+      const p2Bag = document.getElementById('p2-pref-bag');
+      tripConfig.p2.prefs.bag = p2Bag ? p2Bag.checked : false;
+      const p2Carry = document.getElementById('p2-pref-carry');
+      tripConfig.p2.prefs.carry = p2Carry ? p2Carry.checked : false;
+      const p2Seat = document.getElementById('p2-pref-seat');
+      tripConfig.p2.prefs.seat = p2Seat ? p2Seat.checked : false;
+
+      const pCount = document.getElementById('cfg-passenger-count');
+      if (pCount) tripConfig.passengerCount = parseInt(pCount.value, 10);
     }
 
     function saveStep1AndNext() {
-      syncPassengerNamesLive();
-      tripConfig.p1.startDate = document.getElementById('p1-cfg-date').value || "2026-10-16";
-      tripConfig.p1.origin = document.getElementById('p1-cfg-origin').value;
-      tripConfig.p1.nationality = document.getElementById('p1-cfg-nat').value;
-      tripConfig.p1.visas.usa = document.getElementById('p1-cfg-visa-usa').checked;
-      tripConfig.p1.prefs.bag = document.getElementById('p1-pref-bag').checked;
-      tripConfig.p1.prefs.carry = document.getElementById('p1-pref-carry').checked;
-      tripConfig.p1.prefs.seat = document.getElementById('p1-pref-seat').checked;
-
-      if (tripConfig.passengerCount >= 2) {
-        tripConfig.p2.startDate = document.getElementById('p2-cfg-date').value || "2026-10-16";
-        tripConfig.p2.origin = document.getElementById('p2-cfg-origin').value;
-        tripConfig.p2.nationality = document.getElementById('p2-cfg-nat').value;
-        tripConfig.p2.visas.residencia = document.getElementById('p2-cfg-residencia').checked;
-        tripConfig.p2.prefs.bag = document.getElementById('p2-pref-bag').checked;
-        tripConfig.p2.prefs.carry = document.getElementById('p2-pref-carry').checked;
-        tripConfig.p2.prefs.seat = document.getElementById('p2-pref-seat').checked;
-      }
-
+      collectTripConfigFromDom();
       showToast('✓ Perfiles y orígenes guardados con éxito', 'success');
       goToStep(2);
     }
@@ -2450,21 +2485,57 @@
     }
 
     function syncDomFromTripConfig() {
-      if (document.getElementById('p1-cfg-name')) document.getElementById('p1-cfg-name').value = tripConfig.p1.name || '';
-      if (document.getElementById('p2-cfg-name')) document.getElementById('p2-cfg-name').value = tripConfig.p2.name || '';
-      if (document.getElementById('p1-cfg-date')) document.getElementById('p1-cfg-date').value = tripConfig.p1.startDate || '';
-      if (document.getElementById('p2-cfg-date')) document.getElementById('p2-cfg-date').value = tripConfig.p2.startDate || '';
+      if (!tripConfig) return;
+      if (!tripConfig.p1) tripConfig.p1 = {};
+      if (!tripConfig.p2) tripConfig.p2 = {};
 
-      if (document.getElementById('cfg-passenger-count')) {
-        document.getElementById('cfg-passenger-count').value = String(tripConfig.passengerCount || 1);
-        changePassengerCount(tripConfig.passengerCount || 1);
+      // 1. Número de pasajeros
+      const count = tripConfig.passengerCount || 2;
+      const countSelect = document.getElementById('cfg-passenger-count');
+      if (countSelect) {
+        countSelect.value = String(count);
       }
-      if (document.getElementById('p1-cfg-visa-usa')) {
-        document.getElementById('p1-cfg-visa-usa').checked = Boolean(tripConfig.p1.visas?.usa);
-      }
-      if (document.getElementById('p2-cfg-visa-residencia')) {
-        document.getElementById('p2-cfg-visa-residencia').checked = Boolean(tripConfig.p2.visas?.residencia);
-      }
+      changePassengerCount(count);
+
+      // 2. Poblar select de país y aeropuertos para P1 y P2
+      ['p1', 'p2'].forEach(pKey => {
+        const cSelect = document.getElementById(`${pKey}-country-select`);
+        const pCountry = tripConfig[pKey]?.country || (pKey === 'p1' ? 'MX' : 'ES');
+        if (cSelect) {
+          cSelect.innerHTML = Object.entries(geoCatalog).map(([code, country]) => 
+            `<option value="${code}" ${pCountry === code ? 'selected' : ''}>${country.name}</option>`
+          ).join('');
+          cSelect.value = pCountry;
+          
+          const aSelect = document.getElementById(`${pKey}-cfg-origin`);
+          if (aSelect) {
+            const countryCode = cSelect.value;
+            const airports = geoCatalog[countryCode]?.airports || [];
+            aSelect.innerHTML = renderAirportSelectOptions(airports, tripConfig[pKey]?.origin);
+            if (tripConfig[pKey]?.origin) aSelect.value = tripConfig[pKey].origin;
+          }
+        }
+      });
+
+      // 3. Pasajero 1
+      if (document.getElementById('p1-cfg-name')) document.getElementById('p1-cfg-name').value = tripConfig.p1?.name || '';
+      if (document.getElementById('p1-cfg-date')) document.getElementById('p1-cfg-date').value = tripConfig.p1?.startDate || '';
+      if (document.getElementById('p1-cfg-nat')) document.getElementById('p1-cfg-nat').value = tripConfig.p1?.nationality || 'MX';
+      if (document.getElementById('p1-cfg-visa-usa')) document.getElementById('p1-cfg-visa-usa').checked = Boolean(tripConfig.p1?.visas?.usa);
+      if (document.getElementById('p1-pref-bag')) document.getElementById('p1-pref-bag').checked = Boolean(tripConfig.p1?.prefs?.bag);
+      if (document.getElementById('p1-pref-carry')) document.getElementById('p1-pref-carry').checked = Boolean(tripConfig.p1?.prefs?.carry);
+      if (document.getElementById('p1-pref-seat')) document.getElementById('p1-pref-seat').checked = Boolean(tripConfig.p1?.prefs?.seat);
+
+      // 4. Pasajero 2
+      if (document.getElementById('p2-cfg-name')) document.getElementById('p2-cfg-name').value = tripConfig.p2?.name || '';
+      if (document.getElementById('p2-cfg-date')) document.getElementById('p2-cfg-date').value = tripConfig.p2?.startDate || '';
+      if (document.getElementById('p2-cfg-nat')) document.getElementById('p2-cfg-nat').value = tripConfig.p2?.nationality || 'ES';
+      if (document.getElementById('p2-cfg-residencia')) document.getElementById('p2-cfg-residencia').checked = Boolean(tripConfig.p2?.visas?.residencia);
+      if (document.getElementById('p2-pref-bag')) document.getElementById('p2-pref-bag').checked = Boolean(tripConfig.p2?.prefs?.bag);
+      if (document.getElementById('p2-pref-carry')) document.getElementById('p2-pref-carry').checked = Boolean(tripConfig.p2?.prefs?.carry);
+      if (document.getElementById('p2-pref-seat')) document.getElementById('p2-pref-seat').checked = Boolean(tripConfig.p2?.prefs?.seat);
+
+      syncPassengerNamesLive();
       renderWaypointsList('p1');
       renderWaypointsList('p2');
     }
@@ -2487,6 +2558,7 @@
     }
 
     async function saveCurrentSessionWithName() {
+      collectTripConfigFromDom();
       const input = document.getElementById('session-name-input');
       const tokenInput = document.getElementById('github-token-input');
       const name = (input.value || '').trim() || 'Plan de Viaje ' + new Date().toLocaleDateString();
@@ -2660,18 +2732,6 @@
         }
       } catch (e) {
         console.log('No valid URL plan hash found');
-      }
-    }
-
-    function syncDomFromTripConfig() {
-      if (document.getElementById('p1-name-input')) document.getElementById('p1-name-input').value = tripConfig.p1.name;
-      if (document.getElementById('p2-name-input')) document.getElementById('p2-name-input').value = tripConfig.p2.name;
-      if (document.getElementById('p1-start-date')) document.getElementById('p1-start-date').value = tripConfig.p1.startDate;
-      if (document.getElementById('p2-start-date')) document.getElementById('p2-start-date').value = tripConfig.p2.startDate;
-      if (document.getElementById('p1-origin-select')) document.getElementById('p1-origin-select').value = tripConfig.p1.origin;
-      if (document.getElementById('p2-origin-select')) document.getElementById('p2-origin-select').value = tripConfig.p2.origin;
-      renderWaypointsList('p1');
-      renderWaypointsList('p2');
     }
 
     async function triggerLivePriceRefresh() {
