@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-04T02:45:23.316Z",
+  "lastUpdated": "2026-09-04T05:17:58.579Z",
   "repository": "M-Maundrell/TravelSyncAI",
   "activePlanId": "plan_mad_mex",
   "plans": {
@@ -197,7 +197,7 @@
       "id": "plan_mad_mex",
       "name": "Plan MAD-MEX Octubre 2026",
       "createdAt": "2026-09-04T02:03:00Z",
-      "updatedAt": "2026-09-04T02:45:22.725Z",
+      "updatedAt": "2026-09-04T05:17:57.655Z",
       "tripConfig": {
         "passengerCount": 2,
         "strictJointFlight": true,
@@ -225,7 +225,7 @@
               "arrivalDate": "2026-10-17",
               "departureDate": "2026-10-27",
               "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
+              "jointFlight": false,
               "isRoundtrip": false
             },
             {
