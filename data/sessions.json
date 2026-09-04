@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-09-04T05:17:58.579Z",
+  "lastUpdated": "2026-09-04T05:19:37.766Z",
   "repository": "M-Maundrell/TravelSyncAI",
   "activePlanId": "plan_mad_mex",
   "plans": {
@@ -197,7 +197,7 @@
       "id": "plan_mad_mex",
       "name": "Plan MAD-MEX Octubre 2026",
       "createdAt": "2026-09-04T02:03:00Z",
-      "updatedAt": "2026-09-04T05:17:57.655Z",
+      "updatedAt": "2026-09-04T05:19:37.058Z",
       "tripConfig": {
         "passengerCount": 2,
         "strictJointFlight": true,
