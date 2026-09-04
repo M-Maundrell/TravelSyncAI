@@ -537,15 +537,31 @@
             <span class="text-[11px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">Titular</span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
               <input type="text" id="p1-cfg-name" value="" placeholder="Ej. Mario" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Modalidad de Viaje</label>
+              <select id="p1-cfg-trip-type" onchange="toggleTripType('p1', this.value)" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+                <option value="roundtrip" selected>🔄 Redondo (Ida + Retorno)</option>
+                <option value="oneway">➡️ Solo Ida (One-Way)</option>
+              </select>
+            </div>
+            <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
               <input type="date" id="p1-cfg-date" value="" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
             </div>
+          </div>
+
+          <!-- FECHA DE RETORNO FINAL (CONDICIONAL REDONDO) -->
+          <div id="p1-return-date-container" class="p-3 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center justify-between gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-blue-900 mb-0.5">🛬 Fecha de Retorno Final a Casa</label>
+              <span class="text-[10px] text-blue-700">Fecha en que finaliza el viaje y regresa a su origen</span>
+            </div>
+            <input type="date" id="p1-cfg-return-date" value="" class="bg-white border border-blue-200 rounded-xl p-2 text-xs font-bold text-slate-800">
           </div>
 
           <!-- SELECTOR EN CASCADA: PAÍS ➔ AEROPUERTO -->
@@ -605,15 +621,31 @@
             <span class="text-[11px] font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded">Acompañante</span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
               <input type="text" id="p2-cfg-name" value="" placeholder="Ej. Yesica" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Modalidad de Viaje</label>
+              <select id="p2-cfg-trip-type" onchange="toggleTripType('p2', this.value)" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+                <option value="roundtrip" selected>🔄 Redondo (Ida + Retorno)</option>
+                <option value="oneway">➡️ Solo Ida (One-Way)</option>
+              </select>
+            </div>
+            <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
               <input type="date" id="p2-cfg-date" value="" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
             </div>
+          </div>
+
+          <!-- FECHA DE RETORNO FINAL (CONDICIONAL REDONDO) -->
+          <div id="p2-return-date-container" class="p-3 bg-pink-50/50 rounded-xl border border-pink-100 flex items-center justify-between gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-pink-900 mb-0.5">🛬 Fecha de Retorno Final a Casa</label>
+              <span class="text-[10px] text-pink-700">Fecha en que finaliza el viaje y regresa a su origen</span>
+            </div>
+            <input type="date" id="p2-cfg-return-date" value="" class="bg-white border border-pink-200 rounded-xl p-2 text-xs font-bold text-slate-800">
           </div>
 
           <!-- SELECTOR EN CASCADA: PAÍS ➔ AEROPUERTO -->
@@ -648,6 +680,9 @@
                   <input type="checkbox" id="p2-cfg-residencia" checked class="w-4 h-4 rounded text-pink-600">
                   <span>Residencia Española / UE</span>
                 </label>
+              </div>
+            </div>
+          </div>
               </div>
             </div>
           </div>
@@ -1782,7 +1817,10 @@
         if (!state.yesica.trans || state.yesica.trans.startsWith('yes_trans_avianca')) state.yesica.trans = 'yes_trans_mex_iberia';
       }
 
-      // Definir los tramos lógicos del menú
+      // Definir los tramos lógicos del menú según la modalidad de cada pasajero (Redondo vs Solo Ida)
+      const p1IsRoundtrip = tripConfig.p1.tripType !== 'oneway';
+      const p2IsRoundtrip = tripConfig.p2.tripType !== 'oneway';
+
       const legs = [
         {
           id: 'leg_p1_salida',
@@ -1790,45 +1828,49 @@
           stateKey: 'salida',
           segmentKey: 'transatlantico-inicio',
           title: `Tramo 1: Salida de ${n1} (${orig1} ➔ Madrid MAD)`,
-          desc: `Vuelo individual desde ${orig1} hacia la 1ra estancia en Madrid.`,
-          passengerBadge: `👤 ${n1} (${orig1})`,
+          desc: `Vuelo ${p1IsRoundtrip ? 'de ida (primer tramo del viaje redondo)' : 'de solo ida'} desde ${orig1} hacia la 1ra estancia en Madrid.`,
+          passengerBadge: `👤 ${n1} (${orig1}) · ${p1IsRoundtrip ? '🔄 Redondo' : '➡️ Solo Ida'}`,
           badgeClass: 'bg-blue-50 text-blue-700 border-blue-200/80 font-bold',
           isJoint: false
-        },
-        {
+        }
+      ];
+
+      if (tripConfig.passengerCount > 1) {
+        legs.push({
           id: 'leg_p2_salida',
           traveler: 'yesica',
           stateKey: 'salida',
           segmentKey: 'transatlantico-inicio',
           title: `Tramo 2: Salida de ${n2} (${orig2} ➔ Madrid MAD)`,
-          desc: `Vuelo de conexión desde Canarias (${orig2}) hacia el punto de encuentro en Madrid.`,
-          passengerBadge: `👤 ${n2} (${orig2})`,
+          desc: `Vuelo ${p2IsRoundtrip ? 'de ida y conexión' : 'de solo ida'} desde Canarias (${orig2}) hacia el punto de encuentro en Madrid.`,
+          passengerBadge: `👤 ${n2} (${orig2}) · ${p2IsRoundtrip ? '🔄 Redondo' : '➡️ Solo Ida'}`,
           badgeClass: 'bg-pink-50 text-pink-700 border-pink-200/80 font-bold',
           isJoint: false
-        },
-        {
-          id: 'leg_joint',
-          traveler: 'mario',
-          stateKey: 'trans',
-          segmentKey: targetSegment,
-          title: `Tramo Conjunto Compartido: Madrid ➔ ${isMexicoDest ? 'Ciudad de México (MEX)' : 'Bogotá (BOG)'}`,
-          desc: `Vuelo en conjunto obligatorio: ${n1} y ${n2} viajarán en el mismo vuelo y horario.`,
-          passengerBadge: `👥 ${n1} & ${n2} (Mismo Vuelo)`,
-          badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold',
-          isJoint: true
-        }
-      ];
+        });
+      }
 
-      // Si Yesica tiene retorno a Canarias desde México/Bogotá
-      if (orig2 !== (isMexicoDest ? 'MEX' : 'BOG')) {
+      legs.push({
+        id: 'leg_joint',
+        traveler: 'mario',
+        stateKey: 'trans',
+        segmentKey: targetSegment,
+        title: `Tramo Conjunto Compartido: Madrid ➔ ${isMexicoDest ? 'Ciudad de México (MEX)' : 'Bogotá (BOG)'}`,
+        desc: `Vuelo en conjunto obligatorio: ${n1} y ${n2} viajarán en el mismo vuelo y horario.`,
+        passengerBadge: `👥 ${n1} & ${n2} (Mismo Vuelo)`,
+        badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold',
+        isJoint: true
+      });
+
+      // Si Yesica viaja en viaje REDONDO y tiene retorno a Canarias desde México/Bogotá
+      if (tripConfig.passengerCount > 1 && p2IsRoundtrip && orig2 !== (isMexicoDest ? 'MEX' : 'BOG')) {
         legs.push({
           id: 'leg_p2_retorno',
           traveler: 'yesica',
           stateKey: 'trans',
           segmentKey: targetSegment,
           title: `Retorno Final a Casa: ${isMexicoDest ? 'Ciudad de México (MEX)' : 'Bogotá (BOG)'} ➔ Canarias (${orig2})`,
-          desc: `Vuelo de regreso de ${n2} incluido y emitido dentro de su boleto global multidestino.`,
-          passengerBadge: `👤 ${n2} (${orig2})`,
+          desc: `Vuelo de regreso de ${n2} incluido y emitido dentro de su boleto global multidestino. (Fecha retorno: ${tripConfig.p2.returnDate || '20 Nov 2026'}).`,
+          passengerBadge: `👤 ${n2} (${orig2}) · 🔄 Retorno`,
           badgeClass: 'bg-pink-50 text-pink-700 border-pink-200/80 font-bold',
           isIncluded: true
         });
@@ -2263,7 +2305,9 @@
           name: "",
           country: "MX",
           origin: "MEX — Ciudad de México (AICM Benito Juárez)",
+          tripType: "roundtrip",
           startDate: "",
+          returnDate: "",
           nationality: "MX",
           visas: { usa: false },
           prefs: { bag: true, carry: true, seat: true },
@@ -2275,7 +2319,9 @@
           name: "",
           country: "ES",
           origin: "MAD — Madrid Barajas Adolfo Suárez",
+          tripType: "roundtrip",
           startDate: "",
+          returnDate: "",
           nationality: "ES",
           visas: { residencia: false },
           prefs: { bag: true, carry: true, seat: true },
@@ -2284,6 +2330,18 @@
           ]
         }
       };
+    }
+
+    function toggleTripType(pKey, value) {
+      if (!tripConfig[pKey]) return;
+      tripConfig[pKey].tripType = value;
+      const cont = document.getElementById(`${pKey}-return-date-container`);
+      if (cont) {
+        cont.classList.toggle('hidden', value === 'oneway');
+      }
+      autoSaveActiveSession();
+      renderStep3();
+      render();
     }
 
     function getBlankState() {
@@ -2369,7 +2427,7 @@
     }
 
     function autoSaveActiveSession() {
-      if (activeSessionId === 'new_blank') return; // No sobreescribir nuevo plan hasta que se guarde explícitamente
+      if (activeSessionId === 'new_blank') return;
       if (!travelSessions[activeSessionId]) {
         travelSessions[activeSessionId] = {
           id: activeSessionId,
@@ -2413,6 +2471,18 @@
       if (document.getElementById('p2-cfg-name')) document.getElementById('p2-cfg-name').value = tripConfig.p2.name || '';
       if (document.getElementById('p1-cfg-date')) document.getElementById('p1-cfg-date').value = tripConfig.p1.startDate || '';
       if (document.getElementById('p2-cfg-date')) document.getElementById('p2-cfg-date').value = tripConfig.p2.startDate || '';
+      if (document.getElementById('p1-cfg-return-date')) document.getElementById('p1-cfg-return-date').value = tripConfig.p1.returnDate || '';
+      if (document.getElementById('p2-cfg-return-date')) document.getElementById('p2-cfg-return-date').value = tripConfig.p2.returnDate || '';
+      
+      if (document.getElementById('p1-cfg-trip-type')) {
+        document.getElementById('p1-cfg-trip-type').value = tripConfig.p1.tripType || 'roundtrip';
+        toggleTripType('p1', tripConfig.p1.tripType || 'roundtrip');
+      }
+      if (document.getElementById('p2-cfg-trip-type')) {
+        document.getElementById('p2-cfg-trip-type').value = tripConfig.p2.tripType || 'roundtrip';
+        toggleTripType('p2', tripConfig.p2.tripType || 'roundtrip');
+      }
+
       if (document.getElementById('cfg-passenger-count')) {
         document.getElementById('cfg-passenger-count').value = String(tripConfig.passengerCount || 1);
         changePassengerCount(tripConfig.passengerCount || 1);

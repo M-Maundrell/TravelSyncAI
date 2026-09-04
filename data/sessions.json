@@ -1,12 +1,12 @@
 {
-  "lastUpdated": "2026-09-03T21:58:00Z",
+  "lastUpdated": "2026-09-04T02:00:00Z",
   "repository": "M-Maundrell/viaje-octubre-2026",
   "activePlanId": "plan_maestro",
   "plans": {
     "plan_maestro": {
       "id": "plan_maestro",
       "name": "Plan Maestro: Madrid & CDMX ($56,760 MXN)",
-      "createdAt": "2026-09-03T21:58:00Z",
+      "createdAt": "2026-09-04T02:00:00Z",
       "description": "Iberia IB0152/IB0153 + Aeroméxico Directos con equipaje y asientos incluidos.",
       "tripConfig": {
         "passengerCount": 2,
@@ -15,7 +15,9 @@
           "name": "Mario",
           "country": "MX",
           "origin": "MEX — Ciudad de México (Benito Juárez / AIFA)",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "MX",
           "visas": { "usa": true },
           "prefs": { "bag": true, "carry": true, "seat": true },
@@ -28,7 +30,9 @@
           "name": "Yesica",
           "country": "ES",
           "origin": "SPC — La Palma, Islas Canarias",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "ES",
           "visas": { "residencia": true },
           "prefs": { "bag": true, "carry": true, "seat": true },
@@ -53,7 +57,7 @@
     "plan_avianca": {
       "id": "plan_avianca",
       "name": "Plan Alternativo: Avianca BOG ($54,200 MXN)",
-      "createdAt": "2026-09-03T21:58:00Z",
+      "createdAt": "2026-09-04T02:00:00Z",
       "description": "Vuelo transatlántico con escala en Bogotá vía Avianca con excelente tarifa.",
       "tripConfig": {
         "passengerCount": 2,
@@ -62,7 +66,9 @@
           "name": "Mario",
           "country": "MX",
           "origin": "MEX — Ciudad de México (Benito Juárez / AIFA)",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "MX",
           "visas": { "usa": true },
           "prefs": { "bag": true, "carry": true, "seat": true },
@@ -75,7 +81,9 @@
           "name": "Yesica",
           "country": "ES",
           "origin": "SPC — La Palma, Islas Canarias",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "ES",
           "visas": { "residencia": true },
           "prefs": { "bag": true, "carry": true, "seat": true },
