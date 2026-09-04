@@ -2270,7 +2270,6 @@
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded ${wp.isRoundtrip ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-200 text-slate-700'}">
                   ${wp.isRoundtrip ? '🔄 Tramo Redondo' : '➡️ Tramo Sencillo'}
                 </span>
-                ${idx > 0 && wp.departureOrigins ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">Salidas: ${wp.departureOrigins}</span>` : ''}
               </div>
               <button type="button" onclick="removeWaypoint('${pKey}', ${idx})" class="text-xs text-rose-600 hover:text-rose-800 font-bold px-2 py-0.5 rounded hover:bg-rose-50 transition">
                 ✕ Eliminar
