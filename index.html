@@ -380,15 +380,33 @@
           <input type="text" id="session-name-input" placeholder="Ej. Plan Maestro Iberia Octubre 2026" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white outline-none focus:border-indigo-500">
         </div>
 
-        <div class="bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800 space-y-2">
+        <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-3">
           <div class="flex justify-between items-center">
-            <label class="text-[11px] font-bold text-indigo-300 flex items-center gap-1.5">
-              <span>🔑 GitHub Personal Access Token (Opcional para Commits directos):</span>
+            <label class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+              <span>🔑 GitHub Personal Access Token (PAT):</span>
             </label>
-            <a href="https://github.com/settings/tokens" target="_blank" class="text-[10px] text-indigo-400 hover:underline">Crear Token ↗</a>
+            <a href="https://github.com/settings/tokens/new" target="_blank" class="text-[11px] text-indigo-400 hover:text-indigo-300 font-semibold underline">Generar Token en GitHub ↗</a>
           </div>
-          <input type="password" id="github-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (Se guarda solo en tu navegador)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-slate-200 outline-none focus:border-indigo-500">
-          <p class="text-[10px] text-slate-500">Con un token (permiso <code>contents:write</code>), el navegador hace un commit directo a tu rama <code>main</code> cada vez que guardas.</p>
+          
+          <input type="password" id="github-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx (Se guarda solo en tu navegador)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs font-mono text-slate-200 outline-none focus:border-indigo-500">
+          
+          <!-- GUÍA DESPLEGABLE PASO A PASO -->
+          <details class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-xs space-y-2 cursor-pointer group">
+            <summary class="font-bold text-slate-300 flex items-center justify-between text-[11px] select-none">
+              <span class="flex items-center gap-1.5">📖 ¿Cómo obtener mi Token de GitHub en 1 minuto?</span>
+              <span class="text-indigo-400 group-open:rotate-180 transition">▾</span>
+            </summary>
+            <ol class="list-decimal list-inside space-y-1.5 text-[11px] text-slate-400 pt-2.5 border-t border-slate-800/80 leading-relaxed">
+              <li>Haz clic en <a href="https://github.com/settings/tokens/new" target="_blank" class="text-indigo-400 font-bold underline">github.com/settings/tokens/new ↗</a> (inicia sesión en GitHub).</li>
+              <li>En <strong>Note</strong>, escribe: <code class="bg-slate-800 text-slate-200 px-1.5 py-0.5 rounded font-mono">TravelSync AI</code></li>
+              <li>En <strong>Expiration</strong>, selecciona <span class="text-slate-200 font-semibold">90 days</span> o <span class="text-slate-200 font-semibold">No expiration</span>.</li>
+              <li>En la lista de permisos (<strong>Select scopes</strong>), marca la casilla: <strong class="text-emerald-400">☑️ repo</strong> (acceso completo a repositorios).</li>
+              <li>Baja al final de la página y haz clic en el botón verde <strong>Generate token</strong>.</li>
+              <li>Copia el token generado que empieza con <code class="bg-slate-800 text-amber-300 px-1.5 py-0.5 rounded font-mono">ghp_...</code> y pégalo aquí.</li>
+            </ol>
+          </details>
+
+          <p class="text-[10px] text-slate-500">Tu token se guarda localmente en tu navegador y permite crear commits directos a <code class="text-slate-400">data/sessions.json</code> en tu rama <code class="text-slate-400">main</code>.</p>
         </div>
       </div>
 
@@ -522,11 +540,11 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
-              <input type="text" id="p1-cfg-name" value="Mario" placeholder="Ej. Mario" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+              <input type="text" id="p1-cfg-name" value="" placeholder="Ej. Mario" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
-              <input type="date" id="p1-cfg-date" value="2026-10-16" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+              <input type="date" id="p1-cfg-date" value="" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
             </div>
           </div>
 
@@ -560,7 +578,7 @@
               <label class="block text-xs font-bold text-slate-600 mb-1">Visados Activos</label>
               <div class="flex items-center gap-2 mt-2">
                 <label class="flex items-center gap-1.5 text-xs font-bold text-slate-700 cursor-pointer">
-                  <input type="checkbox" id="p1-cfg-visa-usa" checked class="w-4 h-4 rounded text-indigo-600">
+                  <input type="checkbox" id="p1-cfg-visa-usa" class="w-4 h-4 rounded text-indigo-600">
                   <span>Visa EE.UU. (B1/B2)</span>
                 </label>
               </div>
@@ -590,11 +608,11 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
-              <input type="text" id="p2-cfg-name" value="Yesica" placeholder="Ej. Yesica" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+              <input type="text" id="p2-cfg-name" value="" placeholder="Ej. Yesica" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
-              <input type="date" id="p2-cfg-date" value="2026-10-16" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+              <input type="date" id="p2-cfg-date" value="" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
             </div>
           </div>
 
@@ -2230,23 +2248,59 @@
     const GITHUB_REPO = 'M-Maundrell/viaje-octubre-2026';
     const GITHUB_SESSIONS_PATH = 'data/sessions.json';
     const GITHUB_TOKEN_KEY = 'travelsync_github_pat_token';
+    const ACTIVE_SESSION_KEY = 'travelsync_active_session_id';
     const LOCAL_SESSIONS_KEY = 'travelsync_saved_sessions_v2';
 
     let travelSessions = {};
-    let activeSessionId = 'plan_maestro';
+    let activeSessionId = 'new_blank';
     let gitHubFileSha = null;
 
+    function getBlankTripConfig() {
+      return {
+        passengerCount: 1,
+        strictJointFlight: false,
+        p1: {
+          name: "",
+          country: "MX",
+          origin: "MEX — Ciudad de México (AICM Benito Juárez)",
+          startDate: "",
+          nationality: "MX",
+          visas: { usa: false },
+          prefs: { bag: true, carry: true, seat: true },
+          waypoints: [
+            { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "", departureDate: "", departureOrigins: "MAD", jointFlight: false }
+          ]
+        },
+        p2: {
+          name: "",
+          country: "ES",
+          origin: "MAD — Madrid Barajas Adolfo Suárez",
+          startDate: "",
+          nationality: "ES",
+          visas: { residencia: false },
+          prefs: { bag: true, carry: true, seat: true },
+          waypoints: [
+            { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "", departureDate: "", departureOrigins: "MAD", jointFlight: false }
+          ]
+        }
+      };
+    }
+
+    function getBlankState() {
+      return {
+        mario: { salida: "", trans: "", bog_esp: "" },
+        yesica: { salida: "", trans: "" }
+      };
+    }
+
     async function initSessionsManager() {
-      // 1. Intentar cargar planes directamente desde GitHub (data/sessions.json)
+      // 1. Cargar planes disponibles desde GitHub (data/sessions.json)
       try {
         const res = await fetch('./data/sessions.json?v=' + Date.now());
         if (res.ok) {
           const remoteData = await res.json();
           if (remoteData.plans && Object.keys(remoteData.plans).length > 0) {
             travelSessions = remoteData.plans;
-            if (remoteData.activePlanId && travelSessions[remoteData.activePlanId]) {
-              activeSessionId = remoteData.activePlanId;
-            }
             console.log('✓ Planes cargados directamente desde GitHub (data/sessions.json)');
           }
         }
@@ -2254,7 +2308,7 @@
         console.log('Using local/cached sessions fallback', e);
       }
 
-      // 2. Si no había conexión o vino vacío, usar fallback de localStorage
+      // 2. Fallback de localStorage si no hay planes remotos
       if (!travelSessions || Object.keys(travelSessions).length === 0) {
         try {
           const saved = localStorage.getItem(LOCAL_SESSIONS_KEY);
@@ -2262,27 +2316,24 @@
         } catch (e) {}
       }
 
-      // 3. Fallback de fábrica
-      if (!travelSessions || Object.keys(travelSessions).length === 0) {
-        travelSessions = {
-          "plan_maestro": {
-            id: "plan_maestro",
-            name: "Plan Maestro: Madrid & CDMX ($56,760 MXN)",
-            createdAt: new Date().toISOString(),
-            tripConfig: JSON.parse(JSON.stringify(tripConfig)),
-            state: JSON.parse(JSON.stringify(state))
-          }
-        };
-      }
+      // 3. Determinar si cargamos un plan existente o iniciamos en BLANCO
+      const savedSessionId = localStorage.getItem(ACTIVE_SESSION_KEY);
+      const hasUrlPlan = window.location.hash && window.location.hash.startsWith('#plan=');
 
-      // 4. Si el usuario ya tenía un plan activo seleccionado, aplicarlo
-      if (travelSessions[activeSessionId]) {
-        const s = travelSessions[activeSessionId];
+      if (hasUrlPlan) {
+        checkUrlHashSession();
+      } else if (savedSessionId && travelSessions[savedSessionId]) {
+        activeSessionId = savedSessionId;
+        const s = travelSessions[savedSessionId];
         if (s.tripConfig) tripConfig = JSON.parse(JSON.stringify(s.tripConfig));
         if (s.state) state = JSON.parse(JSON.stringify(s.state));
+      } else {
+        // FORMULARIO EN BLANCO PARA VIAJE NUEVO
+        activeSessionId = 'new_blank';
+        tripConfig = getBlankTripConfig();
+        state = getBlankState();
       }
 
-      checkUrlHashSession();
       renderSessionsDropdown();
       syncDomFromTripConfig();
     }
@@ -2299,6 +2350,15 @@
       const dropdown = document.getElementById('sessions-dropdown');
       if (!dropdown) return;
       dropdown.innerHTML = '';
+      
+      // Opción 1: Nuevo Plan en Blanco
+      const blankOpt = document.createElement('option');
+      blankOpt.value = 'new_blank';
+      blankOpt.innerText = '✨ + Nuevo Plan en Blanco';
+      if (activeSessionId === 'new_blank') blankOpt.selected = true;
+      dropdown.appendChild(blankOpt);
+
+      // Opciones de planes guardados en GitHub
       Object.values(travelSessions).forEach(session => {
         const opt = document.createElement('option');
         opt.value = session.id;
@@ -2309,6 +2369,7 @@
     }
 
     function autoSaveActiveSession() {
+      if (activeSessionId === 'new_blank') return; // No sobreescribir nuevo plan hasta que se guarde explícitamente
       if (!travelSessions[activeSessionId]) {
         travelSessions[activeSessionId] = {
           id: activeSessionId,
@@ -2323,8 +2384,20 @@
     }
 
     function loadSessionFromDropdown(sessionId) {
+      if (sessionId === 'new_blank') {
+        activeSessionId = 'new_blank';
+        localStorage.removeItem(ACTIVE_SESSION_KEY);
+        tripConfig = getBlankTripConfig();
+        state = getBlankState();
+        syncDomFromTripConfig();
+        goToStep(1);
+        showToast('✨ Nuevo plan en blanco. Ingresa los datos de tu viaje.', 'info');
+        return;
+      }
+
       if (!travelSessions[sessionId]) return;
       activeSessionId = sessionId;
+      localStorage.setItem(ACTIVE_SESSION_KEY, sessionId);
       const s = travelSessions[sessionId];
       if (s.tripConfig) tripConfig = JSON.parse(JSON.stringify(s.tripConfig));
       if (s.state) state = JSON.parse(JSON.stringify(s.state));
@@ -2333,6 +2406,25 @@
       renderStep3();
       render();
       showToast(`✓ Plan "${s.name}" cargado exitosamente`, 'success');
+    }
+
+    function syncDomFromTripConfig() {
+      if (document.getElementById('p1-cfg-name')) document.getElementById('p1-cfg-name').value = tripConfig.p1.name || '';
+      if (document.getElementById('p2-cfg-name')) document.getElementById('p2-cfg-name').value = tripConfig.p2.name || '';
+      if (document.getElementById('p1-cfg-date')) document.getElementById('p1-cfg-date').value = tripConfig.p1.startDate || '';
+      if (document.getElementById('p2-cfg-date')) document.getElementById('p2-cfg-date').value = tripConfig.p2.startDate || '';
+      if (document.getElementById('cfg-passenger-count')) {
+        document.getElementById('cfg-passenger-count').value = String(tripConfig.passengerCount || 1);
+        changePassengerCount(tripConfig.passengerCount || 1);
+      }
+      if (document.getElementById('p1-cfg-visa-usa')) {
+        document.getElementById('p1-cfg-visa-usa').checked = Boolean(tripConfig.p1.visas?.usa);
+      }
+      if (document.getElementById('p2-cfg-visa-residencia')) {
+        document.getElementById('p2-cfg-visa-residencia').checked = Boolean(tripConfig.p2.visas?.residencia);
+      }
+      renderWaypointsList('p1');
+      renderWaypointsList('p2');
     }
 
     function openSaveSessionModal() {
@@ -2369,6 +2461,7 @@
         state: JSON.parse(JSON.stringify(state))
       };
       activeSessionId = newId;
+      localStorage.setItem(ACTIVE_SESSION_KEY, newId);
       saveSessionsToStorage();
       renderSessionsDropdown();
 
