@@ -1,7 +1,7 @@
 {
-  "lastUpdated": "2026-09-04T02:07:07.978Z",
+  "lastUpdated": "2026-09-04T02:45:23.316Z",
   "repository": "M-Maundrell/TravelSyncAI",
-  "activePlanId": "plan_maestro",
+  "activePlanId": "plan_mad_mex",
   "plans": {
     "plan_maestro": {
       "id": "plan_maestro",
@@ -197,14 +197,14 @@
       "id": "plan_mad_mex",
       "name": "Plan MAD-MEX Octubre 2026",
       "createdAt": "2026-09-04T02:03:00Z",
-      "updatedAt": "2026-09-04T02:04:00Z",
+      "updatedAt": "2026-09-04T02:45:22.725Z",
       "tripConfig": {
         "passengerCount": 2,
         "strictJointFlight": true,
         "p1": {
           "name": "Mario",
           "country": "MX",
-          "origin": "MEX — Ciudad de México (Benito Juárez / AIFA)",
+          "origin": "MEX — Ciudad de México (AICM Benito Juárez)",
           "tripType": "roundtrip",
           "startDate": "2026-10-16",
           "returnDate": "2026-11-20",
@@ -223,25 +223,30 @@
               "cityCode": "MAD",
               "name": "Madrid (MAD)",
               "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-21",
+              "departureDate": "2026-10-27",
               "departureOrigins": "MAD, BCN",
-              "jointFlight": false
+              "jointFlight": true,
+              "isRoundtrip": false
             },
             {
-              "country": "MX",
-              "cityCode": "MEX",
-              "name": "Ciudad de México (MEX)",
+              "country": "ES",
+              "cityCode": "MAD",
+              "name": "Madrid (MAD)",
               "arrivalDate": "2026-10-27",
-              "departureDate": "2026-11-20",
-              "departureOrigins": "MEX",
-              "jointFlight": true
+              "departureDate": "2026-11-27",
+              "departureOrigins": "MAD, BCN",
+              "jointFlight": true,
+              "originCountry1": "ES",
+              "originCity1": "MAD",
+              "originCountry2": "ES",
+              "originCity2": "BCN"
             }
           ]
         },
         "p2": {
           "name": "Yesica",
           "country": "ES",
-          "origin": "SPC — La Palma, Islas Canarias",
+          "origin": "SPC — La Palma (Santa Cruz de La Palma, Canarias)",
           "tripType": "roundtrip",
           "startDate": "2026-10-16",
           "returnDate": "2026-11-20",
@@ -260,9 +265,10 @@
               "cityCode": "MAD",
               "name": "Madrid (MAD)",
               "arrivalDate": "2026-10-16",
-              "departureDate": "2026-10-21",
+              "departureDate": "2026-11-21",
               "departureOrigins": "MAD, BCN",
-              "jointFlight": false
+              "jointFlight": false,
+              "isRoundtrip": true
             },
             {
               "country": "MX",
@@ -270,8 +276,14 @@
               "name": "Ciudad de México (MEX)",
               "arrivalDate": "2026-10-27",
               "departureDate": "2026-11-20",
-              "departureOrigins": "MEX",
-              "jointFlight": true
+              "departureOrigins": "MAD, BCN",
+              "jointFlight": true,
+              "originCountry1": "ES",
+              "originCity1": "MAD",
+              "originCountry2": "ES",
+              "originCity2": "BCN — Barcelona El Prat Josep Tarradellas",
+              "departureOrigin1": "MAD",
+              "departureOrigin2": "BCN"
             }
           ]
         }
