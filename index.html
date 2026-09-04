@@ -2138,7 +2138,9 @@
       if (!container) return;
       syncPassengerNamesLive();
       const wps = tripConfig[pKey].waypoints || [];
+      const passengerName = pKey === 'p1' ? (tripConfig.p1.name || 'Mario') : (tripConfig.p2.name || 'Yesica');
       const otherName = pKey === 'p1' ? (tripConfig.p2.name || 'Acompañante') : (tripConfig.p1.name || 'Titular');
+      const passengerOrigin = tripConfig[pKey]?.origin || (pKey === 'p1' ? 'MEX — Ciudad de México (AICM Benito Juárez / AIFA)' : 'SPC — La Palma, Islas Canarias');
 
       let html = '';
       wps.forEach((wp, idx) => {
@@ -2149,39 +2151,164 @@
         ).join('');
         const cityOptions = renderAirportSelectOptions(country.airports, wp.cityCode);
 
+        // Inicialización inteligente para paradas idx > 0 (Tramo 2 en adelante)
+        if (idx > 0) {
+          const prevWp = wps[idx - 1];
+          if (!wp.originCountry1) wp.originCountry1 = prevWp?.country || 'ES';
+          if (!wp.originCity1) wp.originCity1 = prevWp?.cityCode || 'MAD';
+          
+          // Soporte para departureOrigins legado (ej: "MAD, BCN")
+          if (wp.departureOrigins && wp.departureOrigins.includes(',') && !wp.originCity2) {
+            const parts = wp.departureOrigins.split(',');
+            wp.originCity1 = parts[0].trim();
+            wp.originCountry2 = 'ES';
+            wp.originCity2 = parts[1].trim();
+          }
+        }
+
+        let originHtml = '';
+        if (idx === 0) {
+          // TRAMO 1: Origen ya fijado en Paso 1
+          originHtml = `
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-blue-50/80 border border-blue-200/80 rounded-xl px-3.5 py-2.5 text-xs">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-black text-blue-950 flex items-center gap-1.5">
+                  <span>🛫</span> Origen del Tramo 1 (Definido en Paso 1):
+                </span>
+                <span class="font-extrabold text-blue-800 bg-white px-2.5 py-1 rounded-lg border border-blue-200 shadow-2xs">${passengerOrigin}</span>
+              </div>
+              <span class="text-[11px] text-blue-600 font-semibold">Punto de partida de ${passengerName}</span>
+            </div>
+          `;
+        } else {
+          // TRAMO 2 EN ADELANTE: Origen con 2 alternativas (Alternativa 2 es opcional)
+          const o1CountryKey = wp.originCountry1 || 'ES';
+          const o1Country = geoCatalog[o1CountryKey] || geoCatalog['ES'];
+          const o1CountryOptions = Object.entries(geoCatalog).map(([k, c]) => 
+            `<option value="${k}" ${o1CountryKey === k ? 'selected' : ''}>${c.name}</option>`
+          ).join('');
+          const o1CityOptions = renderAirportSelectOptions(o1Country.airports, wp.originCity1);
+
+          const o2CountryKey = wp.originCountry2 || '';
+          const o2CountryOptions = `<option value="">(Ninguno / Solo Origen 1)</option>` + Object.entries(geoCatalog).map(([k, c]) => 
+            `<option value="${k}" ${o2CountryKey === k ? 'selected' : ''}>${c.name}</option>`
+          ).join('');
+          
+          let o2CityOptions = `<option value="">(Sin 2da alternativa)</option>`;
+          if (o2CountryKey && geoCatalog[o2CountryKey]) {
+            o2CityOptions += renderAirportSelectOptions(geoCatalog[o2CountryKey].airports, wp.originCity2);
+          }
+
+          originHtml = `
+            <div class="bg-indigo-50/50 p-3.5 rounded-2xl border border-indigo-100 space-y-2.5">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                <span class="text-xs font-black text-indigo-950 flex items-center gap-1.5">
+                  <span>🛫</span> Origen de Salida hacia esta Estancia (2 Alternativas de Origen):
+                </span>
+                <span class="text-[10px] font-bold text-indigo-700 bg-indigo-100/90 px-2 py-0.5 rounded-md self-start sm:self-auto">
+                  La 2da alternativa es opcional
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <!-- Origen 1 (Principal) -->
+                <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-extrabold text-slate-800 flex items-center gap-1">
+                      <span class="w-2 h-2 rounded-full bg-indigo-600"></span> Origen 1 (Principal):
+                    </span>
+                    <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">Ruta Primaria</span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-500 mb-0.5">🌍 País</label>
+                      <select onchange="handleWpOriginCountryChange('${pKey}', ${idx}, 1, this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-800">
+                        ${o1CountryOptions}
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-500 mb-0.5">🛫 Ciudad / Aeropuerto</label>
+                      <select id="wp-orig-city1-${pKey}-${idx}" onchange="handleWpOriginCityChange('${pKey}', ${idx}, 1, this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-800">
+                        ${o1CityOptions}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Origen 2 (Alternativa Opcional) -->
+                <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5 shadow-2xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-extrabold text-slate-800 flex items-center gap-1">
+                      <span class="w-2 h-2 rounded-full ${o2CountryKey ? 'bg-amber-500' : 'bg-slate-300'}"></span> Origen 2 (Alternativa Opcional):
+                    </span>
+                    <span class="text-[10px] font-bold ${o2CountryKey ? 'text-amber-800 bg-amber-50' : 'text-slate-400 bg-slate-100'} px-1.5 py-0.5 rounded">
+                      ${o2CountryKey ? 'Activo' : 'Opcional'}
+                    </span>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-500 mb-0.5">🌍 País (Opcional)</label>
+                      <select onchange="handleWpOriginCountryChange('${pKey}', ${idx}, 2, this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-800">
+                        ${o2CountryOptions}
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-[10px] font-bold text-slate-500 mb-0.5">🛫 Ciudad / Aeropuerto</label>
+                      <select id="wp-orig-city2-${pKey}-${idx}" onchange="handleWpOriginCityChange('${pKey}', ${idx}, 2, this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-1.5 text-xs font-bold text-slate-800" ${!o2CountryKey ? 'disabled' : ''}>
+                        ${o2CityOptions}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
         html += `
           <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-            <div class="flex justify-between items-center">
-              <div class="flex items-center gap-2">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-200/80">
+              <div class="flex items-center gap-2 flex-wrap">
                 <span id="wp-title-${pKey}-${idx}" class="text-xs font-black text-slate-800">📍 Estancia ${idx + 1}: ${wp.name}</span>
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded ${wp.isRoundtrip ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-200 text-slate-700'}">
                   ${wp.isRoundtrip ? '🔄 Tramo Redondo' : '➡️ Tramo Sencillo'}
                 </span>
+                ${idx > 0 && wp.departureOrigins ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">Salidas: ${wp.departureOrigins}</span>` : ''}
               </div>
               <button type="button" onclick="removeWaypoint('${pKey}', ${idx})" class="text-xs text-rose-600 hover:text-rose-800 font-bold px-2 py-0.5 rounded hover:bg-rose-50 transition">
                 ✕ Eliminar
               </button>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-              <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">🌍 País Destino</label>
-                <select onchange="handleWpCountryChange('${pKey}', ${idx}, this.value)" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                  ${countryOptions}
-                </select>
+
+            <!-- ORIGEN DEL TRAMO -->
+            ${originHtml}
+
+            <!-- DESTINO Y FECHAS DE LA ESTANCIA -->
+            <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-1.5">
+              <div class="text-[11px] font-extrabold text-slate-700 flex items-center gap-1">
+                <span>🎯 Destino y Fechas de la Estancia:</span>
               </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">🏙️ Ciudad / Aeropuerto</label>
-                <select id="wp-city-select-${pKey}-${idx}" onchange="handleWpCityChange('${pKey}', ${idx}, this.value)" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                  ${cityOptions}
-                </select>
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📅 Fecha Vuelo Llegada</label>
-                <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'arrivalDate', this.value)" value="${wp.arrivalDate || ''}" class="w-full bg-white border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
-              </div>
-              <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-0.5">${wp.isRoundtrip ? '📅 Fecha Vuelo Regreso' : '📅 Fecha Salida Siguiente'}</label>
-                <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'departureDate', this.value)" value="${wp.departureDate || ''}" class="w-full bg-white border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">🌍 País Destino</label>
+                  <select onchange="handleWpCountryChange('${pKey}', ${idx}, this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                    ${countryOptions}
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">🏙️ Ciudad / Aeropuerto Destino</label>
+                  <select id="wp-city-select-${pKey}-${idx}" onchange="handleWpCityChange('${pKey}', ${idx}, this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+                    ${cityOptions}
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📅 Fecha Vuelo Llegada</label>
+                  <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'arrivalDate', this.value)" value="${wp.arrivalDate || ''}" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">${wp.isRoundtrip ? '📅 Fecha Vuelo Regreso' : '📅 Fecha Salida Siguiente'}</label>
+                  <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'departureDate', this.value)" value="${wp.departureDate || ''}" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
+                </div>
               </div>
             </div>
 
@@ -2203,16 +2330,44 @@
       container.innerHTML = html;
     }
 
-    function handleDepartureOriginChange(pKey, idx) {
-      const sel1 = document.getElementById(`wp-dep-orig1-${pKey}-${idx}`);
-      const sel2 = document.getElementById(`wp-dep-orig2-${pKey}-${idx}`);
-      if (!sel1) return;
-      const o1 = sel1.value;
-      const o2 = sel2 ? sel2.value : '';
-      
-      tripConfig[pKey].waypoints[idx].departureOrigin1 = o1;
-      tripConfig[pKey].waypoints[idx].departureOrigin2 = o2;
-      tripConfig[pKey].waypoints[idx].departureOrigins = o2 ? `${o1}, ${o2}` : o1;
+    function handleWpOriginCountryChange(pKey, idx, altNum, newCountryCode) {
+      const wp = tripConfig[pKey].waypoints[idx];
+      if (!wp) return;
+      if (altNum === 1) {
+        wp.originCountry1 = newCountryCode;
+        const airports = geoCatalog[newCountryCode]?.airports || [];
+        wp.originCity1 = airports[0]?.name || '';
+      } else {
+        wp.originCountry2 = newCountryCode;
+        if (!newCountryCode) {
+          wp.originCity2 = '';
+        } else {
+          const airports = geoCatalog[newCountryCode]?.airports || [];
+          wp.originCity2 = airports[0]?.name || '';
+        }
+      }
+      syncDepartureOrigins(wp);
+      renderWaypointsList(pKey);
+    }
+
+    function handleWpOriginCityChange(pKey, idx, altNum, selectedVal) {
+      const wp = tripConfig[pKey].waypoints[idx];
+      if (!wp) return;
+      if (altNum === 1) {
+        wp.originCity1 = selectedVal;
+      } else {
+        wp.originCity2 = selectedVal;
+      }
+      syncDepartureOrigins(wp);
+      renderWaypointsList(pKey);
+    }
+
+    function syncDepartureOrigins(wp) {
+      const c1 = wp.originCity1 ? (wp.originCity1.split('—')[0]?.trim() || wp.originCity1) : '';
+      const c2 = wp.originCity2 ? (wp.originCity2.split('—')[0]?.trim() || wp.originCity2) : '';
+      wp.departureOrigin1 = c1;
+      wp.departureOrigin2 = c2;
+      wp.departureOrigins = (c1 && c2) ? `${c1}, ${c2}` : (c1 || c2 || '');
     }
 
     function handleWpCountryChange(pKey, idx, newCountryCode) {
