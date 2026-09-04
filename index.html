@@ -1497,7 +1497,12 @@
     // ─── ESTADO SELECCIONADO DE VUELOS ───
     let state = {
       mario: { salida: "mex_mad_iberia_152", trans: "esp_mex_iberia_6403", bog_esp: "bog_esp_iberia_user" },
-      yesica: { salida: "yes_spc_mad_16_1815", trans: "yes_trans_mex_iberia" }
+      yesica: { 
+        salida: "yes_spc_mad_16_1815", 
+        trans: "yes_trans_mex_iberia",
+        retorno_trans: "live_retorno-transatlantico_yesica_iberia_IB304_0",
+        retorno_canarias: "live_retorno-canarias_yesica_iberia_I21535_0"
+      }
     };
 
     // ─── CATÁLOGO COMPLETO DE VUELOS MULTI-AEROLÍNEA CON OCUPACIÓN & DISPONIBILIDAD ───
@@ -2128,6 +2133,33 @@
         returnDest: orig2
       });
 
+      if (tripConfig.passengerCount > 1 && orig2 !== destCode) {
+        const wps2 = tripConfig.p2.waypoints || [];
+        const lastWp2 = wps2[wps2.length - 1];
+        const retTransDate = lastWp2?.departureDate || jointRetDate || '2026-11-20';
+        const retCanariasDate = wps2[0]?.departureDate || '2026-11-21';
+
+        searchRoutes.push({
+          label: `Regreso Transatlántico ${n2}: ${destCode} ➔ MAD`,
+          dep: destCode,
+          arr: 'MAD',
+          date: retTransDate,
+          traveler: 'yesica',
+          segment: 'retorno-transatlantico',
+          isJoint: false
+        });
+
+        searchRoutes.push({
+          label: `Retorno a Canarias ${n2}: MAD ➔ ${orig2}`,
+          dep: 'MAD',
+          arr: orig2,
+          date: retCanariasDate,
+          traveler: 'yesica',
+          segment: 'retorno-canarias',
+          isJoint: false
+        });
+      }
+
       if (modal) {
         modal.classList.remove('hidden');
         if (progressBar) progressBar.style.width = '10%';
@@ -2265,11 +2297,60 @@
     }
 
     function generateFallbackFlights(leg, originCode, destCode, destCityName) {
-      const orig = originCode || 'MAD';
-      const dest = destCode || 'BOG';
+      const orig = leg?.depCode || originCode || 'MAD';
+      const dest = leg?.arrCode || destCode || 'BOG';
       const city = destCityName || dest;
-      const seg = leg.segmentKey || 'espana-colombia';
-      
+      const seg = leg?.segmentKey || 'espana-colombia';
+
+      if (seg === 'retorno-transatlantico') {
+        const retCarriers = [
+          { key: 'ib1', code: 'iberia', name: 'Iberia', fn: 'IB304', price: 10813, occ: 76, ac: 'Airbus A350-900', dep: '12:50', arr: '06:00 (+1)', direct: true },
+          { key: 'ib2', code: 'iberia', name: 'Iberia', fn: 'IB308', price: 10813, occ: 80, ac: 'Airbus A350-900', dep: '20:30', arr: '13:50 (+1)', direct: true },
+          { key: 'am1', code: 'aeromexico', name: 'Aeroméxico', fn: 'AM01', price: 11025, occ: 72, ac: 'Boeing 787-9 Dreamliner', dep: '17:45', arr: '11:30 (+1)', direct: true },
+          { key: 'ux1', code: 'air-europa', name: 'Air Europa', fn: 'UX202', price: 10650, occ: 83, ac: 'Boeing 787-9 Dreamliner', dep: '15:30', arr: '09:20 (+1)', direct: true }
+        ];
+        retCarriers.forEach(c => {
+          const yId = `gen_ret_trans_yesica_${c.key}`;
+          if (!flightsCatalog[yId]) {
+            flightsCatalog[yId] = {
+              id: yId, traveler: 'yesica', segment: 'retorno-transatlantico',
+              title: `${c.name} ${c.fn} (${c.direct ? 'Directo' : 'Conexión'} ${orig} ➔ ${dest}) · ${formatMXN(c.price)}`,
+              airline: c.code, price: c.price, occupancy: c.occ, seatsLeft: 4, aircraft: c.ac,
+              description: `Vuelo de regreso transatlántico en ${c.name} cubriendo ${orig} hacia ${dest}.`,
+              outbound: { route: `${orig} ➔ ${dest}`, schedule: `${c.dep} → ${c.arr}`, flightNumber: c.fn, date: "Viernes 20 Nov 2026" },
+              class: "Tarifa Estándar", bag: true, carry: true, seat: true, direct: c.direct, usTransit: false,
+              googleFlightsUrl: `https://www.google.com/travel/flights?q=Flights%20from%20${orig}%20to%20${dest}`,
+              bookingUrl: "https://www.google.com/travel/flights"
+            };
+          }
+        });
+        return;
+      }
+
+      if (seg === 'retorno-canarias') {
+        const canCarriers = [
+          { key: 'i2_1', code: 'iberia', name: 'Iberia Express', fn: 'I21535', price: 1142, occ: 62, ac: 'Airbus A320neo', dep: '16:45', arr: '18:55', direct: true },
+          { key: 'i2_2', code: 'iberia', name: 'Iberia Express', fn: 'I21531', price: 1158, occ: 68, ac: 'Airbus A320neo', dep: '11:30', arr: '13:35', direct: true },
+          { key: 'nt1', code: 'binter', name: 'Binter Canarias', fn: 'NT5013', price: 1850, occ: 55, ac: 'Embraer E195-E2', dep: '14:00', arr: '18:15', direct: false }
+        ];
+        canCarriers.forEach(c => {
+          const yId = `gen_ret_can_yesica_${c.key}`;
+          if (!flightsCatalog[yId]) {
+            flightsCatalog[yId] = {
+              id: yId, traveler: 'yesica', segment: 'retorno-canarias',
+              title: `${c.name} ${c.fn} (${c.direct ? 'Directo' : 'Conexión'} ${orig} ➔ ${dest}) · ${formatMXN(c.price)}`,
+              airline: c.code, price: c.price, occupancy: c.occ, seatsLeft: 5, aircraft: c.ac,
+              description: `Vuelo de conexión interinsular/peninsular en ${c.name} desde ${orig} hacia Canarias (${dest}).`,
+              outbound: { route: `${orig} ➔ ${dest}`, schedule: `${c.dep} → ${c.arr}`, flightNumber: c.fn, date: "Sábado 21 Nov 2026" },
+              class: "Tarifa Residente", bag: true, carry: true, seat: true, direct: c.direct, usTransit: false,
+              googleFlightsUrl: `https://www.google.com/travel/flights?q=Flights%20from%20${orig}%20to%20${dest}`,
+              bookingUrl: "https://www.google.com/travel/flights"
+            };
+          }
+        });
+        return;
+      }
+
       const carriers = [
         { key: 'ib', code: 'iberia', name: 'Iberia', fn: 'IB6585', price: 13800, occ: 80, ac: 'Airbus A350-900', dep: '12:45', arr: '16:45', direct: true },
         { key: 'av', code: 'avianca', name: 'Avianca', fn: 'AV11', price: 12900, occ: 78, ac: 'Boeing 787-8 Dreamliner', dep: '12:45', arr: '16:45', direct: true },
@@ -2378,6 +2459,8 @@
         if (!state.mario.salida || state.mario.salida.startsWith('mex_bog')) state.mario.salida = 'mex_mad_iberia_152';
         if (!state.mario.trans || !state.mario.trans.startsWith('esp_mex')) state.mario.trans = 'esp_mex_iberia_6403';
         if (!state.yesica.trans || !state.yesica.trans.startsWith('yes_trans_mex')) state.yesica.trans = 'yes_trans_mex_iberia';
+        if (!state.yesica.retorno_trans) state.yesica.retorno_trans = 'live_retorno-transatlantico_yesica_iberia_IB304_0';
+        if (!state.yesica.retorno_canarias) state.yesica.retorno_canarias = 'live_retorno-canarias_yesica_iberia_I21535_0';
       } else {
         if (!state.mario.trans || state.mario.trans.startsWith('esp_mex')) state.mario.trans = 'esp_col_avianca_av11';
         if (!state.yesica.trans || state.yesica.trans.startsWith('yes_trans_mex')) state.yesica.trans = 'yes_trans_avianca';
@@ -2423,19 +2506,35 @@
         isJoint: true
       });
 
-      // Solo si el tramo es REDONDO y Yesica regresa a Canarias desde el destino conjunto
-      if (tripConfig.passengerCount > 1 && isJointRoundtrip && orig2 !== destCode) {
-        const returnDateStr = jointWp2?.departureDate || jointWp1?.departureDate || '27 Nov 2026';
+      // Tramos de regreso para el pasajero 2 (Yesica) si su origen difiere del destino conjunto:
+      if (tripConfig.passengerCount > 1 && orig2 !== destCode) {
+        const returnDateStr = jointWp2?.departureDate || jointWp1?.departureDate || '20 Nov 2026';
         legs.push({
-          id: 'leg_p2_retorno',
+          id: 'leg_p2_retorno_trans',
           traveler: 'yesica',
-          stateKey: 'trans',
-          segmentKey: targetSegment,
-          title: `Vuelo de Regreso: ${destCityName} ➔ Canarias (${orig2})`,
-          desc: `Vuelo de regreso de ${n2} planificado para el ${returnDateStr} (incluido en boleto multidestino).`,
+          stateKey: 'retorno_trans',
+          segmentKey: 'retorno-transatlantico',
+          depCode: destCode,
+          arrCode: 'MAD',
+          title: `Tramo 4: Regreso Transatlántico de ${n2} (${destCode} ➔ Madrid MAD)`,
+          desc: `Vuelo de retorno cruzando el Atlántico desde ${destCityName} hacia el hub de Madrid. (Fecha: ${returnDateStr}).`,
           passengerBadge: `👤 ${n2} (${orig2}) · 🔄 Retorno`,
           badgeClass: 'bg-pink-50 text-pink-700 border-pink-200/80 font-bold',
-          isIncluded: true
+          isJoint: false
+        });
+
+        legs.push({
+          id: 'leg_p2_retorno_canarias',
+          traveler: 'yesica',
+          stateKey: 'retorno_canarias',
+          segmentKey: 'retorno-canarias',
+          depCode: 'MAD',
+          arrCode: orig2,
+          title: `Tramo 5: Conexión Final a Canarias de ${n2} (Madrid MAD ➔ ${orig2})`,
+          desc: `Vuelo de conexión península-islas hacia su residencia en Canarias. (Fecha: ${tripConfig.p2.endDate || '21 Nov 2026'}).`,
+          passengerBadge: `👤 ${n2} (${orig2}) · 🛬 Destino`,
+          badgeClass: 'bg-pink-50 text-pink-700 border-pink-200/80 font-bold',
+          isJoint: false
         });
       }
 
@@ -2497,7 +2596,7 @@
 
         let options = Object.values(flightsCatalog).filter(f => f.traveler === leg.traveler && f.segment === leg.segmentKey);
         if (options.length === 0) {
-          generateFallbackFlights(leg, originCode, destCode, destCityName);
+          generateFallbackFlights(leg, leg.depCode || originCode, leg.arrCode || destCode, destCityName);
           options = Object.values(flightsCatalog).filter(f => f.traveler === leg.traveler && f.segment === leg.segmentKey);
         }
         // Si el usuario configuró hasta 4 aerolíneas específicas en el Paso 2:
@@ -3125,7 +3224,7 @@
     function getBlankState() {
       return {
         mario: { salida: "", trans: "", bog_esp: "" },
-        yesica: { salida: "", trans: "" }
+        yesica: { salida: "", trans: "", retorno_trans: "", retorno_canarias: "" }
       };
     }
 
@@ -3695,7 +3794,12 @@
       else if (sortVal === 'price_desc') options.sort((a, b) => b.price - a.price);
       else if (sortVal === 'direct_first') options.sort((a, b) => (b.direct ? 1 : 0) - (a.direct ? 1 : 0));
 
-      const currentSelectedId = state[traveler][segmentKey === 'transatlantico-inicio' ? 'salida' : (segmentKey === 'alternativo-regreso' ? 'bog_esp' : 'trans')];
+      const currentSelectedId = state[traveler][
+        segmentKey === 'transatlantico-inicio' ? 'salida' : 
+        (segmentKey === 'alternativo-regreso' ? 'bog_esp' : 
+        (segmentKey === 'retorno-transatlantico' ? 'retorno_trans' : 
+        (segmentKey === 'retorno-canarias' ? 'retorno_canarias' : 'trans')))
+      ];
 
       // Verificación de sincronización con el otro pasajero
       const otherTraveler = traveler === 'mario' ? 'yesica' : 'mario';
@@ -3780,7 +3884,11 @@
 
     function selectFlightFromModal(flightId) {
       const { traveler, segmentKey } = activeModalContext;
-      const stateKey = segmentKey === 'transatlantico-inicio' ? 'salida' : (segmentKey === 'alternativo-regreso' ? 'bog_esp' : 'trans');
+      let stateKey = 'trans';
+      if (segmentKey === 'transatlantico-inicio') stateKey = 'salida';
+      else if (segmentKey === 'alternativo-regreso') stateKey = 'bog_esp';
+      else if (segmentKey === 'retorno-transatlantico') stateKey = 'retorno_trans';
+      else if (segmentKey === 'retorno-canarias') stateKey = 'retorno_canarias';
       state[traveler][stateKey] = flightId;
       if (traveler === 'mario' && (segmentKey === 'espana-colombia' || segmentKey === 'espana-mexico')) {
         const selected = getCatalogBrick(flightId);
@@ -4112,6 +4220,19 @@
             type: 'included', parentKey: 'salida', leg: 'return',
             sub: `Retorno final a ${origCity} (${lastWp.departureDate || '27 Nov'})`
           });
+        } else if (traveler === 'yesica' && (state.yesica.retorno_trans || state.yesica.retorno_canarias || lastCode === 'MEX')) {
+          segments.push({
+            key: 'retorno_trans', step: String(stepCounter++),
+            label: `Regreso Transatlántico: ${lastCity} (${lastCode}) ➔ Madrid (MAD)`,
+            type: 'select', segment: 'retorno-transatlantico',
+            sub: `Vuelo de retorno transatlántico (${lastWp.departureDate || '20 Nov'})`
+          });
+          segments.push({
+            key: 'retorno_canarias', step: String(stepCounter++),
+            label: `Conexión a Canarias: Madrid (MAD) ➔ ${origCity} (${origCode})`,
+            type: 'select', segment: 'retorno-canarias',
+            sub: `Conexión final a Canarias (${travelerData.endDate || '21 Nov'})`
+          });
         } else {
           segments.push({
             key: 'salida_ret', step: String(stepCounter++),
@@ -4137,6 +4258,8 @@
       } else {
         sum += getCatalogBrick(state.yesica.salida)?.price || 0;
         sum += getCatalogBrick(state.yesica.trans)?.price || 0;
+        if (state.yesica.retorno_trans) sum += getCatalogBrick(state.yesica.retorno_trans)?.price || 0;
+        if (state.yesica.retorno_canarias) sum += getCatalogBrick(state.yesica.retorno_canarias)?.price || 0;
       }
       return sum;
     }

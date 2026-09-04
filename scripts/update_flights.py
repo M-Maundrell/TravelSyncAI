@@ -377,6 +377,24 @@ def get_active_itinerary_routes():
         "return_dest": p2_orig
     })
 
+    if p2_orig != joint_dest:
+        routes.append({
+            "dep": joint_dest,
+            "arr": "MAD",
+            "date": joint_ret_date or "2026-11-20",
+            "traveler": "yesica",
+            "segment": "retorno-transatlantico",
+            "is_joint": False
+        })
+        routes.append({
+            "dep": "MAD",
+            "arr": p2_orig,
+            "date": "2026-11-21",
+            "traveler": "yesica",
+            "segment": "retorno-canarias",
+            "is_joint": False
+        })
+
     return routes
 
 

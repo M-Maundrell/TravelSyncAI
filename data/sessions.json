@@ -229,12 +229,12 @@
               "isRoundtrip": false
             },
             {
-              "country": "ES",
-              "cityCode": "MAD",
-              "name": "Madrid (MAD)",
+              "country": "MX",
+              "cityCode": "MEX",
+              "name": "Ciudad de México (MEX)",
               "arrivalDate": "2026-10-27",
-              "departureDate": "2026-11-27",
-              "departureOrigins": "MAD, BCN",
+              "departureDate": "2026-11-20",
+              "departureOrigins": "MEX",
               "jointFlight": true,
               "originCountry1": "ES",
               "originCity1": "MAD",
@@ -296,7 +296,9 @@
         },
         "yesica": {
           "salida": "yes_spc_mad_16_1815",
-          "trans": "yes_trans_mex_iberia"
+          "trans": "esp_mex_iberia_6403",
+          "retorno_trans": "live_retorno-transatlantico_yesica_iberia_IB304_0",
+          "retorno_canarias": "live_retorno-canarias_yesica_iberia_I21535_0"
         }
       }
     }
