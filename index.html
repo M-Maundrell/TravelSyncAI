@@ -410,11 +410,16 @@
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 pt-2">
-        <button onclick="closeSaveSessionModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Cancelar</button>
-        <button onclick="saveCurrentSessionWithName()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-sm flex items-center gap-1.5">
-          <span>💾 Guardar Plan</span>
+      <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+        <button id="btn-delete-plan-modal" onclick="deleteCurrentPlan()" class="px-3.5 py-2 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-white text-xs font-semibold rounded-xl border border-rose-800/60 transition flex items-center gap-1">
+          <span>🗑️ Eliminar Plan</span>
         </button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeSaveSessionModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl">Cancelar</button>
+          <button onclick="saveCurrentSessionWithName()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-md border border-indigo-400/30 flex items-center gap-1.5">
+            <span>💾 Guardar / Sobreescribir</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -423,7 +428,7 @@
   <div class="max-w-6xl mx-auto space-y-6">
 
     <!-- ══════════════════════════════════════════════════
-         TOP APP BAR & STEPPER WIZARD (LUXURY OTA)
+         TOP APP BAR & STEPPER WIZARD (TRAVELSYNC AI)
          ══════════════════════════════════════════════════ -->
     <header class="bg-slate-900 border border-slate-800/90 rounded-3xl p-5 md:p-6 shadow-xl text-white">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -434,37 +439,37 @@
             </div>
             <div>
               <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                TravelSync AI <span class="text-[11px] bg-indigo-950 text-indigo-300 font-semibold px-2.5 py-0.5 rounded-full border border-indigo-800/60 uppercase tracking-wider">Luxury OTA</span>
+                TravelSync AI
               </h1>
               <p class="text-xs text-slate-400 font-medium">Planificador Inteligente de Viajes Multi-Pasajero y Vuelos Conjuntos</p>
             </div>
           </div>
         </div>
 
-        <!-- ACCIONES RÁPIDAS & GESTOR DE SESIONES EN HEADER -->
-        <div class="flex flex-wrap items-center gap-2">
+        <!-- ACCIONES RÁPIDAS & GESTOR DE SESIONES EN HEADER (ALTO CONTRASTE) -->
+        <div class="flex flex-wrap items-center gap-2.5">
           <!-- Selector de Planes Guardados -->
-          <div class="flex items-center gap-1.5 bg-slate-800/90 border border-slate-700/80 rounded-xl px-3 py-1.5 shadow-2xs">
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Plan:</span>
-            <select id="sessions-dropdown" onchange="loadSessionFromDropdown(this.value)" class="bg-transparent text-xs font-semibold text-white outline-none cursor-pointer">
+          <div class="flex items-center gap-2 bg-slate-950/90 border border-slate-700 rounded-xl px-3 py-1.5 shadow-sm">
+            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Plan:</span>
+            <select id="sessions-dropdown" onchange="loadSessionFromDropdown(this.value)" class="bg-slate-900 border border-slate-700 text-xs font-bold text-white rounded-lg px-2.5 py-1 outline-none cursor-pointer hover:border-indigo-400 transition">
               <!-- Renderizado dinámicamente -->
             </select>
           </div>
           
-          <button onclick="openSaveSessionModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+          <button onclick="openSaveSessionModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-md border border-indigo-400/40 transition flex items-center gap-1.5">
             <span>💾 Guardar</span>
           </button>
           
-          <button onclick="shareCurrentPlan()" class="px-3 py-1.5 bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 hover:text-white text-xs font-semibold rounded-xl border border-indigo-500/40 transition flex items-center gap-1.5">
+          <button onclick="shareCurrentPlan()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl border border-slate-600 shadow-sm transition flex items-center gap-1.5">
             <span>🔗 Compartir</span>
           </button>
 
-          <button onclick="triggerLivePriceRefresh()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5" id="btn-sync-live">
+          <button onclick="triggerLivePriceRefresh()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md border border-emerald-400/40 transition flex items-center gap-1.5" id="btn-sync-live">
             <span id="sync-icon" class="text-xs">🔄</span>
             <span id="sync-text">Actualizar Tarifas</span>
           </button>
 
-          <button onclick="resetToBlank()" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 text-xs font-medium rounded-xl border border-slate-700 transition" title="Nuevo Viaje en Blanco">
+          <button onclick="resetToBlank()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-bold rounded-xl border border-slate-600 shadow-sm transition" title="Nuevo Viaje en Blanco">
             + Nuevo
           </button>
         </div>
@@ -2287,7 +2292,7 @@
     }
 
     // ─── GESTOR DE SESIONES Y PLANES DE VIAJE EN GITHUB (data/sessions.json) ───
-    const GITHUB_REPO = 'M-Maundrell/viaje-octubre-2026';
+    const GITHUB_REPO = 'M-Maundrell/TravelSyncAI';
     const GITHUB_SESSIONS_PATH = 'data/sessions.json';
     const GITHUB_TOKEN_KEY = 'travelsync_github_pat_token';
     const ACTIVE_SESSION_KEY = 'travelsync_active_session_id';
@@ -2351,6 +2356,30 @@
       };
     }
 
+    function cleanDuplicatePlans() {
+      const seenNames = new Map();
+      const cleaned = {};
+      Object.keys(travelSessions).forEach(key => {
+        const p = travelSessions[key];
+        const trimmedName = (p.name || '').trim().toLowerCase();
+        if (!seenNames.has(trimmedName)) {
+          seenNames.set(trimmedName, key);
+          cleaned[key] = p;
+        } else {
+          // Si hay duplicado con el mismo nombre, conservar el más reciente
+          const existingKey = seenNames.get(trimmedName);
+          const existingDate = new Date(cleaned[existingKey].updatedAt || cleaned[existingKey].createdAt || 0);
+          const currentDate = new Date(p.updatedAt || p.createdAt || 0);
+          if (currentDate >= existingDate) {
+            delete cleaned[existingKey];
+            cleaned[key] = p;
+            seenNames.set(trimmedName, key);
+          }
+        }
+      });
+      travelSessions = cleaned;
+    }
+
     async function initSessionsManager() {
       // 1. Cargar planes disponibles desde GitHub (data/sessions.json)
       try {
@@ -2359,7 +2388,8 @@
           const remoteData = await res.json();
           if (remoteData.plans && Object.keys(remoteData.plans).length > 0) {
             travelSessions = remoteData.plans;
-            console.log('✓ Planes cargados directamente desde GitHub (data/sessions.json)');
+            cleanDuplicatePlans();
+            console.log('✓ Planes cargados y deduplicados desde GitHub (data/sessions.json)');
           }
         }
       } catch (e) {
@@ -2370,7 +2400,10 @@
       if (!travelSessions || Object.keys(travelSessions).length === 0) {
         try {
           const saved = localStorage.getItem(LOCAL_SESSIONS_KEY);
-          if (saved) travelSessions = JSON.parse(saved);
+          if (saved) {
+            travelSessions = JSON.parse(saved);
+            cleanDuplicatePlans();
+          }
         } catch (e) {}
       }
 
@@ -2398,6 +2431,7 @@
 
     function saveSessionsToStorage() {
       try {
+        cleanDuplicatePlans();
         localStorage.setItem(LOCAL_SESSIONS_KEY, JSON.stringify(travelSessions));
       } catch (e) {
         console.error('Error saving sessions to localStorage', e);
@@ -2498,11 +2532,15 @@
     }
 
     function openSaveSessionModal() {
-      const currentName = travelSessions[activeSessionId]?.name || 'Plan de Viaje Octubre 2026';
+      const currentName = travelSessions[activeSessionId]?.name || 'Plan de Viaje ' + new Date().toLocaleDateString();
       document.getElementById('session-name-input').value = currentName;
       const savedToken = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
       const tokenInput = document.getElementById('github-token-input');
       if (tokenInput && savedToken) tokenInput.value = savedToken;
+      
+      const delBtn = document.getElementById('btn-delete-plan-modal');
+      if (delBtn) delBtn.classList.toggle('hidden', activeSessionId === 'new_blank');
+
       document.getElementById('save-session-modal').classList.remove('hidden');
     }
 
@@ -2514,7 +2552,6 @@
       const input = document.getElementById('session-name-input');
       const tokenInput = document.getElementById('github-token-input');
       const name = (input.value || '').trim() || 'Plan de Viaje ' + new Date().toLocaleDateString();
-      const newId = 'plan_' + Date.now();
 
       // Guardar token si el usuario lo ingresó
       let patToken = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
@@ -2523,32 +2560,76 @@
         localStorage.setItem(GITHUB_TOKEN_KEY, patToken);
       }
 
-      travelSessions[newId] = {
-        id: newId,
+      // DETERMINAR ID: Si estamos en un plan activo o existe un plan con el mismo nombre, sobreescribir ese ID
+      let targetId = null;
+      const existingKeyByName = Object.keys(travelSessions).find(k => (travelSessions[k].name || '').trim().toLowerCase() === name.toLowerCase());
+
+      if (activeSessionId !== 'new_blank' && travelSessions[activeSessionId]) {
+        targetId = activeSessionId;
+      } else if (existingKeyByName) {
+        targetId = existingKeyByName;
+      } else {
+        targetId = 'plan_' + Date.now();
+      }
+
+      travelSessions[targetId] = {
+        id: targetId,
         name: name,
-        createdAt: new Date().toISOString(),
+        createdAt: travelSessions[targetId]?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         tripConfig: JSON.parse(JSON.stringify(tripConfig)),
         state: JSON.parse(JSON.stringify(state))
       };
-      activeSessionId = newId;
-      localStorage.setItem(ACTIVE_SESSION_KEY, newId);
+
+      activeSessionId = targetId;
+      localStorage.setItem(ACTIVE_SESSION_KEY, targetId);
+      cleanDuplicatePlans();
       saveSessionsToStorage();
       renderSessionsDropdown();
 
       // Si hay GitHub PAT Token, hacer commit directo a GitHub
       if (patToken) {
-        showToast('🐙 Creando commit en GitHub (M-Maundrell/viaje-octubre-2026)...', 'info');
+        showToast('🐙 Creando commit en GitHub (M-Maundrell/TravelSyncAI)...', 'info');
         try {
           await commitSessionsToGitHub(patToken, name);
-          showToast(`✓ Plan "${name}" guardado y commiteado a GitHub con éxito`, 'success');
+          showToast(`✓ Plan "${name}" guardado y sobreescrito en GitHub con éxito`, 'success');
         } catch (err) {
           showToast(`⚠️ Guardado en navegador. Error en GitHub: ${err.message}`, 'warn');
         }
       } else {
-        showToast(`✓ Plan "${name}" guardado localmente`, 'success');
+        showToast(`✓ Plan "${name}" guardado y actualizado localmente`, 'success');
       }
 
       closeSaveSessionModal();
+    }
+
+    async function deleteCurrentPlan() {
+      if (activeSessionId === 'new_blank' || !travelSessions[activeSessionId]) {
+        showToast('No hay un plan guardado seleccionado para eliminar.', 'warn');
+        return;
+      }
+      const planName = travelSessions[activeSessionId].name;
+      if (!confirm(`¿Estás seguro de que deseas eliminar el plan "${planName}"?`)) return;
+
+      delete travelSessions[activeSessionId];
+      activeSessionId = 'new_blank';
+      localStorage.removeItem(ACTIVE_SESSION_KEY);
+      tripConfig = getBlankTripConfig();
+      state = getBlankState();
+      saveSessionsToStorage();
+      renderSessionsDropdown();
+      syncDomFromTripConfig();
+      closeSaveSessionModal();
+
+      let patToken = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
+      if (patToken) {
+        try {
+          await commitSessionsToGitHub(patToken, `Delete plan ${planName}`);
+          showToast(`✓ Plan "${planName}" eliminado de GitHub`, 'success');
+        } catch (e) {}
+      } else {
+        showToast(`✓ Plan "${planName}" eliminado`, 'success');
+      }
     }
 
     async function commitSessionsToGitHub(patToken, planName) {

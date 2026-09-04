@@ -1,12 +1,12 @@
 {
-  "lastUpdated": "2026-09-04T02:03:59.057Z",
-  "repository": "M-Maundrell/viaje-octubre-2026",
-  "activePlanId": "plan_1788487438519",
+  "lastUpdated": "2026-09-04T02:07:07.978Z",
+  "repository": "M-Maundrell/TravelSyncAI",
+  "activePlanId": "plan_maestro",
   "plans": {
     "plan_maestro": {
       "id": "plan_maestro",
-      "name": "Plan Maestro: Madrid & CDMX ($56,760 MXN)",
-      "createdAt": "2026-09-03T21:58:00Z",
+      "name": "Plan Maestro: Madrid & CDMX (,760 MXN)",
+      "createdAt": "2026-09-04T02:00:00Z",
       "description": "Iberia IB0152/IB0153 + Aeroméxico Directos con equipaje y asientos incluidos.",
       "tripConfig": {
         "passengerCount": 2,
@@ -15,7 +15,9 @@
           "name": "Mario",
           "country": "MX",
           "origin": "MEX — Ciudad de México (Benito Juárez / AIFA)",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "MX",
           "visas": {
             "usa": true
@@ -50,7 +52,9 @@
           "name": "Yesica",
           "country": "ES",
           "origin": "SPC — La Palma, Islas Canarias",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "ES",
           "visas": {
             "residencia": true
@@ -96,8 +100,8 @@
     },
     "plan_avianca": {
       "id": "plan_avianca",
-      "name": "Plan Alternativo: Avianca BOG ($54,200 MXN)",
-      "createdAt": "2026-09-03T21:58:00Z",
+      "name": "Plan Alternativo: Avianca BOG (,200 MXN)",
+      "createdAt": "2026-09-04T02:00:00Z",
       "description": "Vuelo transatlántico con escala en Bogotá vía Avianca con excelente tarifa.",
       "tripConfig": {
         "passengerCount": 2,
@@ -106,7 +110,9 @@
           "name": "Mario",
           "country": "MX",
           "origin": "MEX — Ciudad de México (Benito Juárez / AIFA)",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "MX",
           "visas": {
             "usa": true
@@ -141,7 +147,9 @@
           "name": "Yesica",
           "country": "ES",
           "origin": "SPC — La Palma, Islas Canarias",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "ES",
           "visas": {
             "residencia": true
@@ -185,18 +193,21 @@
         }
       }
     },
-    "plan_1788487321808": {
-      "id": "plan_1788487321808",
+    "plan_mad_mex": {
+      "id": "plan_mad_mex",
       "name": "Plan MAD-MEX Octubre 2026",
-      "createdAt": "2026-09-04T02:02:01.808Z",
+      "createdAt": "2026-09-04T02:03:00Z",
+      "updatedAt": "2026-09-04T02:04:00Z",
       "tripConfig": {
-        "passengerCount": 1,
-        "strictJointFlight": false,
+        "passengerCount": 2,
+        "strictJointFlight": true,
         "p1": {
           "name": "Mario",
           "country": "MX",
-          "origin": "MEX",
+          "origin": "MEX — Ciudad de México (Benito Juárez / AIFA)",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
+          "returnDate": "2026-11-20",
           "nationality": "MX",
           "visas": {
             "usa": true
@@ -212,19 +223,17 @@
               "cityCode": "MAD",
               "name": "Madrid (MAD)",
               "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-27",
+              "departureDate": "2026-10-21",
               "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
-              "departureOrigin1": "MAD",
-              "departureOrigin2": "BCN"
+              "jointFlight": false
             },
             {
               "country": "MX",
               "cityCode": "MEX",
               "name": "Ciudad de México (MEX)",
               "arrivalDate": "2026-10-27",
-              "departureDate": "2026-11-27",
-              "departureOrigins": "MAD, BCN",
+              "departureDate": "2026-11-20",
+              "departureOrigins": "MEX",
               "jointFlight": true
             }
           ]
@@ -232,59 +241,13 @@
         "p2": {
           "name": "Yesica",
           "country": "ES",
-          "origin": "MAD",
-          "startDate": "",
-          "nationality": "ES",
-          "visas": {
-            "residencia": false
-          },
-          "prefs": {
-            "bag": true,
-            "carry": true,
-            "seat": true
-          },
-          "waypoints": [
-            {
-              "country": "ES",
-              "cityCode": "MAD",
-              "name": "Madrid (MAD)",
-              "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-27",
-              "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
-              "departureOrigin1": "MAD",
-              "departureOrigin2": "BCN"
-            }
-          ]
-        }
-      },
-      "state": {
-        "mario": {
-          "salida": "",
-          "trans": "",
-          "bog_esp": ""
-        },
-        "yesica": {
-          "salida": "",
-          "trans": ""
-        }
-      }
-    },
-    "plan_1788487337911": {
-      "id": "plan_1788487337911",
-      "name": "Plan MAD-MEX Octubre 2026",
-      "createdAt": "2026-09-04T02:02:17.911Z",
-      "tripConfig": {
-        "passengerCount": 1,
-        "strictJointFlight": false,
-        "p1": {
-          "name": "Mario",
-          "country": "MX",
-          "origin": "MEX",
+          "origin": "SPC — La Palma, Islas Canarias",
+          "tripType": "roundtrip",
           "startDate": "2026-10-16",
-          "nationality": "MX",
+          "returnDate": "2026-11-20",
+          "nationality": "ES",
           "visas": {
-            "usa": true
+            "residencia": true
           },
           "prefs": {
             "bag": true,
@@ -296,232 +259,32 @@
               "country": "ES",
               "cityCode": "MAD",
               "name": "Madrid (MAD)",
-              "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-27",
+              "arrivalDate": "2026-10-16",
+              "departureDate": "2026-10-21",
               "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
-              "departureOrigin1": "MAD",
-              "departureOrigin2": "BCN"
+              "jointFlight": false
             },
             {
               "country": "MX",
               "cityCode": "MEX",
               "name": "Ciudad de México (MEX)",
               "arrivalDate": "2026-10-27",
-              "departureDate": "2026-11-27",
-              "departureOrigins": "MAD, BCN",
+              "departureDate": "2026-11-20",
+              "departureOrigins": "MEX",
               "jointFlight": true
-            }
-          ]
-        },
-        "p2": {
-          "name": "Yesica",
-          "country": "ES",
-          "origin": "MAD",
-          "startDate": "",
-          "nationality": "ES",
-          "visas": {
-            "residencia": false
-          },
-          "prefs": {
-            "bag": true,
-            "carry": true,
-            "seat": true
-          },
-          "waypoints": [
-            {
-              "country": "ES",
-              "cityCode": "MAD",
-              "name": "Madrid (MAD)",
-              "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-27",
-              "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
-              "departureOrigin1": "MAD",
-              "departureOrigin2": "BCN"
             }
           ]
         }
       },
       "state": {
         "mario": {
-          "salida": "",
-          "trans": "",
-          "bog_esp": ""
+          "salida": "mex_mad_iberia_152",
+          "trans": "esp_mex_iberia_6403",
+          "bog_esp": "bog_esp_iberia_user"
         },
         "yesica": {
-          "salida": "",
-          "trans": ""
-        }
-      }
-    },
-    "plan_1788487351323": {
-      "id": "plan_1788487351323",
-      "name": "Plan MAD-MEX Octubre 2026",
-      "createdAt": "2026-09-04T02:02:31.323Z",
-      "tripConfig": {
-        "passengerCount": 1,
-        "strictJointFlight": false,
-        "p1": {
-          "name": "Mario",
-          "country": "MX",
-          "origin": "MEX",
-          "startDate": "2026-10-16",
-          "nationality": "MX",
-          "visas": {
-            "usa": true
-          },
-          "prefs": {
-            "bag": true,
-            "carry": true,
-            "seat": true
-          },
-          "waypoints": [
-            {
-              "country": "ES",
-              "cityCode": "MAD",
-              "name": "Madrid (MAD)",
-              "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-27",
-              "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
-              "departureOrigin1": "MAD",
-              "departureOrigin2": "BCN"
-            },
-            {
-              "country": "MX",
-              "cityCode": "MEX",
-              "name": "Ciudad de México (MEX)",
-              "arrivalDate": "2026-10-27",
-              "departureDate": "2026-11-27",
-              "departureOrigins": "MAD, BCN",
-              "jointFlight": true
-            }
-          ]
-        },
-        "p2": {
-          "name": "Yesica",
-          "country": "ES",
-          "origin": "MAD",
-          "startDate": "",
-          "nationality": "ES",
-          "visas": {
-            "residencia": false
-          },
-          "prefs": {
-            "bag": true,
-            "carry": true,
-            "seat": true
-          },
-          "waypoints": [
-            {
-              "country": "ES",
-              "cityCode": "MAD",
-              "name": "Madrid (MAD)",
-              "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-27",
-              "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
-              "departureOrigin1": "MAD",
-              "departureOrigin2": "BCN"
-            }
-          ]
-        }
-      },
-      "state": {
-        "mario": {
-          "salida": "",
-          "trans": "",
-          "bog_esp": ""
-        },
-        "yesica": {
-          "salida": "",
-          "trans": ""
-        }
-      }
-    },
-    "plan_1788487438519": {
-      "id": "plan_1788487438519",
-      "name": "Plan MAD-MEX Octubre 2026",
-      "createdAt": "2026-09-04T02:03:58.519Z",
-      "tripConfig": {
-        "passengerCount": 1,
-        "strictJointFlight": false,
-        "p1": {
-          "name": "Mario",
-          "country": "MX",
-          "origin": "MEX",
-          "startDate": "2026-10-16",
-          "nationality": "MX",
-          "visas": {
-            "usa": true
-          },
-          "prefs": {
-            "bag": true,
-            "carry": true,
-            "seat": true
-          },
-          "waypoints": [
-            {
-              "country": "ES",
-              "cityCode": "MAD",
-              "name": "Madrid (MAD)",
-              "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-27",
-              "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
-              "departureOrigin1": "MAD",
-              "departureOrigin2": "BCN"
-            },
-            {
-              "country": "MX",
-              "cityCode": "MEX",
-              "name": "Ciudad de México (MEX)",
-              "arrivalDate": "2026-10-27",
-              "departureDate": "2026-11-27",
-              "departureOrigins": "MAD, BCN",
-              "jointFlight": true
-            }
-          ]
-        },
-        "p2": {
-          "name": "Yesica",
-          "country": "ES",
-          "origin": "MAD",
-          "startDate": "",
-          "nationality": "ES",
-          "visas": {
-            "residencia": false
-          },
-          "prefs": {
-            "bag": true,
-            "carry": true,
-            "seat": true
-          },
-          "waypoints": [
-            {
-              "country": "ES",
-              "cityCode": "MAD",
-              "name": "Madrid (MAD)",
-              "arrivalDate": "2026-10-17",
-              "departureDate": "2026-10-27",
-              "departureOrigins": "MAD, BCN",
-              "jointFlight": true,
-              "departureOrigin1": "MAD",
-              "departureOrigin2": "BCN"
-            }
-          ]
-        }
-      },
-      "state": {
-        "mario": {
-          "salida": "",
-          "trans": "",
-          "bog_esp": ""
-        },
-        "yesica": {
-          "salida": "",
-          "trans": ""
+          "salida": "yes_spc_mad_16_1815",
+          "trans": "yes_trans_mex_iberia"
         }
       }
     }
