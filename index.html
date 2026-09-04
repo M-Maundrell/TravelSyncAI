@@ -13,8 +13,10 @@
   <style>
     *, ::before, ::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e2e8f0; margin: 0; padding: 0; }
     html { line-height: 1.5; -webkit-text-size-adjust: 100%; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #0b1120; color: #1e293b; min-height: 100vh; padding: 0.75rem; letter-spacing: -0.01em; }
-    @media (min-width: 768px) { body { padding: 1.75rem; } }
+
+    /* ─── BASE: Light neutral bg for full contrast everywhere ─── */
+    body { background-color: #f1f5f9; color: #1e293b; min-height: 100vh; padding: 0.75rem; letter-spacing: -0.01em; }
+    @media (min-width: 768px) { body { padding: 1.5rem; } }
 
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .font-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -28,6 +30,7 @@
     .space-y-2 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.5rem; }
     .space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0.75rem; }
     .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem; }
+    .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.25rem; }
     .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 1.5rem; }
 
     .flex { display: flex; }
@@ -108,10 +111,12 @@
     .mb-5 { margin-bottom: 1.25rem; }
     .mb-6 { margin-bottom: 1.5rem; }
 
+    /* ─── Background tokens ─── */
     .bg-white { background-color: #ffffff; }
     .bg-slate-50 { background-color: #f8fafc; }
     .bg-slate-100 { background-color: #f1f5f9; }
     .bg-slate-200 { background-color: #e2e8f0; }
+    .bg-slate-700 { background-color: #334155; }
     .bg-slate-800 { background-color: #1e293b; }
     .bg-slate-900 { background-color: #0f172a; }
     .bg-slate-950 { background-color: #020617; }
@@ -134,6 +139,7 @@
     .bg-rose-100 { background-color: #ffe4e6; }
     .bg-rose-500 { background-color: #f43f5e; }
     .bg-rose-600 { background-color: #e11d48; }
+    .bg-rose-950 { background-color: #4c0519; }
     .bg-blue-50 { background-color: #eff6ff; }
     .bg-blue-100 { background-color: #dbeafe; }
     .bg-blue-500 { background-color: #3b82f6; }
@@ -143,6 +149,7 @@
     .bg-pink-500 { background-color: #ec4899; }
     .bg-pink-600 { background-color: #db2777; }
 
+    /* ─── Text tokens ─── */
     .text-white { color: #ffffff; }
     .text-slate-300 { color: #cbd5e1; }
     .text-slate-400 { color: #94a3b8; }
@@ -162,6 +169,7 @@
     .text-emerald-800 { color: #065f46; }
     .text-amber-700 { color: #b45309; }
     .text-amber-800 { color: #92400e; }
+    .text-rose-300 { color: #fda4af; }
     .text-rose-600 { color: #e11d48; }
     .text-rose-700 { color: #be123c; }
     .text-rose-800 { color: #9f1239; }
@@ -170,6 +178,7 @@
     .text-pink-600 { color: #db2777; }
     .text-pink-700 { color: #be185d; }
 
+    /* ─── Border tokens ─── */
     .border { border-width: 1px; }
     .border-2 { border-width: 2px; }
     .border-t { border-top-width: 1px; }
@@ -179,16 +188,19 @@
     .border-slate-100 { border-color: #f1f5f9; }
     .border-slate-200 { border-color: #e2e8f0; }
     .border-slate-300 { border-color: #cbd5e1; }
+    .border-slate-600 { border-color: #475569; }
     .border-slate-700 { border-color: #334155; }
     .border-slate-800 { border-color: #1e293b; }
     .border-indigo-100 { border-color: #e0e7ff; }
     .border-indigo-200 { border-color: #c7d2fe; }
+    .border-indigo-400 { border-color: #818cf8; }
     .border-indigo-500 { border-color: #6366f1; }
     .border-indigo-600 { border-color: #4f46e5; }
     .border-emerald-200 { border-color: #a7f3d0; }
     .border-emerald-300 { border-color: #6ee7b7; }
     .border-amber-200 { border-color: #fde68a; }
     .border-rose-200 { border-color: #fecdd3; }
+    .border-rose-800 { border-color: #9f1239; }
     .border-blue-200 { border-color: #bfdbfe; }
     .border-blue-500 { border-color: #3b82f6; }
     .border-pink-200 { border-color: #fbcfe8; }
@@ -200,7 +212,7 @@
     .rounded-lg { border-radius: 0.5rem; }
     .rounded-xl { border-radius: 0.75rem; }
     .rounded-2xl { border-radius: 1rem; }
-    .rounded-3xl { border-radius: 1.5rem; }
+    .rounded-3xl { border-radius: 1.25rem; }
     .rounded-full { border-radius: 9999px; }
 
     .font-medium { font-weight: 500; }
@@ -218,12 +230,12 @@
     .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
     .text-4xl { font-size: 2.25rem; line-height: 2.5rem; }
 
-    .shadow-2xs { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-    .shadow-sm { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08); }
-    .shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.08); }
-    .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08); }
-    .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
-    .shadow-2xl { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
+    .shadow-2xs { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04); }
+    .shadow-sm { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06); }
+    .shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06); }
+    .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07); }
+    .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.08); }
+    .shadow-2xl { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.18); }
 
     .w-full { width: 100%; }
     .w-auto { width: auto; }
@@ -239,26 +251,59 @@
     .h-4 { height: 1rem; }
     .w-5 { width: 1.25rem; }
     .h-5 { height: 1.25rem; }
+    .w-7 { width: 1.75rem; }
+    .h-7 { height: 1.75rem; }
+    .w-8 { width: 2rem; }
+    .h-8 { height: 2rem; }
     .w-9 { width: 2.25rem; }
     .h-9 { height: 2.25rem; }
     .w-10 { width: 2.5rem; }
     .h-10 { height: 2.5rem; }
     .w-20 { width: 5rem; }
     .h-20 { height: 5rem; }
+    .w-28 { width: 7rem; }
     .shrink-0 { flex-shrink: 0; }
     .grow { flex-grow: 1; }
     .cursor-pointer { cursor: pointer; }
     .transition { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
     .overflow-hidden { overflow: hidden; }
     .overflow-y-auto { overflow-y: auto; }
+    .overflow-x-auto { overflow-x: auto; }
     .relative { position: relative; }
     .fixed { position: fixed; }
+    .absolute { position: absolute; }
     .inset-0 { inset: 0px; }
+    .left-2\.5 { left: 0.625rem; }
     .z-50 { z-index: 50; }
     .z-60 { z-index: 60; }
+    .z-100 { z-index: 100; }
     .backdrop-blur-sm { backdrop-filter: blur(8px); }
+    .select-none { user-select: none; }
+    .self-start { align-self: flex-start; }
+    .self-auto { align-self: auto; }
+    .list-decimal { list-style-type: decimal; }
+    .list-inside { list-style-position: inside; }
+    .leading-relaxed { line-height: 1.625; }
+    .text-right { text-align: right; }
+    .text-left { text-align: left; }
+    .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    .min-h-0 { min-height: 0; }
+    .flex-1 { flex: 1 1 0%; }
+    .overscroll-contain { overscroll-behavior: contain; }
+    .pb-1 { padding-bottom: 0.25rem; }
 
-    /* Stepper Wizard Luxury */
+    /* ─── Professional App Shell ─── */
+    /* Header: Deep slate — always dark, high contrast white text */
+    header.app-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 4px 24px -4px rgba(0,0,0,0.18);
+    }
+
+    /* ─── Step Wizard Tabs ─── */
     .step-item {
       display: flex;
       align-items: center;
@@ -267,37 +312,33 @@
       opacity: 0.55;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 0.625rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(255,255,255,0.03);
     }
-    .step-item:hover {
-      opacity: 0.85;
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-    .step-item.active {
-      opacity: 1;
-      border-color: rgba(99, 102, 241, 0.4);
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-    }
-    .step-item.completed {
-      opacity: 0.9;
-    }
+    .step-item:hover { opacity: 0.85; border-color: rgba(255,255,255,0.12); }
+    .step-item.active { opacity: 1; border-color: rgba(99,102,241,0.5); background: rgba(79,70,229,0.12); }
+    .step-item.completed { opacity: 0.85; }
+
     .step-badge {
       width: 1.75rem;
       height: 1.75rem;
-      border-radius: 0.625rem;
+      border-radius: 0.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       background-color: #1e293b;
       color: #94a3b8;
       border: 1px solid #334155;
+      flex-shrink: 0;
     }
     .step-item.active .step-badge {
       background: #4f46e5;
       color: #ffffff;
       border-color: #6366f1;
-      box-shadow: 0 0 16px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 0 12px rgba(79,70,229,0.4);
     }
     .step-item.completed .step-badge {
       background-color: #059669;
@@ -305,17 +346,241 @@
       border-color: #10b981;
     }
 
-    /* Radar animation */
-    @keyframes pulseGlow {
-      0% { transform: scale(0.95); opacity: 0.7; }
-      50% { transform: scale(1.05); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.7; }
+    /* ─── Form Containers (Step 1, 2, etc.) ─── */
+    .step-container {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 1px 4px 0 rgba(0,0,0,0.05);
     }
-    .radar-pulse {
-      animation: pulseGlow 2s infinite ease-in-out;
+    @media (min-width: 768px) { .step-container { padding: 2rem; } }
+
+    /* ─── Passenger Cards ─── */
+    .passenger-card {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.875rem;
+      padding: 1.25rem;
+      position: relative;
+    }
+    .passenger-card-p1 { border-left: 3px solid #3b82f6; }
+    .passenger-card-p2 { border-left: 3px solid #ec4899; }
+
+    /* ─── Form Field Labels ─── */
+    .field-label {
+      display: block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 0.4rem;
     }
 
-    /* Path visualization styling */
+    /* ─── Input Fields ─── */
+    .field-input {
+      width: 100%;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #1e293b;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+    .field-input::placeholder { color: #94a3b8; font-weight: 400; }
+
+    select.field-input { appearance: auto; cursor: pointer; }
+    input[type="date"].field-input { cursor: pointer; }
+
+    /* ─── Inline group (country + airport box) ─── */
+    .field-group-box {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 0.875rem;
+    }
+
+    /* ─── Preferences section ─── */
+    .prefs-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.625rem;
+      padding: 0.75rem 1rem;
+      margin-top: 0.5rem;
+    }
+    .pref-label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+    }
+    .pref-label input[type="checkbox"] { width: 1rem; height: 1rem; flex-shrink: 0; cursor: pointer; }
+
+    /* ─── Step section headers ─── */
+    .step-section-badge {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #4f46e5;
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      padding: 0.25rem 0.625rem;
+      border-radius: 0.375rem;
+    }
+    .step-section-badge.green { color: #047857; background: #ecfdf5; border-color: #a7f3d0; }
+
+    /* ─── Action Buttons ─── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      background: #4f46e5;
+      color: #ffffff;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s;
+      border: none;
+      box-shadow: 0 1px 3px rgba(79,70,229,0.2);
+    }
+    .btn-primary:hover { background: #4338ca; box-shadow: 0 2px 8px rgba(79,70,229,0.25); }
+
+    .btn-primary-lg {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      border-radius: 0.75rem;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid #cbd5e1;
+    }
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    .btn-success {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      background: #059669;
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: none;
+    }
+    .btn-success:hover { background: #047857; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.875rem;
+      background: rgba(255,255,255,0.07);
+      color: #e2e8f0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.2); }
+
+    .btn-danger-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.875rem;
+      background: rgba(225,29,72,0.08);
+      color: #be123c;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid rgba(225,29,72,0.2);
+    }
+    .btn-danger-ghost:hover { background: rgba(225,29,72,0.15); }
+
+    /* ─── Session Selector in header ─── */
+    .session-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 0.625rem;
+      padding: 0.375rem 0.75rem;
+    }
+    .session-bar select {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      min-width: 10rem;
+    }
+    .session-bar select option { color: #1e293b; background: #ffffff; }
+
+    /* ─── Status badges ─── */
+    .badge { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.6rem; border-radius: 0.375rem; font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.02em; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-pink { background: #fce7f3; color: #be185d; }
+    .badge-green { background: #d1fae5; color: #047857; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-rose { background: #ffe4e6; color: #be123c; }
+    .badge-indigo { background: #e0e7ff; color: #4338ca; }
+    .badge-slate { background: #f1f5f9; color: #334155; }
+
+    /* ─── Waypoint cards (step 2) ─── */
+    .waypoint-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.875rem;
+      padding: 1rem 1.25rem;
+    }
+    .waypoint-card:hover { border-color: #c7d2fe; }
+
+    /* ─── Flight option cards (step 3) ─── */
+    .flight-option-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+    }
+    .flight-option-card:hover { border-color: #c7d2fe; box-shadow: 0 2px 8px rgba(99,102,241,0.06); }
+    .flight-option-card.selected { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); background: #f5f3ff; }
+
+    /* ─── Path Visualization ─── */
     .path-node {
       display: flex;
       flex-direction: column;
@@ -331,31 +596,49 @@
       z-index: 1;
     }
 
-    /* Toast Container */
+    /* ─── Toast Notifications ─── */
     #toast-container {
       position: fixed;
-      bottom: 1.5rem;
-      right: 1.5rem;
+      bottom: 1.25rem;
+      right: 1.25rem;
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      z-index: 100;
+      z-index: 200;
       pointer-events: none;
     }
     .toast-msg {
-      padding: 0.75rem 1.25rem;
-      border-radius: 0.875rem;
-      font-size: 0.8125rem;
+      padding: 0.625rem 1rem;
+      border-radius: 0.625rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: white;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 24px -4px rgba(0,0,0,0.25);
       animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      border: 1px solid rgba(255,255,255,0.15);
     }
     @keyframes slideIn {
       from { transform: translateY(100%) scale(0.95); opacity: 0; }
       to { transform: translateY(0) scale(1); opacity: 1; }
     }
+
+    /* ─── Radar pulse ─── */
+    @keyframes pulseGlow {
+      0% { transform: scale(0.95); opacity: 0.7; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.7; }
+    }
+    .radar-pulse { animation: pulseGlow 2s infinite ease-in-out; }
+
+    /* ─── Divider ─── */
+    .divider { border: none; border-top: 1px solid #e2e8f0; margin: 1rem 0; }
+
+    /* ─── Misc ─── */
+    details > summary { cursor: pointer; list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    code { font-family: 'JetBrains Mono', monospace; }
   </style>
+
 </head>
 <body>
 
@@ -430,149 +713,129 @@
     <!-- ══════════════════════════════════════════════════
          TOP APP BAR & STEPPER WIZARD (TRAVELSYNC AI)
          ══════════════════════════════════════════════════ -->
-    <header class="bg-slate-900 border border-slate-800/90 rounded-3xl p-5 md:p-6 shadow-xl text-white">
+    <header class="app-header text-white">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-blue-700 rounded-xl flex items-center justify-center text-lg shadow-md border border-indigo-400/30">
-              ✈️
-            </div>
-            <div>
-              <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                TravelSync AI
-              </h1>
-              <p class="text-xs text-slate-400 font-medium">Planificador Inteligente de Viajes Multi-Pasajero y Vuelos Conjuntos</p>
-            </div>
+        <div class="flex items-center gap-3">
+          <div style="width:2.25rem;height:2.25rem;background:linear-gradient(135deg,#6366f1,#3b82f6);border-radius:0.625rem;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;">✈️</div>
+          <div>
+            <h1 style="font-size:1.125rem;font-weight:800;color:#ffffff;letter-spacing:-0.02em;line-height:1.2;">TravelSync AI</h1>
+            <p style="font-size:0.6875rem;color:#94a3b8;font-weight:500;margin-top:0.1rem;">Planificador Inteligente de Viajes Multi-Pasajero</p>
           </div>
         </div>
 
-        <!-- ACCIONES RÁPIDAS & GESTOR DE SESIONES EN HEADER (ALTO CONTRASTE) -->
-        <div class="flex flex-wrap items-center gap-2.5">
+        <!-- ACCIONES RÁPIDAS & GESTOR DE SESIONES -->
+        <div class="flex flex-wrap items-center gap-2">
           <!-- Selector de Planes Guardados -->
-          <div class="flex items-center gap-2 bg-slate-950/90 border border-slate-700 rounded-xl px-3 py-1.5 shadow-sm">
-            <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">Plan:</span>
-            <select id="sessions-dropdown" onchange="loadSessionFromDropdown(this.value)" class="bg-slate-900 border border-slate-700 text-xs font-bold text-white rounded-lg px-2.5 py-1 outline-none cursor-pointer hover:border-indigo-400 transition">
+          <div class="session-bar">
+            <span style="font-size:0.65rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;">Plan:</span>
+            <select id="sessions-dropdown" onchange="loadSessionFromDropdown(this.value)">
               <!-- Renderizado dinámicamente -->
             </select>
           </div>
-          
-          <button onclick="openSaveSessionModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-md border border-indigo-400/40 transition flex items-center gap-1.5">
-            <span>💾 Guardar</span>
-          </button>
-          
-          <button onclick="shareCurrentPlan()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl border border-slate-600 shadow-sm transition flex items-center gap-1.5">
-            <span>🔗 Compartir</span>
+
+          <button onclick="openSaveSessionModal()" class="btn-primary" style="font-size:0.75rem;padding:0.4rem 0.875rem;">
+            💾 Guardar
           </button>
 
-          <button onclick="triggerLivePriceRefresh()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-md border border-emerald-400/40 transition flex items-center gap-1.5" id="btn-sync-live">
-            <span id="sync-icon" class="text-xs">🔄</span>
+          <button onclick="shareCurrentPlan()" class="btn-ghost" style="font-size:0.75rem;padding:0.4rem 0.875rem;">
+            🔗 Compartir
+          </button>
+
+          <button onclick="triggerLivePriceRefresh()" class="btn-success" id="btn-sync-live" style="font-size:0.75rem;padding:0.4rem 0.875rem;">
+            <span id="sync-icon">🔄</span>
             <span id="sync-text">Actualizar Tarifas</span>
           </button>
 
-          <button onclick="resetToBlank()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-bold rounded-xl border border-slate-600 shadow-sm transition" title="Nuevo Viaje en Blanco">
+          <button onclick="resetToBlank()" class="btn-ghost" style="font-size:0.75rem;padding:0.4rem 0.75rem;" title="Nuevo Viaje en Blanco">
             + Nuevo
           </button>
         </div>
       </div>
 
-      <!-- STEPPER NAVIGATION BAR REFINADO -->
-      <div class="mt-5 pt-4 border-t border-slate-800/80">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
-          <div id="step-nav-1" onclick="goToStep(1)" class="step-item active bg-slate-950/50 p-2.5 rounded-2xl">
+      <!-- STEPPER NAVIGATION BAR -->
+      <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.08);">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <div id="step-nav-1" onclick="goToStep(1)" class="step-item active">
             <div class="step-badge">1</div>
             <div>
-              <div class="text-xs font-bold text-white">Pasajeros</div>
-              <div class="text-[10px] text-slate-400">Orígenes & Visados</div>
+              <div style="font-size:0.75rem;font-weight:700;color:#ffffff;">Pasajeros</div>
+              <div style="font-size:0.65rem;color:#94a3b8;">Orígenes &amp; Visados</div>
             </div>
           </div>
-          <div id="step-nav-2" onclick="goToStep(2)" class="step-item bg-slate-950/50 p-2.5 rounded-2xl">
+          <div id="step-nav-2" onclick="goToStep(2)" class="step-item">
             <div class="step-badge">2</div>
             <div>
-              <div class="text-xs font-bold text-white">Estancias</div>
-              <div class="text-[10px] text-slate-400">Paradas & Salto Conjunto</div>
+              <div style="font-size:0.75rem;font-weight:700;color:#ffffff;">Estancias</div>
+              <div style="font-size:0.65rem;color:#94a3b8;">Paradas &amp; Salto Conjunto</div>
             </div>
           </div>
-          <div id="step-nav-3" onclick="goToStep(3)" class="step-item bg-slate-950/50 p-2.5 rounded-2xl">
+          <div id="step-nav-3" onclick="goToStep(3)" class="step-item">
             <div class="step-badge">3</div>
             <div>
-              <div class="text-xs font-bold text-white">Selección de Vuelos</div>
-              <div class="text-[10px] text-slate-400">Menú Guiado por Tramo</div>
-            </div>
-          </div>
-          <div id="step-nav-4" onclick="goToStep(4)" class="step-item bg-slate-950/50 p-2.5 rounded-2xl">
-            <div class="step-badge">4</div>
-            <div>
-              <div class="text-xs font-bold text-white">Itinerario Final</div>
-              <div class="text-[10px] text-slate-400">Presupuesto & Path Vis</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-
-    <!-- ══════════════════════════════════════════════════
+              <div style="font-size:0.75rem;font-weight:700;color:#ffffff;">V    <!-- ══════════════════════════════════════════════════
          PASO 1: CONFIGURACIÓN DE PASAJEROS & PERFILES
          ══════════════════════════════════════════════════ -->
-    <div id="step-container-1" class="bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm space-y-6">
+    <div id="step-container-1" class="step-container space-y-5">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-100 gap-3">
         <div>
-          <span class="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Paso 1 de 4</span>
-          <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1">Configura a los Pasajeros</h2>
-          <p class="text-xs md:text-sm text-slate-500">Selecciona el país para ver sus aeropuertos disponibles y define visas y preferencias.</p>
+          <span class="step-section-badge">Paso 1 de 4</span>
+          <h2 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin-top:0.4rem;letter-spacing:-0.02em;">Configura a los Pasajeros</h2>
+          <p style="font-size:0.8125rem;color:#64748b;margin-top:0.2rem;">Selecciona el país para ver aeropuertos disponibles y define visas y preferencias de vuelo.</p>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-slate-500">Pasajeros:</span>
-          <select id="cfg-passenger-count" onchange="changePassengerCount(this.value)" class="bg-slate-100 border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-800">
-            <option value="2" selected>2 Pasajeros (Mario & Yesica)</option>
+          <span style="font-size:0.6875rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.04em;">Pasajeros:</span>
+          <select id="cfg-passenger-count" onchange="changePassengerCount(this.value)" class="field-input" style="width:auto;padding:0.375rem 0.625rem;">
+            <option value="2" selected>2 Pasajeros (Mario &amp; Yesica)</option>
             <option value="1">1 Pasajero Individual</option>
           </select>
         </div>
       </div>
 
       <!-- CARDS DE PASAJEROS -->
-      <div id="passengers-cards-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div id="passengers-cards-container" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <!-- Tarjeta Pasajero 1 -->
-        <div class="bg-slate-50 border border-blue-200/80 rounded-2xl p-5 space-y-4 relative">
+        <div class="passenger-card passenger-card-p1 space-y-4">
           <div class="flex justify-between items-center pb-3 border-b border-slate-200">
             <div class="flex items-center gap-2">
-              <span class="w-3.5 h-3.5 rounded-full bg-blue-600 ring-4 ring-blue-100"></span>
-              <span class="text-xs font-extrabold uppercase tracking-wider text-blue-700">Pasajero 1 (Principal)</span>
+              <span style="width:0.75rem;height:0.75rem;border-radius:50%;background:#2563eb;display:inline-block;flex-shrink:0;"></span>
+              <span style="font-size:0.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#1d4ed8;">Pasajero 1 — Principal</span>
             </div>
-            <span class="text-[11px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded">Titular</span>
+            <span class="badge badge-blue">Titular</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
-              <input type="text" id="p1-cfg-name" value="" placeholder="Ej. Mario" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+              <label class="field-label">Nombre</label>
+              <input type="text" id="p1-cfg-name" value="" placeholder="Ej. Mario" oninput="syncPassengerNamesLive()" class="field-input">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
-              <input type="date" id="p1-cfg-date" value="" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+              <label class="field-label">Fecha de Salida Inicial</label>
+              <input type="date" id="p1-cfg-date" value="" class="field-input">
             </div>
           </div>
 
           <!-- SELECTOR EN CASCADA: PAÍS ➔ AEROPUERTO -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white rounded-xl border border-slate-200">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-500 mb-1">🌍 País de Origen</label>
-              <select id="p1-country-select" onchange="updateAirportOptions('p1')" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                <!-- Se llena con renderCountryOptions -->
-              </select>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-500 mb-1">🛫 Ciudad / Aeropuerto</label>
-              <select id="p1-cfg-origin" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                <!-- Se llena dinámicamente -->
-              </select>
+          <div class="field-group-box">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="field-label">País de Origen</label>
+                <select id="p1-country-select" onchange="updateAirportOptions('p1')" class="field-input">
+                  <!-- Se llena con renderCountryOptions -->
+                </select>
+              </div>
+              <div>
+                <label class="field-label">Ciudad / Aeropuerto</label>
+                <select id="p1-cfg-origin" class="field-input">
+                  <!-- Se llena dinámicamente -->
+                </select>
+              </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nacionalidad / Pasaporte</label>
-              <select id="p1-cfg-nat" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+              <label class="field-label">Nacionalidad / Pasaporte</label>
+              <select id="p1-cfg-nat" class="field-input">
                 <option value="MX" selected>🇲🇽 México (Exento Schengen / Visa USA)</option>
                 <option value="ES">🇪🇸 España / Unión Europea</option>
                 <option value="CO">🇨🇴 Colombia</option>
@@ -580,95 +843,91 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Visados Activos</label>
-              <div class="flex items-center gap-2 mt-2">
-                <label class="flex items-center gap-1.5 text-xs font-bold text-slate-700 cursor-pointer">
-                  <input type="checkbox" id="p1-cfg-visa-usa" class="w-4 h-4 rounded text-indigo-600">
+              <label class="field-label">Visados Activos</label>
+              <div style="margin-top:0.5rem;">
+                <label class="pref-label">
+                  <input type="checkbox" id="p1-cfg-visa-usa">
                   <span>Visa EE.UU. (B1/B2)</span>
                 </label>
               </div>
             </div>
           </div>
 
-          <div class="pt-2 border-t border-slate-200">
-            <span class="block text-[11px] font-bold text-slate-500 mb-1.5">Preferencias de Vuelo:</span>
-            <div class="flex flex-wrap gap-3 text-xs font-bold text-slate-600">
-              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="p1-pref-bag" checked class="rounded text-indigo-600"> 🧳 Maleta 23kg</label>
-              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="p1-pref-carry" checked class="rounded text-indigo-600"> 🎒 Carry-On</label>
-              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="p1-pref-seat" checked class="rounded text-indigo-600"> 💺 Asiento</label>
+          <div class="prefs-section">
+            <p style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#64748b;margin-bottom:0.5rem;">Preferencias de Vuelo</p>
+            <div class="flex flex-wrap gap-3">
+              <label class="pref-label"><input type="checkbox" id="p1-pref-bag" checked> 🧳 Maleta 23kg</label>
+              <label class="pref-label"><input type="checkbox" id="p1-pref-carry" checked> 🎒 Carry-On</label>
+              <label class="pref-label"><input type="checkbox" id="p1-pref-seat" checked> 💺 Asiento</label>
             </div>
           </div>
         </div>
 
         <!-- Tarjeta Pasajero 2 -->
-        <div id="p2-card-wrapper" class="bg-slate-50 border border-pink-200/80 rounded-2xl p-5 space-y-4 relative">
+        <div id="p2-card-wrapper" class="passenger-card passenger-card-p2 space-y-4">
           <div class="flex justify-between items-center pb-3 border-b border-slate-200">
             <div class="flex items-center gap-2">
-              <span class="w-3.5 h-3.5 rounded-full bg-pink-600 ring-4 ring-pink-100"></span>
-              <span class="text-xs font-extrabold uppercase tracking-wider text-pink-700">Pasajero 2</span>
+              <span style="width:0.75rem;height:0.75rem;border-radius:50%;background:#db2777;display:inline-block;flex-shrink:0;"></span>
+              <span style="font-size:0.6875rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#be185d;">Pasajero 2 — Acompañante</span>
             </div>
-            <span class="text-[11px] font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded">Acompañante</span>
+            <span class="badge badge-pink">Acompañante</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
-              <input type="text" id="p2-cfg-name" value="" placeholder="Ej. Yesica" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+              <label class="field-label">Nombre</label>
+              <input type="text" id="p2-cfg-name" value="" placeholder="Ej. Yesica" oninput="syncPassengerNamesLive()" class="field-input">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
-              <input type="date" id="p2-cfg-date" value="" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+              <label class="field-label">Fecha de Salida Inicial</label>
+              <input type="date" id="p2-cfg-date" value="" class="field-input">
             </div>
           </div>
 
           <!-- SELECTOR EN CASCADA: PAÍS ➔ AEROPUERTO -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-white rounded-xl border border-slate-200">
-            <div>
-              <label class="block text-[11px] font-bold text-slate-500 mb-1">🌍 País de Origen</label>
-              <select id="p2-country-select" onchange="updateAirportOptions('p2')" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                <!-- Se llena con renderCountryOptions -->
-              </select>
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-slate-500 mb-1">🛫 Ciudad / Aeropuerto</label>
-              <select id="p2-cfg-origin" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                <!-- Se llena dinámicamente -->
-              </select>
+          <div class="field-group-box">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="field-label">País de Origen</label>
+                <select id="p2-country-select" onchange="updateAirportOptions('p2')" class="field-input">
+                  <!-- Se llena con renderCountryOptions -->
+                </select>
+              </div>
+              <div>
+                <label class="field-label">Ciudad / Aeropuerto</label>
+                <select id="p2-cfg-origin" class="field-input">
+                  <!-- Se llena dinámicamente -->
+                </select>
+              </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Nacionalidad / Residencia</label>
-              <select id="p2-cfg-nat" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+              <label class="field-label">Nacionalidad / Residencia</label>
+              <select id="p2-cfg-nat" class="field-input">
                 <option value="ES" selected>🇪🇸 España / Residencia UE</option>
                 <option value="MX">🇲🇽 México</option>
                 <option value="CO">🇨🇴 Colombia</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Visados Activos</label>
-              <div class="flex items-center gap-2 mt-2">
-                <label class="flex items-center gap-1.5 text-xs font-bold text-slate-700 cursor-pointer">
-                  <input type="checkbox" id="p2-cfg-residencia" checked class="w-4 h-4 rounded text-pink-600">
+              <label class="field-label">Visados Activos</label>
+              <div style="margin-top:0.5rem;">
+                <label class="pref-label">
+                  <input type="checkbox" id="p2-cfg-residencia" checked>
                   <span>Residencia Española / UE</span>
                 </label>
               </div>
             </div>
           </div>
-              </div>
-            </div>
-          </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="pt-2 border-t border-slate-200">
-            <span class="block text-[11px] font-bold text-slate-500 mb-1.5">Preferencias de Vuelo:</span>
-            <div class="flex flex-wrap gap-3 text-xs font-bold text-slate-600">
-              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="p2-pref-bag" checked class="rounded text-pink-600"> 🧳 Maleta 23kg</label>
-              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="p2-pref-carry" checked class="rounded text-pink-600"> 🎒 Carry-On</label>
-              <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="p2-pref-seat" checked class="rounded text-pink-600"> 💺 Asiento</label>
+          <div class="prefs-section">
+            <p style="font-size:0.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#64748b;margin-bottom:0.5rem;">Preferencias de Vuelo</p>
+            <div class="flex flex-wrap gap-3">
+              <label class="pref-label"><input type="checkbox" id="p2-pref-bag" checked> 🧳 Maleta 23kg</label>
+              <label class="pref-label"><input type="checkbox" id="p2-pref-carry" checked> 🎒 Carry-On</label>
+              <label class="pref-label"><input type="checkbox" id="p2-pref-seat" checked> 💺 Asiento</label>
             </div>
           </div>
         </div>
@@ -676,25 +935,25 @@
 
       <!-- BOTÓN DE AVANCE -->
       <div class="flex justify-end pt-4 border-t border-slate-100">
-        <button onclick="saveStep1AndNext()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
-          <span>Continuar: Configurar Itinerario & Estancias</span>
-          <span>➔</span>
+        <button onclick="saveStep1AndNext()" class="btn-primary btn-primary-lg">
+          <span>Continuar: Configurar Itinerario &amp; Estancias</span>
+          <span>→</span>
         </button>
       </div>
     </div>
 
-
     <!-- ══════════════════════════════════════════════════
          PASO 2: ITINERARIO, ESTANCIAS & REGLAS DE VUELO CONJUNTO
          ══════════════════════════════════════════════════ -->
-    <div id="step-container-2" class="bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm space-y-6 hidden">
+    <div id="step-container-2" class="step-container space-y-5 hidden">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-100 gap-3">
         <div>
-          <span class="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Paso 2 de 4</span>
-          <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1">Estancias, Paradas y Vuelos Conjuntos</h2>
-          <p class="text-xs md:text-sm text-slate-500">Selecciona el país y ciudad de cada parada; los títulos y rutas se actualizarán automáticamente.</p>
+          <span class="step-section-badge">Paso 2 de 4</span>
+          <h2 style="font-size:1.25rem;font-weight:800;color:#0f172a;margin-top:0.4rem;letter-spacing:-0.02em;">Estancias, Paradas y Vuelos Conjuntos</h2>
+          <p style="font-size:0.8125rem;color:#64748b;margin-top:0.2rem;">Selecciona el país y ciudad de cada parada; los títulos y rutas se actualizarán automáticamente.</p>
         </div>
       </div>
+
 
       <!-- TABS DE WAYPOINTS POR PASAJERO -->
       <div class="border-b border-slate-200 flex gap-2">
@@ -741,10 +1000,10 @@
 
       <!-- BOTONES DE NAVEGACIÓN -->
       <div class="flex justify-between pt-4 border-t border-slate-100">
-        <button onclick="goToStep(1)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+        <button onclick="goToStep(1)" class="btn-secondary">
           ⬅ Volver a Pasajeros
         </button>
-        <button onclick="startOptimizationAndSearch()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
+        <button onclick="startOptimizationAndSearch()" class="btn-primary btn-primary-lg">
           <span>✈️ Confirmar Tramos & Ver Menú de Vuelos (Paso 3)</span>
           <span>➔</span>
         </button>
@@ -755,10 +1014,10 @@
     <!-- ══════════════════════════════════════════════════
          PASO 3: MENÚ INTERACTIVO DE VUELOS POR TRAMO (WIZARD OTA GUIADO)
          ══════════════════════════════════════════════════ -->
-    <div id="step-container-3" class="bg-white border border-slate-200/80 rounded-3xl p-6 md:p-8 shadow-sm space-y-6 hidden">
+    <div id="step-container-3" class="step-container space-y-5 hidden">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-100 gap-3">
         <div>
-          <span class="text-xs font-black uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">Paso 3 de 4 · Menú de Vuelos OTA</span>
+          <span class="step-section-badge">Paso 3 de 4 — Menú de Vuelos</span>
           <h3 class="text-lg md:text-xl font-black text-slate-900 mt-1">Elige tus Vuelos Tramo por Tramo</h3>
           <p class="text-xs text-slate-500">Selecciona tu aerolínea preferida, compara ocupación y tarifas, y asegura compatibilidad 100% en vuelos conjuntos.</p>
         </div>
@@ -780,7 +1039,7 @@
 
       <!-- BARRA DE TOTAL ACUMULADO Y NAVEGACIÓN -->
       <div class="flex flex-col sm:flex-row justify-between items-center pt-5 border-t border-slate-200 gap-4">
-        <button onclick="goToStep(2)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+        <button onclick="goToStep(2)" class="btn-secondary">
           ⬅ Volver a Estancias (Paso 2)
         </button>
         <div class="flex items-center gap-4">
@@ -788,7 +1047,7 @@
             <div class="text-xs text-slate-400 font-bold">Total Vuelos Seleccionados:</div>
             <div id="step3-total-cost-display" class="text-lg font-black text-indigo-600">$0 MXN</div>
           </div>
-          <button onclick="goToStep(4)" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
+          <button onclick="goToStep(4)" class="btn-success btn-primary-lg">
             <span>Ver Resumen Final & Itinerario (Paso 4)</span>
             <span>➔</span>
           </button>
@@ -800,13 +1059,13 @@
     <!-- ══════════════════════════════════════════════════
          PASO 4: RESULTADOS, COMPARADOR DE PLANES, PATH VISUALIZATION & COMPRA
          ══════════════════════════════════════════════════ -->
-    <div id="step-container-4" class="space-y-6 hidden">
+    <div id="step-container-4" class="space-y-5 hidden">
 
       <!-- BANNER SUPERIOR CON MEDIDOR DE PRESUPUESTO EDITABLE -->
-      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-4">
+      <div class="step-container space-y-4">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
           <div>
-            <span class="text-xs font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md">Paso 4 de 4 · Resultados</span>
+            <span class="step-section-badge green">Paso 4 de 4 — Itinerario Final</span>
             <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mt-2">Costo Combinado de Vuelos</div>
             <div class="flex items-baseline gap-2 mt-0.5">
               <div id="cost-display" class="text-3xl md:text-4xl font-black text-emerald-600">$0 MXN</div>
@@ -885,7 +1144,7 @@
       <!-- COLUMNAS DE ITINERARIO POR PASAJERO (LEGO BRICKS) -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- COLUMNA PASAJERO 1 -->
-        <div class="bg-white border border-slate-200/80 rounded-3xl p-5 md:p-6 shadow-sm flex flex-col justify-between">
+        <div class="step-container flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
               <div class="flex items-center gap-2.5 flex-wrap">
@@ -907,7 +1166,7 @@
         </div>
 
         <!-- COLUMNA PASAJERO 2 -->
-        <div class="bg-white border border-slate-200/80 rounded-3xl p-5 md:p-6 shadow-sm flex flex-col justify-between">
+        <div class="step-container flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
               <div class="flex items-center gap-2.5 flex-wrap">
@@ -930,7 +1189,7 @@
       </div>
 
       <!-- CRONOLOGÍA DEL VIAJE (PASO A PASO) -->
-      <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm">
+      <div class="step-container">
         <div class="flex justify-between items-center mb-5">
           <div>
             <h3 class="text-base md:text-lg font-black text-slate-900 flex items-center gap-2">
@@ -944,10 +1203,10 @@
 
       <!-- BOTONES INFERIORES -->
       <div class="flex justify-between items-center pt-2">
-        <button onclick="goToStep(2)" class="px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl shadow-xs transition">
+        <button onclick="goToStep(2)" class="btn-secondary">
           ⬅ Modificar Itinerario & Estancias
         </button>
-        <button onclick="window.print()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5">
+        <button onclick="window.print()" class="btn-primary">
           <span>📥 Guardar / Imprimir Itinerario</span>
         </button>
       </div>
