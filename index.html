@@ -2301,10 +2301,33 @@
                   <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📅 Fecha Vuelo Llegada</label>
                   <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'arrivalDate', this.value)" value="${wp.arrivalDate || ''}" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
                 </div>
-                <div>
-                  <label class="block text-[11px] font-bold text-slate-500 mb-0.5">${wp.isRoundtrip ? '📅 Fecha Vuelo Regreso' : '📅 Fecha Salida Siguiente'}</label>
-                  <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'departureDate', this.value)" value="${wp.departureDate || ''}" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
-                </div>
+                ${(() => {
+                  const isLastWp = idx === wps.length - 1;
+                  if (wp.isRoundtrip) {
+                    return `
+                      <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📅 Fecha Vuelo Regreso</label>
+                        <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'departureDate', this.value)" value="${wp.departureDate || ''}" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
+                      </div>
+                    `;
+                  } else if (!isLastWp) {
+                    return `
+                      <div>
+                        <label class="block text-[11px] font-bold text-slate-500 mb-0.5">📅 Fecha Salida Siguiente</label>
+                        <input type="date" onchange="updateWpField('${pKey}', ${idx}, 'departureDate', this.value)" value="${wp.departureDate || ''}" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-1.5 text-xs font-bold text-slate-800">
+                      </div>
+                    `;
+                  } else {
+                    return `
+                      <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-0.5">🏁 Vuelo Siguiente / Regreso</label>
+                        <div class="w-full bg-slate-100 border border-dashed border-slate-300 rounded-xl px-2 text-[11px] font-semibold text-slate-500 text-center flex items-center justify-center gap-1.5" style="height: 35px;" title="Al ser un tramo sencillo y el destino final, el viaje termina aquí (sin vuelos posteriores ni regreso)">
+                          <span>🏁 Destino Final (Solo Ida)</span>
+                        </div>
+                      </div>
+                    `;
+                  }
+                })()}
               </div>
             </div>
 
