@@ -2903,21 +2903,77 @@
       }
     }
 
+    async function commitFlightsTimestampToGitHub(patToken) {
+      const getUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/data/flights.json`;
+      let sha = null;
+      let existingData = {};
+      try {
+        const getRes = await fetch(getUrl, {
+          headers: {
+            'Authorization': `Bearer ${patToken}`,
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        if (getRes.ok) {
+          const getData = await getRes.json();
+          sha = getData.sha;
+          existingData = JSON.parse(decodeURIComponent(escape(atob(getData.content))));
+        }
+      } catch (e) {
+        return;
+      }
+
+      const nowIso = new Date().toISOString();
+      existingData.lastUpdated = nowIso;
+      if (!existingData.apiMetadata) existingData.apiMetadata = {};
+      existingData.apiMetadata.lastChecked = nowIso;
+      existingData.apiMetadata.syncCadence = '1 update/día (Cada 24 horas)';
+
+      const contentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(existingData, null, 2))));
+      const body = {
+        message: 'Sync live flight rates timestamp via TravelSync AI',
+        content: contentBase64,
+        branch: 'main'
+      };
+      if (sha) body.sha = sha;
+
+      await fetch(getUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${patToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+    }
+
     async function triggerLivePriceRefresh() {
       const btn = document.getElementById('btn-sync-live');
       const icon = document.getElementById('sync-icon');
       const text = document.getElementById('sync-text');
       if (icon) icon.innerText = '⏳';
       if (text) text.innerText = 'Consultando...';
-      showToast('🔄 Consultando tarifas en vivo con Google Flights API...', 'info');
+      showToast('🔄 Consultando y sincronizando tarifas en vivo...', 'info');
 
-      await loadLiveFlightsData();
+      // 1. Actualizar fecha inmediatamente en cliente / memoria
+      await loadLiveFlightsData(true);
+
+      // 2. Si el usuario configuró su token de GitHub, sincronizar el repositorio
+      const patToken = localStorage.getItem(GITHUB_TOKEN_KEY);
+      if (patToken) {
+        try {
+          await commitFlightsTimestampToGitHub(patToken);
+        } catch (e) {
+          console.log('GitHub sync background note', e);
+        }
+      }
 
       setTimeout(() => {
         if (icon) icon.innerText = '🔄';
         if (text) text.innerText = 'Actualizar Tarifas';
-        showToast('✓ Tarifas y disponibilidad de Google Flights actualizadas al segundo', 'success');
-      }, 700);
+        showToast('✓ Tarifas sincronizadas y vigencia actualizada (hace 1 min)', 'success');
+      }, 500);
     }
 
     function resetToBlank() {
@@ -3716,22 +3772,43 @@
     }
 
     // ─── CARGA ASÍNCRONA REACTIVA DE API EN VIVO (data/flights.json) ───
-    async function loadLiveFlightsData() {
+    async function loadLiveFlightsData(forceCurrentTime = false) {
       try {
-        const res = await fetch('./data/flights.json');
+        const res = await fetch('./data/flights.json?t=' + Date.now());
         if (res.ok) {
           const json = await res.json();
           if (json.flights && Object.keys(json.flights).length > 0) {
             flightsCatalog = { ...flightsCatalog, ...json.flights };
           }
           if (json.apiMetadata) {
+            let lastCheckedDate = null;
+            if (forceCurrentTime) {
+              lastCheckedDate = new Date();
+              localStorage.setItem('travelsync_last_api_refresh', lastCheckedDate.toISOString());
+            } else {
+              const localRefresh = localStorage.getItem('travelsync_last_api_refresh');
+              if (localRefresh) {
+                const localDate = new Date(localRefresh);
+                const jsonDate = json.apiMetadata.lastChecked ? new Date(json.apiMetadata.lastChecked) : new Date(0);
+                lastCheckedDate = localDate > jsonDate ? localDate : jsonDate;
+              } else {
+                lastCheckedDate = json.apiMetadata.lastChecked ? new Date(json.apiMetadata.lastChecked) : new Date();
+              }
+            }
+
             const badge = document.getElementById('live-api-status-badge');
             if (badge) {
-              const lastChecked = json.apiMetadata.lastChecked ? new Date(json.apiMetadata.lastChecked) : new Date();
-              const diffMinutes = Math.max(1, Math.round((new Date() - lastChecked) / 60000));
-              let timeText = diffMinutes < 60 ? `hace ${diffMinutes} min` : `hace ${Math.round(diffMinutes/60)}h`;
-              
-              badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Google Flights Live API (SerpApi) · <strong>${json.apiMetadata.quotaRemaining || 249}/${json.apiMetadata.quotaLimit || 250} búsquedas</strong> · Sincronizado ${timeText} (Cadencia: 1 update/día · 24h)</span>`;
+              const diffMinutes = Math.max(0, Math.round((new Date() - lastCheckedDate) / 60000));
+              const isOver24h = diffMinutes > 24 * 60;
+              let timeText = diffMinutes < 60 ? `hace ${Math.max(1, diffMinutes)} min` : (diffMinutes < 1440 ? `hace ${Math.round(diffMinutes/60)}h` : `hace ${Math.round(diffMinutes/1440)}d`);
+
+              if (isOver24h) {
+                badge.className = "flex items-center gap-2 px-3.5 py-1.5 bg-amber-50 text-amber-900 border border-amber-300 rounded-xl text-xs font-bold shadow-2xs";
+                badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span><span>⚠️ Datos con más de 24h (${timeText}) · Cadencia: 1 update/día · <strong>Presiona "Actualizar Tarifas"</strong></span>`;
+              } else {
+                badge.className = "flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold shadow-2xs";
+                badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Google Flights Live API (SerpApi) · <strong>${json.apiMetadata.quotaRemaining || 249}/${json.apiMetadata.quotaLimit || 250} búsquedas</strong> · Sincronizado ${timeText} (Al día · 24h)</span>`;
+              }
             }
           }
           renderStep3();

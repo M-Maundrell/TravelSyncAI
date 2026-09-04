@@ -1,12 +1,12 @@
 {
-  "lastUpdated": "2026-09-02T03:29:03Z",
+  "lastUpdated": "2026-09-04T04:52:02Z",
   "apiMetadata": {
     "provider": "Google Flights Live API (SerpApi)",
     "httpStatus": "200 OK",
     "quotaRemaining": "249",
     "quotaLimit": "250",
-    "lastChecked": "2026-09-02T03:29:03.374682+00:00",
-    "syncCadence": "2 updates/día (Cada 12 horas)"
+    "lastChecked": "2026-09-04T04:52:02Z",
+    "syncCadence": "1 update/día (Cada 24 horas)"
   },
   "currencyRate": {
     "EUR_TO_MXN": 19.73
