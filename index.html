@@ -425,13 +425,13 @@
   </div>
 
   <!-- MODAL DE DESCUBRIMIENTO DINÁMICO DE VUELOS EN TIEMPO REAL -->
-  <div id="flight-discovery-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-60 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-indigo-500/30 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-white shadow-2xl space-y-6 relative overflow-hidden">
+  <div id="flight-discovery-modal" class="fixed inset-0 z-60 hidden flex items-center justify-center p-4" style="background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px);">
+    <div style="background-color: #0f172a; color: #ffffff;" class="border border-slate-700 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6 relative overflow-hidden">
       <!-- Glow effect -->
-      <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-3xl pointer-events-none" style="background-color: rgba(99, 102, 241, 0.2);"></div>
       
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-2xl animate-pulse">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background-color: rgba(99, 102, 241, 0.25); border: 1px solid rgba(129, 140, 248, 0.4);">
           ✈️
         </div>
         <div>
@@ -782,43 +782,44 @@
       </div>
 
       <!-- DESCUBRIMIENTO DINÁMICO & SELECTOR DE AEROLÍNEAS (GOOGLE FLIGHTS API) -->
-      <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 border border-indigo-500/30 rounded-3xl p-6 text-white space-y-4 shadow-xl">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-white/10">
+      <div class="bg-indigo-50/70 border-2 border-indigo-200 rounded-3xl p-5 md:p-6 space-y-4 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-indigo-100">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-xl shadow-inner">
+            <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl shadow-sm">
               ⚡
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h4 class="text-sm md:text-base font-black text-white">Descubrimiento Dinámico de Vuelos</h4>
-                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Google Flights Live API</span>
+                <h4 class="text-sm md:text-base font-black text-slate-900">Descubrimiento Dinámico de Vuelos</h4>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">Google Flights Live API</span>
               </div>
-              <p class="text-xs text-slate-300">Descubre tarifas reales y disponibilidad en tiempo real sin vuelos precargados ni datos estáticos.</p>
+              <p class="text-xs text-slate-600 font-medium">Descubre tarifas reales y disponibilidad en tiempo real sin vuelos precargados ni datos estáticos.</p>
             </div>
           </div>
-          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs font-mono text-indigo-200">
-            <span>📡 Cuota SerpApi:</span>
-            <span id="wizard-api-quota-badge" class="font-bold text-emerald-400">248/250 búsquedas</span>
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-indigo-200 text-xs font-mono text-slate-700 shadow-2xs">
+            <span class="text-slate-500 font-bold">📡 Cuota SerpApi:</span>
+            <span id="wizard-api-quota-badge" class="font-extrabold text-indigo-700">247/250 búsquedas</span>
           </div>
         </div>
 
         <!-- OPCIONES DE BÚSQUEDA / SELECCIÓN DE AEROLÍNEAS -->
         <div class="space-y-3">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <label class="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-indigo-100 hover:text-white transition">
-              <input type="checkbox" id="cfg-search-all-airlines" checked onchange="toggleAllAirlinesSelection(this.checked)" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 bg-slate-800 border-slate-600">
+            <label class="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-slate-800 hover:text-indigo-700 transition">
+              <input type="checkbox" id="cfg-search-all-airlines" checked onchange="toggleAllAirlinesSelection(this.checked)" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
               <span>Buscar en todas las aerolíneas disponibles (Recomendado: 1 sola llamada API analiza todo el mercado)</span>
             </label>
-            <span id="selected-airlines-count" class="text-[11px] font-semibold text-slate-400">Todas seleccionadas</span>
+            <span id="selected-airlines-count" class="text-[11px] font-extrabold text-indigo-700 bg-white px-2.5 py-1 rounded-lg border border-indigo-200 shadow-2xs">Todas seleccionadas</span>
           </div>
 
           <!-- CHIPS DE AEROLÍNEAS (HASTA 4 SELECCIONABLES SI NO SE ELIGEN TODAS) -->
-          <div id="airline-chips-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+          <div id="airline-chips-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
             <!-- RENDERIZADO DINÁMICAMENTE POR JS -->
           </div>
-          <p class="text-[11px] text-slate-400 italic">
-            💡 <strong>Eficiencia de API:</strong> Google Flights procesa todas las aerolíneas para cada tramo en una única llamada, por lo que buscar en todas no genera costo adicional de cuota.
-          </p>
+          <div class="text-[11px] text-slate-600 bg-white p-3 rounded-xl border border-indigo-100/80 flex items-center gap-2">
+            <span class="text-base">💡</span>
+            <span><strong>Eficiencia de API:</strong> Google Flights procesa todas las aerolíneas para cada tramo en una única llamada, por lo que buscar en todas no genera costo adicional de cuota.</span>
+          </div>
         </div>
       </div>
 
@@ -2054,16 +2055,16 @@
       container.innerHTML = availableDiscoveryAirlines.map(a => {
         const isSelected = searchAllAirlines || selectedDiscoveryAirlines.includes(a.code);
         const badgeStyle = isSelected
-          ? 'bg-indigo-600/30 border-indigo-400/80 text-white font-bold ring-1 ring-indigo-400/60 shadow-xs'
-          : 'bg-slate-800/40 border-slate-700/60 text-slate-400 hover:text-slate-200 hover:border-slate-600';
+          ? 'bg-indigo-50 border-2 border-indigo-600 text-indigo-950 font-bold shadow-xs'
+          : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-semibold';
 
         return `
           <div onclick="toggleAirlineSelection('${a.code}')" class="flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${badgeStyle}">
             <div class="flex items-center gap-2 text-xs">
-              <span>${a.icon}</span>
-              <span>${a.name}</span>
+              <span class="text-base">${a.icon}</span>
+              <span class="font-bold">${a.name}</span>
             </div>
-            <span class="text-xs font-mono">${isSelected ? '✓' : '+'}</span>
+            <span class="text-xs font-black ${isSelected ? 'text-indigo-600' : 'text-slate-400'}">${isSelected ? '✓' : '+'}</span>
           </div>
         `;
       }).join('');
@@ -2134,7 +2135,7 @@
         if (statusText) statusText.innerText = 'Conectando con Google Flights Live API...';
         if (legsList) {
           legsList.innerHTML = searchRoutes.map((r, idx) => `
-            <div id="disc-leg-${idx}" class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/10 text-xs">
+            <div id="disc-leg-${idx}" class="flex items-center justify-between p-2.5 rounded-xl text-xs" style="background-color: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.12);">
               <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-slate-500" id="disc-dot-${idx}"></span>
                 <span class="font-medium text-slate-200">${r.label} (${r.date})</span>
