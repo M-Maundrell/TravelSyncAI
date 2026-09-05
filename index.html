@@ -4128,6 +4128,7 @@
       const yTrans = getCatalogBrick(state.yesica.trans);
       const retTrans = getCatalogBrick(state.yesica.retorno_trans);
       const retCan = getCatalogBrick(state.yesica.retorno_canarias);
+      const jointFlight = mTrans;
 
       const mJointFn = isMarioAlt() ? (mTrans?.return?.flightNumber || 'IB0153') : (mTrans?.outbound?.flightNumber || 'IB6403');
       const yJointFn = yTrans?.outbound?.flightNumber || mJointFn;
@@ -4799,6 +4800,8 @@
 
       const isJointPrimary = (step3RouteModes['leg_joint'] || state.jointRouteMode || 'primary') === 'primary';
       const originCode = isJointPrimary ? 'MAD' : 'BCN';
+      const mJointFn = jointFlight?.outbound?.flightNumber || jointFlight?.return?.flightNumber || (isJointPrimary ? 'IB6403' : 'IB2601');
+      const yJointFn = yTrans?.outbound?.flightNumber || mJointFn;
 
       const p1Start = tripConfig.p1.startDate || '2026-10-16';
       const p2End = tripConfig.p2.endDate || '2026-11-21';
