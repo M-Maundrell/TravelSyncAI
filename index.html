@@ -997,14 +997,14 @@
         </div>
       </div>
 
-      <!-- CRONOLOGÍA DE ITINERARIO POR BLOQUES (VUELOS & ESTANCIAS DE X A Y) -->
+      <!-- CRONOLOGÍA INTEGRAL DEL ITINERARIO (VUELOS Y ESTANCIAS) -->
       <div class="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm space-y-5">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-100">
           <div>
             <h3 class="text-base md:text-lg font-black text-slate-900 flex items-center gap-2">
-              <span>🗺️</span> Cronología de Itinerario (Vuelos & Estancias de X a Y)
+              <span>🗺️</span> Cronología Integral del Itinerario
             </h3>
-            <p class="text-xs text-slate-500 mt-0.5">Secuencia ejecutiva consolidada: vuelos individuales detallados y estancias continuas resumidas por rango de fechas.</p>
+            <p class="text-xs text-slate-600 font-medium mt-0.5">Desglose cronológico de vuelos coordinados y periodos de estancia en cada destino.</p>
           </div>
           <div id="timeline-summary-badge" class="flex flex-wrap items-center gap-2">
             <!-- Renderizado dinámicamente -->
@@ -4775,7 +4775,7 @@
       renderTimeline();
     }
 
-    // ─── CRONOLOGÍA DE ITINERARIO POR BLOQUES (VUELOS DETALLADOS & ESTANCIAS DE X A Y) ───
+    // ─── CRONOLOGÍA INTEGRAL DEL ITINERARIO (VUELOS Y ESTANCIAS SINCRONIZADAS) ───
     function renderTimeline() {
       const container = document.getElementById('calendar-timeline');
       if (!container) return;
@@ -4810,24 +4810,23 @@
       const dEnd = new Date(p2End + 'T00:00:00');
       const totalDays = Math.max(1, Math.round((dEnd - dStart) / (1000 * 60 * 60 * 24)) + 1);
 
-      // Summary Header Badge
+      // Resumen ejecutivo de la cabecera
       const summaryBadgeContainer = document.getElementById('timeline-summary-badge');
       if (summaryBadgeContainer) {
         const totalCost = calculateTravelerCost('mario') + calculateTravelerCost('yesica');
         summaryBadgeContainer.innerHTML = `
-          <span class="px-3 py-1 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-xl border border-indigo-200 shadow-2xs">
+          <span class="px-3 py-1 bg-slate-100 text-slate-800 font-bold text-xs rounded-xl border border-slate-300 shadow-2xs">
             📅 ${totalDays} Días Totales (16 Oct – 21 Nov 2026)
           </span>
-          <span class="px-3 py-1 bg-emerald-50 text-emerald-800 font-bold text-xs rounded-xl border border-emerald-200 shadow-2xs">
+          <span class="px-3 py-1 bg-emerald-50 text-emerald-900 font-bold text-xs rounded-xl border border-emerald-300 shadow-2xs">
             ✨ 34 Días Juntos en Destino (92%)
           </span>
-          <span class="px-3 py-1 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 shadow-2xs">
-            ✈️ 5 Tramos Coordinados (${formatMXN(totalCost)})
+          <span class="px-3 py-1 bg-indigo-50 text-indigo-900 font-bold text-xs rounded-xl border border-indigo-300 shadow-2xs">
+            ✈️ 5 Vuelos Coordinados (${formatMXN(totalCost)})
           </span>
         `;
       }
 
-      // HELPER: Formato amigable de fecha (ej: "Vie 16 Oct" o "17 Oct")
       const formatNiceDate = (isoStr, includeYear = false) => {
         if (!isoStr) return '';
         const d = new Date(isoStr + 'T00:00:00');
@@ -4837,352 +4836,488 @@
         return includeYear ? `${base} 2026` : base;
       };
 
-      // GENERACIÓN DINÁMICA DE BLOQUES (VUELOS Y ESTANCIAS DE X A Y)
-      const blocks = [];
-
-      // ─── BLOQUE 1: VUELOS DE SALIDA E IDA (16 OCT) ───
-      blocks.push({
-        id: 'block_salida',
-        type: 'flight',
-        stepNumber: 1,
-        title: 'Vuelos de Salida e Ida hacia Madrid',
-        badge: 'Despegues de Origen',
-        dateRange: formatNiceDate(p1Start, true),
-        together: false,
-        icon: '🛫',
-        tagClass: 'bg-blue-100 text-blue-900 border-blue-300',
-        content: `
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            <!-- Mario -->
-            <div class="bg-slate-900 border border-blue-800/60 rounded-2xl p-4 md:p-5 space-y-2.5 text-xs text-white shadow-md">
-              <div class="flex justify-between items-center text-[10px] font-extrabold uppercase tracking-wider text-blue-400">
-                <span>👤 Pasajero 1: ${n1} (${orig1})</span>
-                <span class="bg-blue-950 px-2 py-0.5 rounded border border-blue-700 font-mono text-white">${mSal?.outbound?.flightNumber || 'IB0152'}</span>
-              </div>
-              <div class="text-sm font-black text-white flex justify-between items-center">
-                <span>${orig1} ➔ MAD · ${mSal?.airlineName || 'Iberia'}</span>
-                <span class="text-emerald-400 font-mono font-bold">${formatMXN(mSal?.price || 19800)}</span>
-              </div>
-              <div class="text-slate-300 flex justify-between">
-                <span>🕒 Horario:</span>
-                <span class="font-mono font-bold text-white">${mSal?.outbound?.schedule || '20:05 → 14:00+1'}</span>
-              </div>
-              <div class="text-slate-400 text-[11px] pt-2 border-t border-slate-800 flex justify-between">
-                <span>✈️ ${mSal?.aircraft || 'Airbus A350-900'}</span>
-                <span>🧳 Maleta 23kg + equipaje de mano</span>
-              </div>
-              <p class="text-[11px] text-slate-400">Vuelo transatlántico nocturno. Arribo a Madrid Barajas T4 el sábado 17 Oct a las 14:00 h.</p>
-            </div>
-
-            <!-- Yesica -->
-            <div class="bg-slate-900 border border-pink-800/60 rounded-2xl p-4 md:p-5 space-y-2.5 text-xs text-white shadow-md">
-              <div class="flex justify-between items-center text-[10px] font-extrabold uppercase tracking-wider text-pink-400">
-                <span>👤 Pasajera 2: ${n2} (${orig2})</span>
-                <span class="bg-pink-950 px-2 py-0.5 rounded border border-pink-700 font-mono text-white">${ySal?.outbound?.flightNumber || 'I21535'}</span>
-              </div>
-              <div class="text-sm font-black text-white flex justify-between items-center">
-                <span>${orig2} ➔ MAD · ${ySal?.airlineName || 'Iberia Express'}</span>
-                <span class="text-pink-400 font-mono font-bold">${formatMXN(ySal?.price || 1158)}</span>
-              </div>
-              <div class="text-slate-300 flex justify-between">
-                <span>🕒 Horario:</span>
-                <span class="font-mono font-bold text-white">${ySal?.outbound?.schedule || '18:15 → 22:05'}</span>
-              </div>
-              <div class="text-slate-400 text-[11px] pt-2 border-t border-slate-800 flex justify-between">
-                <span>✈️ ${ySal?.aircraft || 'Airbus A320neo'}</span>
-                <span>🧳 Maleta facturada + equipaje de mano</span>
-              </div>
-              <p class="text-[11px] text-slate-400">Vuelo directo península-islas. Arribo a Madrid el viernes 16 Oct a las 22:05 h.</p>
-            </div>
-          </div>
-        `
-      });
-
-      // ─── BLOQUE 2: ESTANCIA EN MADRID (DEL 17 AL 27 OCT · 10 NOCHES) ───
       const wp1Arr = wps[0]?.arrivalDate || '2026-10-17';
       const wp1Dep = wps[0]?.departureDate && wps[0]?.departureDate > wp1Arr ? wps[0].departureDate : '2026-10-27';
       const wp1Nights = Math.max(1, Math.round((new Date(wp1Dep + 'T00:00:00') - new Date(wp1Arr + 'T00:00:00')) / (1000 * 60 * 60 * 24)));
 
-      blocks.push({
-        id: 'block_stay_madrid',
-        type: 'stay',
-        stepNumber: 2,
-        title: 'Estancia en Madrid',
-        badge: `${wp1Nights} Noches Consecutivas`,
-        dateRange: `Del ${formatNiceDate(wp1Arr)} al ${formatNiceDate(wp1Dep, true)} (${wp1Nights} Noches)`,
-        together: true,
-        icon: '🇪🇸',
-        tagClass: 'bg-amber-100 text-amber-900 border-amber-300',
-        content: `
-          <div class="bg-gradient-to-r from-slate-900 via-amber-950/40 to-slate-900 border-2 border-amber-500/70 rounded-2xl p-5 text-xs text-white space-y-3.5 shadow-md">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-slate-800 gap-2">
-              <div class="flex items-center gap-2.5">
-                <span class="text-2xl sm:text-3xl">🇪🇸</span>
-                <div>
-                  <h4 class="text-sm sm:text-base font-black text-white">Madrid, España · Estancia Consolidada de ${wp1Nights} Noches</h4>
-                  <div class="text-[11px] text-amber-300 font-mono font-bold">Del ${formatNiceDate(wp1Arr)} al ${formatNiceDate(wp1Dep)} 2026 · ${wp1Nights} Noches Consecutivas</div>
-                </div>
-              </div>
-              <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-600 self-start sm:self-auto">
-                👥 100% Juntos en Pareja
-              </span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px]">
-              <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-amber-400 font-extrabold uppercase text-[10px]">✨ Arribo & Encuentro (17 Oct):</span>
-                <p class="text-slate-300 leading-relaxed">${n2} recibe a ${n1} en Barajas T4 a las 14:00 h. Traslado conjunto al alojamiento en Madrid y primera noche juntos.</p>
-              </div>
-
-              <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-amber-400 font-extrabold uppercase text-[10px]">🏨 Base de Operaciones (${wp1Nights} Noches):</span>
-                <p class="text-slate-300 leading-relaxed">Alojamiento compartido en Madrid. Días de convivencia, trabajo remoto sincronizado, gastronomía y recorridos culturales por la capital.</p>
-              </div>
-
-              <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-amber-400 font-extrabold uppercase text-[10px]">🛫 Salida Transatlántica (27 Oct):</span>
-                <p class="text-slate-300 leading-relaxed">Cierre de estancia en Madrid. Traslado al aeropuerto (${originCode}) para abordar juntos el vuelo con destino a México.</p>
-              </div>
-            </div>
-          </div>
-        `
-      });
-
-      // ─── BLOQUE 3: VUELO CONJUNTO TRANSATLÁNTICO (27 OCT) ───
       const jointDate = wp1Dep;
       const jointPriceMario = jointFlight?.price || 14200;
       const jointPriceYesica = yTrans?.price || jointPriceMario;
 
-      blocks.push({
-        id: 'block_joint_flight',
-        type: 'flight',
-        stepNumber: 3,
-        title: `Vuelo Conjunto Transatlántico (${originCode} ➔ ${destCode})`,
-        badge: isJointSynced ? '👥 Vuelo Coordinado (Mismo Asiento & Cabina)' : '⚠️ Vuelos Separados',
-        dateRange: formatNiceDate(jointDate, true),
-        together: true,
-        icon: '✈️',
-        tagClass: 'bg-emerald-100 text-emerald-900 border-emerald-300',
-        content: `
-          <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border-2 border-emerald-500/80 rounded-2xl p-5 text-xs text-white space-y-3.5 shadow-lg">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-800 gap-2">
-              <div class="flex items-center gap-2.5">
-                <span class="text-2xl sm:text-3xl">✈️</span>
-                <div>
-                  <h4 class="text-sm sm:text-base font-black text-white">${jointFlight?.airlineName || 'Iberia'} (${mJointFn}) · Vuelo Transatlántico Compartido</h4>
-                  <div class="text-[11px] text-emerald-300 font-mono font-bold">${originCode} ➔ ${destCode} · ${formatNiceDate(jointDate, true)}</div>
-                </div>
-              </div>
-              <div class="flex items-center gap-2 self-start sm:self-auto">
-                <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-600">
-                  ${mJointFn}
-                </span>
-                <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-600/80">
-                  👥 Misma Cabina y Horario
-                </span>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-slate-400 font-bold uppercase text-[10px]">🕒 Horario y Duración:</span>
-                <div class="text-base font-black text-white font-mono">${jointFlight?.outbound?.schedule || '13:15 → 18:30'}</div>
-                <div class="text-[11px] text-slate-400">Salida desde ${originCode} y aterrizaje en AICM T1 a las 18:30 h (mismo día).</div>
-              </div>
-
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-slate-400 font-bold uppercase text-[10px]">✈️ Aeronave & Equipaje:</span>
-                <div class="text-xs font-bold text-white">${jointFlight?.aircraft || 'Airbus A350-900'}</div>
-                <div class="text-[11px] text-slate-400">2 Maletas facturadas (1 Mario + 1 Yesica) + 2 equipajes de mano + selección de asientos contiguos.</div>
-              </div>
-
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-slate-400 font-bold uppercase text-[10px]">💰 Costo Conjunto:</span>
-                <div class="text-base font-black text-emerald-400 font-mono">${formatMXN(jointPriceMario + jointPriceYesica)}</div>
-                <div class="text-[11px] text-slate-400">${formatMXN(jointPriceMario)} por pasajero · Sin cargos ocultos.</div>
-              </div>
-            </div>
-          </div>
-        `
-      });
-
-      // ─── BLOQUE 4: ESTANCIA EN CIUDAD DE MÉXICO (DEL 27 OCT AL 20 NOV · 24 NOCHES) ───
       const wp2Arr = jointDate;
       const wp2Dep = wps[1]?.departureDate || '2026-11-20';
       const wp2Nights = Math.max(1, Math.round((new Date(wp2Dep + 'T00:00:00') - new Date(wp2Arr + 'T00:00:00')) / (1000 * 60 * 60 * 24)));
 
-      blocks.push({
-        id: 'block_stay_mexico',
-        type: 'stay',
-        stepNumber: 4,
-        title: 'Estancia en Ciudad de México',
-        badge: `${wp2Nights} Noches Consecutivas`,
-        dateRange: `Del ${formatNiceDate(wp2Arr)} al ${formatNiceDate(wp2Dep, true)} (${wp2Nights} Noches)`,
-        together: true,
-        icon: '🇲🇽',
-        tagClass: 'bg-emerald-100 text-emerald-900 border-emerald-300',
-        content: `
-          <div class="bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 border-2 border-emerald-500/70 rounded-2xl p-5 text-xs text-white space-y-3.5 shadow-md">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-slate-800 gap-2">
-              <div class="flex items-center gap-2.5">
-                <span class="text-2xl sm:text-3xl">🇲🇽</span>
-                <div>
-                  <h4 class="text-sm sm:text-base font-black text-white">Ciudad de México, México · Estancia Consolidada de ${wp2Nights} Noches</h4>
-                  <div class="text-[11px] text-emerald-300 font-mono font-bold">Del ${formatNiceDate(wp2Arr)} al ${formatNiceDate(wp2Dep)} 2026 · ${wp2Nights} Noches Consecutivas</div>
+      const events = [
+        // 1. Vuelos de Salida e Ida
+        {
+          id: 'step_salida',
+          type: 'flight',
+          stepNum: 1,
+          stepIcon: '🛫',
+          categoryTag: '✈️ VUELOS DE SALIDA',
+          categoryClass: 'bg-blue-100 text-blue-900 border-blue-300',
+          title: 'Salida e Ida hacia Madrid',
+          dateRange: formatNiceDate(p1Start, true),
+          statusBadge: '👤 Vuelos Individuales de Inicio',
+          statusClass: 'bg-blue-50 text-blue-800 border-blue-200 font-bold',
+          content: `
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <!-- Tarjeta Pasajero 1: Mario -->
+              <div class="bg-white border-2 border-blue-200/90 rounded-2xl p-4 md:p-5 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-blue-100">
+                  <span class="px-2.5 py-0.5 rounded-lg text-xs font-black bg-blue-100 text-blue-900 border border-blue-200">
+                    👤 ${n1} · ${orig1}
+                  </span>
+                  <span class="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                    ${mSal?.outbound?.flightNumber || 'IB0152'}
+                  </span>
                 </div>
-              </div>
-              <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-emerald-950 text-emerald-300 border border-emerald-600 self-start sm:self-auto">
-                👥 100% Juntos en Pareja
-              </span>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px]">
-              <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-emerald-400 font-extrabold uppercase text-[10px]">🏠 Residencia Base:</span>
-                <p class="text-slate-300 leading-relaxed">${n1} en su ciudad habitual y ${n2} en estancia de trabajo remoto y turismo. Convivencia diaria durante ${wp2Nights} noches ininterrumpidas.</p>
-              </div>
-
-              <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-emerald-400 font-extrabold uppercase text-[10px]">📅 Fines de Semana & Ocio:</span>
-                <p class="text-slate-300 leading-relaxed">8 días de fin de semana para paseos culturales, Coyoacán, Roma-Condesa, gastronomía mexicana y descanso en pareja.</p>
-              </div>
-
-              <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                <span class="text-emerald-400 font-extrabold uppercase text-[10px]">🛬 Cierre de Estancia:</span>
-                <p class="text-slate-300 leading-relaxed">El viernes 20 Noviembre ${n1} acompaña a ${n2} al AICM para abordar su itinerario de regreso a España.</p>
-              </div>
-            </div>
-          </div>
-        `
-      });
-
-      // ─── BLOQUE 5: RETORNO TRANSATLÁNTICO DE YESICA (20 NOV) ───
-      blocks.push({
-        id: 'block_return_trans',
-        type: 'flight',
-        stepNumber: 5,
-        title: `Retorno Transatlántico de ${n2} (MEX ➔ MAD)`,
-        badge: 'Retorno a Europa',
-        dateRange: formatNiceDate(wp2Dep, true),
-        together: false,
-        icon: '🛫',
-        tagClass: 'bg-purple-100 text-purple-900 border-purple-300',
-        content: `
-          <div class="bg-slate-900 border border-purple-800/60 rounded-2xl p-4 md:p-5 space-y-3 text-xs text-white shadow-md">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-800 gap-2">
-              <div class="flex items-center gap-2">
-                <span class="text-xl">🛫</span>
-                <h4 class="text-sm font-black text-white">${retTrans?.airlineName || 'Iberia'} (${retTrans?.outbound?.flightNumber || 'IB304'}) · Vuelo Transatlántico de Regreso</h4>
-              </div>
-              <span class="text-purple-400 font-mono font-bold">${formatMXN(retTrans?.price || 10813)}</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
-              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
-                <span class="text-slate-400 font-bold uppercase text-[10px]">👤 Pasajero 1: ${n1}</span>
-                <p class="text-slate-300">Concluye su viaje y permanece en su residencia en Ciudad de México. No requiere vuelos adicionales.</p>
-              </div>
-              <div class="bg-slate-950 p-3 rounded-xl border border-purple-900/80 space-y-1">
-                <span class="text-purple-400 font-bold uppercase text-[10px]">👤 Pasajera 2: ${n2} (${orig1} ➔ MAD)</span>
-                <p class="text-slate-300">Vuelo nocturno en ${retTrans?.aircraft || 'Airbus A350-900'}. Despega de CDMX a las 12:50 y aterriza en Madrid Barajas a las 06:00 (+1 día).</p>
-              </div>
-            </div>
-          </div>
-        `
-      });
-
-      // ─── BLOQUE 6: CONEXIÓN A CANARIAS Y CIERRE DE EXPEDICIÓN (21 NOV) ───
-      blocks.push({
-        id: 'block_return_canarias',
-        type: 'flight',
-        stepNumber: 6,
-        title: `Conexión a Canarias (${n2}: MAD ➔ SPC) & Fin de Expedición`,
-        badge: 'Cierre de Expedición',
-        dateRange: formatNiceDate(p2End, true),
-        together: false,
-        icon: '🛬',
-        tagClass: 'bg-emerald-100 text-emerald-900 border-emerald-300',
-        content: `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-5 space-y-3 text-xs text-white shadow-md">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-800 gap-2">
-              <div class="flex items-center gap-2">
-                <span class="text-xl">🛬</span>
-                <h4 class="text-sm font-black text-white">${retCan?.airlineName || 'Iberia Express'} (${retCan?.outbound?.flightNumber || 'I21535'}) · Vuelo de Conexión Final</h4>
-              </div>
-              <span class="text-pink-400 font-mono font-bold">${formatMXN(retCan?.price || 1142)}</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
-              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
-                <span class="text-slate-400 font-bold uppercase text-[10px]">🕒 Horario & Escala:</span>
-                <p class="text-slate-300">Escala de conexión en Madrid Barajas T4. Despegue a las 16:45 y arribo al aeropuerto de La Palma (SPC) a las 18:55 h.</p>
-              </div>
-              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
-                <span class="text-emerald-400 font-bold uppercase text-[10px]">🏁 Estatus Final:</span>
-                <p class="text-slate-300">Ambos pasajeros se encuentran en sus hogares respectivos. Expedición de 37 días completada exitosamente al 100%.</p>
-              </div>
-            </div>
-          </div>
-        `
-      });
-
-      // Filter blocks
-      let visibleBlocks = blocks;
-      if (timelineActiveFilter === 'flights') {
-        visibleBlocks = blocks.filter(b => b.type === 'flight');
-      } else if (timelineActiveFilter === 'stays') {
-        visibleBlocks = blocks.filter(b => b.type === 'stay');
-      }
-
-      // Render HTML
-      container.innerHTML = `
-        <!-- BARRA DE FILTROS RÁPIDOS DE LA CRONOLOGÍA -->
-        <div class="flex flex-wrap items-center justify-between gap-2 p-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl text-xs">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="font-extrabold text-slate-700 mr-1">Vista del Itinerario:</span>
-            <button onclick="setTimelineFilter('all')" class="px-3.5 py-1.5 rounded-xl font-bold transition ${timelineActiveFilter === 'all' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}">
-              Todos los Bloques (${blocks.length})
-            </button>
-            <button onclick="setTimelineFilter('flights')" class="px-3.5 py-1.5 rounded-xl font-bold transition ${timelineActiveFilter === 'flights' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}">
-              ✈️ Solo Vuelos (${blocks.filter(b => b.type === 'flight').length})
-            </button>
-            <button onclick="setTimelineFilter('stays')" class="px-3.5 py-1.5 rounded-xl font-bold transition ${timelineActiveFilter === 'stays' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}">
-              🏨 Solo Estancias (${blocks.filter(b => b.type === 'stay').length})
-            </button>
-          </div>
-          <span class="text-[11px] text-slate-500 font-medium">Secuencia consolidada: vuelos detallados y estancias de X a Y</span>
-        </div>
-
-        <!-- LISTADO DE BLOQUES CRONOLÓGICOS CONSOLIDADOS -->
-        <div class="space-y-4 pt-1">
-          ${visibleBlocks.map(b => `
-            <div class="bg-white border-2 border-slate-200/90 hover:border-indigo-300 rounded-3xl p-5 md:p-6 shadow-xs transition-all space-y-4">
-              <!-- Cabecera del Bloque -->
-              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-slate-100 gap-3">
-                <div class="flex items-start sm:items-center gap-3">
-                  <span class="text-2xl sm:text-3xl p-2 rounded-2xl ${b.type === 'flight' ? 'bg-indigo-50 border border-indigo-100' : 'bg-amber-50 border border-amber-100'}">${b.icon}</span>
+                
+                <div class="flex items-center justify-between gap-2 py-1">
                   <div>
-                    <div class="flex flex-wrap items-center gap-2">
-                      <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ${b.type === 'flight' ? 'bg-indigo-50 text-indigo-700 border-indigo-200' : 'bg-amber-50 text-amber-800 border-amber-200'}">
-                        Hito 0${b.stepNumber} · ${b.type === 'flight' ? 'Vuelo / Tránsito' : 'Estancia Consolidada'}
-                      </span>
-                      <span class="text-xs font-bold text-slate-500">${b.badge}</span>
+                    <div class="text-xl font-black font-mono text-slate-900">${mSal?.outbound?.schedule?.split('→')[0]?.trim() || '20:05'}</div>
+                    <div class="text-xs font-black text-slate-800">${orig1}</div>
+                    <div class="text-[11px] text-slate-600 font-semibold">AICM T1</div>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center px-2">
+                    <div class="text-[11px] font-bold text-slate-700">${mSal?.airlineName || 'Iberia'}</div>
+                    <div class="w-full flex items-center gap-1 my-1">
+                      <div class="h-0.5 flex-1 bg-blue-300"></div>
+                      <span class="text-xs text-blue-600">✈️</span>
+                      <div class="h-0.5 flex-1 bg-blue-300"></div>
                     </div>
-                    <h4 class="text-base sm:text-lg font-black text-slate-900 mt-1">${b.title}</h4>
+                    <div class="text-[10px] font-bold text-slate-600">Directo · 10h 55m</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-xl font-black font-mono text-slate-900">${mSal?.outbound?.schedule?.split('→')[1]?.trim() || '14:00+1'}</div>
+                    <div class="text-xs font-black text-slate-800">MAD</div>
+                    <div class="text-[11px] text-slate-600 font-semibold">Barajas T4</div>
                   </div>
                 </div>
 
-                <div class="flex flex-col sm:items-end gap-1">
-                  <div class="text-xs font-mono font-extrabold text-indigo-700 bg-indigo-50/80 px-3 py-1 rounded-xl border border-indigo-100">
-                    ${b.dateRange}
+                <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div class="text-slate-700 font-semibold">
+                    <span>✈️ ${mSal?.aircraft || 'Airbus A350-900'}</span> · <span>🧳 Maleta 23kg</span>
                   </div>
-                  <span class="text-[11px] font-bold ${b.together ? 'text-emerald-700' : 'text-blue-700'}">
-                    ${b.together ? '👥 100% Juntos en Pareja' : '👤 Trayectos Individuales'}
+                  <div class="text-emerald-700 font-mono font-black text-sm">
+                    ${formatMXN(mSal?.price || 19800)}
+                  </div>
+                </div>
+                <div class="bg-blue-50/70 text-blue-900 text-xs p-2.5 rounded-xl border border-blue-100 leading-relaxed font-medium">
+                  Vuelo transatlántico nocturno. Aterrizaje en Madrid el sábado 17 de octubre a las 14:00 h.
+                </div>
+              </div>
+
+              <!-- Tarjeta Pasajera 2: Yesica -->
+              <div class="bg-white border-2 border-pink-200/90 rounded-2xl p-4 md:p-5 shadow-2xs space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-pink-100">
+                  <span class="px-2.5 py-0.5 rounded-lg text-xs font-black bg-pink-100 text-pink-900 border border-pink-200">
+                    👤 ${n2} · ${orig2}
+                  </span>
+                  <span class="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                    ${ySal?.outbound?.flightNumber || 'I21535'}
+                  </span>
+                </div>
+
+                <div class="flex items-center justify-between gap-2 py-1">
+                  <div>
+                    <div class="text-xl font-black font-mono text-slate-900">${ySal?.outbound?.schedule?.split('→')[0]?.trim() || '18:15'}</div>
+                    <div class="text-xs font-black text-slate-800">${orig2}</div>
+                    <div class="text-[11px] text-slate-600 font-semibold">La Palma</div>
+                  </div>
+                  <div class="flex-1 flex flex-col items-center px-2">
+                    <div class="text-[11px] font-bold text-slate-700">${ySal?.airlineName || 'Iberia Express'}</div>
+                    <div class="w-full flex items-center gap-1 my-1">
+                      <div class="h-0.5 flex-1 bg-pink-300"></div>
+                      <span class="text-xs text-pink-600">✈️</span>
+                      <div class="h-0.5 flex-1 bg-pink-300"></div>
+                    </div>
+                    <div class="text-[10px] font-bold text-slate-600">Directo · 2h 50m</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-xl font-black font-mono text-slate-900">${ySal?.outbound?.schedule?.split('→')[1]?.trim() || '22:05'}</div>
+                    <div class="text-xs font-black text-slate-800">MAD</div>
+                    <div class="text-[11px] text-slate-600 font-semibold">Barajas T4</div>
+                  </div>
+                </div>
+
+                <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <div class="text-slate-700 font-semibold">
+                    <span>✈️ ${ySal?.aircraft || 'Airbus A320neo'}</span> · <span>🧳 Maleta facturada</span>
+                  </div>
+                  <div class="text-pink-700 font-mono font-black text-sm">
+                    ${formatMXN(ySal?.price || 1158)}
+                  </div>
+                </div>
+                <div class="bg-pink-50/70 text-pink-900 text-xs p-2.5 rounded-xl border border-pink-100 leading-relaxed font-medium">
+                  Vuelo península-islas. Arribo a Madrid el viernes 16 de octubre a las 22:05 h para esperar a Mario.
+                </div>
+              </div>
+            </div>
+          `
+        },
+        // 2. Estancia en Madrid
+        {
+          id: 'step_stay_madrid',
+          type: 'stay',
+          stepNum: 2,
+          stepIcon: '🇪🇸',
+          categoryTag: '🏨 ESTANCIA EN DESTINO',
+          categoryClass: 'bg-amber-100 text-amber-950 border-amber-300',
+          title: 'Estancia en Madrid',
+          dateRange: `${formatNiceDate(wp1Arr)} – ${formatNiceDate(wp1Dep, true)}`,
+          statusBadge: `👥 Convivencia en Pareja · ${wp1Nights} Noches`,
+          statusClass: 'bg-emerald-100 text-emerald-900 border-emerald-300 font-extrabold',
+          content: `
+            <div class="bg-gradient-to-r from-amber-50/60 via-white to-amber-50/40 border-2 border-amber-200/90 rounded-2xl p-5 shadow-2xs space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-amber-200/60">
+                <div>
+                  <div class="text-base font-black text-slate-900">Madrid, España · Estancia de ${wp1Nights} Noches</div>
+                  <div class="text-xs text-slate-700 font-semibold mt-0.5">Del ${formatNiceDate(wp1Arr)} al ${formatNiceDate(wp1Dep)} de 2026</div>
+                </div>
+                <span class="px-3 py-1 rounded-xl text-xs font-black bg-amber-100 text-amber-950 border border-amber-300 self-start sm:self-auto">
+                  🏨 ${wp1Nights} Noches Consecutivas
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                <div class="bg-white p-3.5 rounded-xl border border-amber-200/80 shadow-2xs space-y-1.5">
+                  <div class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                    <span>📍</span> Encuentro & Check-in (17 Oct)
+                  </div>
+                  <p class="text-xs text-slate-700 font-medium leading-relaxed">
+                    ${n2} recibe a ${n1} en Barajas T4 a las 14:00 h. Traslado conjunto al hotel en Madrid y primera noche juntos.
+                  </p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl border border-amber-200/80 shadow-2xs space-y-1.5">
+                  <div class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                    <span>💼</span> Convivencia & Teletrabajo
+                  </div>
+                  <p class="text-xs text-slate-700 font-medium leading-relaxed">
+                    Base compartida en Madrid con horario europeo coordinado, gastronomía madrileña y paseos culturales.
+                  </p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl border border-amber-200/80 shadow-2xs space-y-1.5">
+                  <div class="text-xs font-black text-amber-900 flex items-center gap-1.5">
+                    <span>🛫</span> Salida a México (27 Oct)
+                  </div>
+                  <p class="text-xs text-slate-700 font-medium leading-relaxed">
+                    Cierre de estancia en Madrid. Traslado al aeropuerto (${originCode}) para abordar juntos el vuelo transatlántico.
+                  </p>
+                </div>
+              </div>
+            </div>
+          `
+        },
+        // 3. Vuelo Transatlántico Conjunto
+        {
+          id: 'step_joint_flight',
+          type: 'flight',
+          stepNum: 3,
+          stepIcon: '✈️',
+          categoryTag: '✈️ VUELO CONJUNTO EN PAREJA',
+          categoryClass: 'bg-emerald-100 text-emerald-950 border-emerald-300',
+          title: `Vuelo Transatlántico Conjunto (${originCode} ➔ ${destCode})`,
+          dateRange: formatNiceDate(jointDate, true),
+          statusBadge: '👥 Misma Cabina · Asientos Contiguos',
+          statusClass: 'bg-emerald-600 text-white font-extrabold',
+          content: `
+            <div class="bg-gradient-to-br from-emerald-50/60 via-white to-indigo-50/40 border-2 border-emerald-300 rounded-2xl p-5 shadow-xs space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-emerald-200/80">
+                <div>
+                  <div class="text-base font-black text-slate-900">${jointFlight?.airlineName || 'Iberia'} (${mJointFn}) · Vuelo Transatlántico Compartido</div>
+                  <div class="text-xs text-emerald-900 font-bold mt-0.5">Ruta directa ${originCode} ➔ ${destCode} · Ambos pasajeros viajan juntos</div>
+                </div>
+                <div class="flex items-center gap-2 self-start sm:self-auto">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-white text-slate-800 border border-slate-300">
+                    ${mJointFn}
+                  </span>
+                  <span class="px-3 py-1 rounded-xl text-xs font-black bg-emerald-600 text-white shadow-2xs">
+                    👥 100% Coordinado
                   </span>
                 </div>
               </div>
 
-              <!-- Contenido Detallado del Bloque -->
-              <div>
-                ${b.content}
+              <!-- Visual Track del Vuelo Conjunto -->
+              <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-2xs flex items-center justify-between gap-3">
+                <div>
+                  <div class="text-2xl font-black font-mono text-slate-900">${jointFlight?.outbound?.schedule?.split('→')[0]?.trim() || '13:15'}</div>
+                  <div class="text-sm font-black text-slate-800">${originCode}</div>
+                  <div class="text-xs text-slate-600 font-semibold">${originCode === 'MAD' ? 'Barajas T4' : 'El Prat T1'}</div>
+                </div>
+                <div class="flex-1 flex flex-col items-center px-3">
+                  <div class="text-xs font-black text-slate-800">${jointFlight?.airlineName || 'Iberia'} · Directo</div>
+                  <div class="w-full flex items-center gap-1.5 my-1.5">
+                    <div class="h-1 flex-1 bg-emerald-400 rounded-full"></div>
+                    <span class="text-base text-emerald-600">✈️</span>
+                    <div class="h-1 flex-1 bg-emerald-400 rounded-full"></div>
+                  </div>
+                  <div class="text-xs font-bold text-slate-600">12h 15m · ${jointFlight?.aircraft || 'Airbus A350-900'}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-2xl font-black font-mono text-slate-900">${jointFlight?.outbound?.schedule?.split('→')[1]?.trim() || '18:30'}</div>
+                  <div class="text-sm font-black text-slate-800">${destCode}</div>
+                  <div class="text-xs text-slate-600 font-semibold">AICM T1 (Mismo Día)</div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                  <div class="font-black text-slate-900">👥 Coordinación en Cabina</div>
+                  <p class="text-slate-700 font-medium">Asientos contiguos garantizados. Ambos pasajeros vuelan lado a lado.</p>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                  <div class="font-black text-slate-900">🧳 Equipaje Incluido</div>
+                  <p class="text-slate-700 font-medium">2 maletas facturadas de 23kg (1 por viajero) + 2 piezas de equipaje de mano.</p>
+                </div>
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs space-y-1">
+                  <div class="font-black text-slate-900">💰 Inversión Conjunta</div>
+                  <div class="text-sm font-black font-mono text-emerald-700">${formatMXN(jointPriceMario + jointPriceYesica)}</div>
+                  <p class="text-[11px] text-slate-600 font-semibold">${formatMXN(jointPriceMario)} por pasajero.</p>
+                </div>
+              </div>
+            </div>
+          `
+        },
+        // 4. Estancia en Ciudad de México
+        {
+          id: 'step_stay_mexico',
+          type: 'stay',
+          stepNum: 4,
+          stepIcon: '🇲🇽',
+          categoryTag: '🏨 ESTANCIA EN DESTINO',
+          categoryClass: 'bg-emerald-100 text-emerald-950 border-emerald-300',
+          title: 'Estancia en Ciudad de México',
+          dateRange: `${formatNiceDate(wp2Arr)} – ${formatNiceDate(wp2Dep, true)}`,
+          statusBadge: `👥 Convivencia en Pareja · ${wp2Nights} Noches`,
+          statusClass: 'bg-emerald-100 text-emerald-900 border-emerald-300 font-extrabold',
+          content: `
+            <div class="bg-gradient-to-r from-emerald-50/60 via-white to-emerald-50/40 border-2 border-emerald-200/90 rounded-2xl p-5 shadow-2xs space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-emerald-200/60">
+                <div>
+                  <div class="text-base font-black text-slate-900">Ciudad de México, México · Estancia de ${wp2Nights} Noches</div>
+                  <div class="text-xs text-slate-700 font-semibold mt-0.5">Del ${formatNiceDate(wp2Arr)} al ${formatNiceDate(wp2Dep)} de 2026</div>
+                </div>
+                <span class="px-3 py-1 rounded-xl text-xs font-black bg-emerald-100 text-emerald-950 border border-emerald-300 self-start sm:self-auto">
+                  🏨 ${wp2Nights} Noches Consecutivas
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                <div class="bg-white p-3.5 rounded-xl border border-emerald-200/80 shadow-2xs space-y-1.5">
+                  <div class="text-xs font-black text-emerald-900 flex items-center gap-1.5">
+                    <span>🏠</span> Residencia Base & Convivencia
+                  </div>
+                  <p class="text-xs text-slate-700 font-medium leading-relaxed">
+                    ${n1} en su base habitual y ${n2} en estancia de trabajo remoto y turismo. Convivencia continua durante ${wp2Nights} noches.
+                  </p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl border border-emerald-200/80 shadow-2xs space-y-1.5">
+                  <div class="text-xs font-black text-emerald-900 flex items-center gap-1.5">
+                    <span>🌮</span> Turismo & Fines de Semana
+                  </div>
+                  <p class="text-xs text-slate-700 font-medium leading-relaxed">
+                    8 días completos de fin de semana para paseos culturales, Coyoacán, Roma-Condesa, gastronomía mexicana y descanso.
+                  </p>
+                </div>
+
+                <div class="bg-white p-3.5 rounded-xl border border-emerald-200/80 shadow-2xs space-y-1.5">
+                  <div class="text-xs font-black text-emerald-900 flex items-center gap-1.5">
+                    <span>🧳</span> Cierre de Estancia (20 Nov)
+                  </div>
+                  <p class="text-xs text-slate-700 font-medium leading-relaxed">
+                    El viernes 20 de Noviembre ${n1} acompaña a ${n2} al AICM para abordar su vuelo de retorno a Europa.
+                  </p>
+                </div>
+              </div>
+            </div>
+          `
+        },
+        // 5. Retorno Transatlántico de Yesica
+        {
+          id: 'step_return_trans',
+          type: 'flight',
+          stepNum: 5,
+          stepIcon: '🛫',
+          categoryTag: '✈️ VUELO DE RETORNO',
+          categoryClass: 'bg-purple-100 text-purple-950 border-purple-300',
+          title: `Retorno Transatlántico (${n2}: MEX ➔ MAD)`,
+          dateRange: formatNiceDate(wp2Dep, true),
+          statusBadge: '👤 Retorno Transatlántico Individual',
+          statusClass: 'bg-purple-50 text-purple-900 border-purple-200 font-bold',
+          content: `
+            <div class="bg-white border-2 border-purple-200/90 rounded-2xl p-4 md:p-5 shadow-2xs space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-purple-100">
+                <span class="px-2.5 py-0.5 rounded-lg text-xs font-black bg-purple-100 text-purple-900 border border-purple-200">
+                  👤 ${n2} · ${orig1} ➔ MAD
+                </span>
+                <span class="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                  ${retTrans?.outbound?.flightNumber || 'IB304'}
+                </span>
+              </div>
+
+              <div class="flex items-center justify-between gap-2 py-1">
+                <div>
+                  <div class="text-xl font-black font-mono text-slate-900">${retTrans?.outbound?.schedule?.split('→')[0]?.trim() || '12:50'}</div>
+                  <div class="text-xs font-black text-slate-800">MEX</div>
+                  <div class="text-[11px] text-slate-600 font-semibold">AICM T1</div>
+                </div>
+                <div class="flex-1 flex flex-col items-center px-2">
+                  <div class="text-[11px] font-bold text-slate-700">${retTrans?.airlineName || 'Iberia'}</div>
+                  <div class="w-full flex items-center gap-1 my-1">
+                    <div class="h-0.5 flex-1 bg-purple-300"></div>
+                    <span class="text-xs text-purple-600">✈️</span>
+                    <div class="h-0.5 flex-1 bg-purple-300"></div>
+                  </div>
+                  <div class="text-[10px] font-bold text-slate-600">Directo · 11h 10m</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xl font-black font-mono text-slate-900">${retTrans?.outbound?.schedule?.split('→')[1]?.trim() || '06:00+1'}</div>
+                  <div class="text-xs font-black text-slate-800">MAD</div>
+                  <div class="text-[11px] text-slate-600 font-semibold">Barajas T4</div>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="text-slate-700 font-semibold">
+                  <span>✈️ ${retTrans?.aircraft || 'Airbus A350-900'}</span> · <span>🧳 Maleta 23kg facturada</span>
+                </div>
+                <div class="text-purple-700 font-mono font-black text-sm">
+                  ${formatMXN(retTrans?.price || 10813)}
+                </div>
+              </div>
+              <div class="bg-purple-50/70 text-purple-900 text-xs p-2.5 rounded-xl border border-purple-100 leading-relaxed font-medium">
+                ${n1} finaliza su viaje y permanece en su residencia en Ciudad de México. ${n2} despega rumbo a España.
+              </div>
+            </div>
+          `
+        },
+        // 6. Conexión a Canarias y Fin de Expedición
+        {
+          id: 'step_return_canarias',
+          type: 'flight',
+          stepNum: 6,
+          stepIcon: '🛬',
+          categoryTag: '🛬 VUELO DE CONEXIÓN FINAL',
+          categoryClass: 'bg-emerald-100 text-emerald-950 border-emerald-300',
+          title: `Conexión a Canarias (${n2}: MAD ➔ SPC) & Cierre`,
+          dateRange: formatNiceDate(p2End, true),
+          statusBadge: '🏁 Cierre Exitoso de Expedición',
+          statusClass: 'bg-emerald-600 text-white font-extrabold',
+          content: `
+            <div class="bg-white border-2 border-slate-200/90 rounded-2xl p-4 md:p-5 shadow-2xs space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <span class="px-2.5 py-0.5 rounded-lg text-xs font-black bg-slate-100 text-slate-900 border border-slate-200">
+                  👤 ${n2} · Conexión Final MAD ➔ SPC
+                </span>
+                <span class="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                  ${retCan?.outbound?.flightNumber || 'I21535'}
+                </span>
+              </div>
+
+              <div class="flex items-center justify-between gap-2 py-1">
+                <div>
+                  <div class="text-xl font-black font-mono text-slate-900">${retCan?.outbound?.schedule?.split('→')[0]?.trim() || '16:45'}</div>
+                  <div class="text-xs font-black text-slate-800">MAD</div>
+                  <div class="text-[11px] text-slate-600 font-semibold">Barajas T4</div>
+                </div>
+                <div class="flex-1 flex flex-col items-center px-2">
+                  <div class="text-[11px] font-bold text-slate-700">${retCan?.airlineName || 'Iberia Express'}</div>
+                  <div class="w-full flex items-center gap-1 my-1">
+                    <div class="h-0.5 flex-1 bg-slate-300"></div>
+                    <span class="text-xs text-slate-600">✈️</span>
+                    <div class="h-0.5 flex-1 bg-slate-300"></div>
+                  </div>
+                  <div class="text-[10px] font-bold text-slate-600">Directo · 3h 10m</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xl font-black font-mono text-slate-900">${retCan?.outbound?.schedule?.split('→')[1]?.trim() || '18:55'}</div>
+                  <div class="text-xs font-black text-slate-800">SPC</div>
+                  <div class="text-[11px] text-slate-600 font-semibold">La Palma</div>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="text-slate-700 font-semibold">
+                  <span>✈️ ${retCan?.aircraft || 'Airbus A320neo'}</span> · <span>🧳 Maleta facturada</span>
+                </div>
+                <div class="text-emerald-700 font-mono font-black text-sm">
+                  ${formatMXN(retCan?.price || 1142)}
+                </div>
+              </div>
+              <div class="bg-emerald-50/70 text-emerald-950 text-xs p-2.5 rounded-xl border border-emerald-200 leading-relaxed font-medium">
+                Arribo a La Palma a las 18:55 h. Ambos pasajeros se encuentran en sus destinos finales. 37 días de itinerario completados con éxito.
+              </div>
+            </div>
+          `
+        }
+      ];
+
+      let visibleEvents = events;
+      if (timelineActiveFilter === 'flights') {
+        visibleEvents = events.filter(e => e.type === 'flight');
+      } else if (timelineActiveFilter === 'stays') {
+        visibleEvents = events.filter(e => e.type === 'stay');
+      }
+
+      container.innerHTML = `
+        <!-- TOOLBAR DE FILTROS -->
+        <div class="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-extrabold text-slate-800 mr-1">Filtrar Vista:</span>
+            <button onclick="setTimelineFilter('all')" class="px-3.5 py-1.5 rounded-xl font-bold transition ${timelineActiveFilter === 'all' ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}">
+              Todos los Eventos (${events.length})
+            </button>
+            <button onclick="setTimelineFilter('flights')" class="px-3.5 py-1.5 rounded-xl font-bold transition ${timelineActiveFilter === 'flights' ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}">
+              ✈️ Solo Vuelos (${events.filter(e => e.type === 'flight').length})
+            </button>
+            <button onclick="setTimelineFilter('stays')" class="px-3.5 py-1.5 rounded-xl font-bold transition ${timelineActiveFilter === 'stays' ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'}">
+              🏨 Solo Estancias (${events.filter(e => e.type === 'stay').length})
+            </button>
+          </div>
+          <span class="text-xs text-slate-600 font-semibold">Itinerario sincronizado punto a punto</span>
+        </div>
+
+        <!-- LÍNEA DE TIEMPO VERTICAL (SPINE CONTINUO) -->
+        <div class="relative pl-6 md:pl-10 space-y-6 pt-3 before:absolute before:top-5 before:bottom-5 before:left-3 md:before:left-5 before:w-0.5 before:bg-slate-200">
+          ${visibleEvents.map(evt => `
+            <div class="relative group">
+              <!-- Marcador Circular sobre el Spine -->
+              <div class="absolute -left-6 md:-left-10 top-4 w-6 h-6 md:w-8 md:h-8 rounded-full bg-white border-2 ${evt.type === 'stay' ? 'border-amber-500 text-amber-700' : 'border-indigo-600 text-indigo-700'} flex items-center justify-center text-xs md:text-sm font-black shadow-xs">
+                ${evt.stepIcon}
+              </div>
+
+              <!-- Tarjeta del Evento -->
+              <div class="bg-white border-2 border-slate-200/90 hover:border-indigo-300 rounded-3xl p-5 md:p-6 shadow-xs transition space-y-4">
+                <!-- Encabezado de la Tarjeta -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-slate-100">
+                  <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ${evt.categoryClass}">
+                        ${evt.categoryTag}
+                      </span>
+                      <span class="text-xs font-mono font-bold text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-200">
+                        ${evt.dateRange}
+                      </span>
+                    </div>
+                    <h4 class="text-base sm:text-lg font-black text-slate-900">${evt.title}</h4>
+                  </div>
+
+                  <div class="self-start sm:self-auto">
+                    <span class="px-3 py-1 rounded-xl text-xs font-black border ${evt.statusClass}">
+                      ${evt.statusBadge}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Contenido del Evento -->
+                <div>
+                  ${evt.content}
+                </div>
               </div>
             </div>
           `).join('')}
