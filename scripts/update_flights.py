@@ -203,7 +203,7 @@ def parse_google_flights_to_catalog(raw_flights, traveler, segment_key, dep_id, 
         aircraft = first_leg.get("airplane") or "Cabina Ancha"
         is_direct = len(flights_sub) == 1
         layovers = f_raw.get("layovers", [])
-        stops = [l.get("id") for l in layovers]
+        stops = [l.get("id") for l in layovers if l.get("id")]
 
         us_transit = any(s in ["MIA", "JFK", "EWR", "ORD", "IAH", "DFW", "ATL", "LAX"] for s in stops) or ("United" in main_airline and not is_direct)
 
@@ -214,7 +214,8 @@ def parse_google_flights_to_catalog(raw_flights, traveler, segment_key, dep_id, 
         if dur_h > 0:
             sched += f" ({dur_h}h {dur_m}m)"
 
-        title = f"{main_airline} {fn_str} ({'Directo' if is_direct else f'Escala {stops[0]}'} {dep_time} → {arr_time}) · ${price:,} MXN"
+        stop_desc = f"Escala {stops[0]}" if stops else ("Directo" if is_direct else "Con escala")
+        title = f"{main_airline} {fn_str} ({stop_desc} {dep_time} → {arr_time}) · ${price:,} MXN"
         if is_direct and price < 16000:
             title += " ⭐ Recomendado"
 
@@ -255,35 +256,23 @@ def parse_google_flights_to_catalog(raw_flights, traveler, segment_key, dep_id, 
         elif traveler == "yesica" and validate_yesica_flight(mario_flight):
             discovered[fid] = mario_flight
 
-        # Si es un vuelo conjunto, generar la opción sincronizada para Yesica
+        # Si es un vuelo conjunto, generar la opción sincronizada para Yesica (mismo costo y cabina sin duplicar retorno)
         if is_joint and traveler == "mario":
             y_fid = f"live_{segment_key}_yesica_{airline_code}_{clean_fn}_{idx}"
-            y_ret_date = return_date or "2026-11-27"
-            y_price = price + 10500  # Conexión de retorno transatlántico a Canarias
-
-            ret_route = f"{arr_id} ➔ MAD ➔ {return_dest}"
-            ret_fn = f"{airline_code.upper()[:2]}RET/IB3842"
-
             yesica_ticket = {
                 "id": y_fid,
                 "traveler": "yesica",
                 "segment": segment_key,
-                "title": f"{main_airline} ({fn_str}) · Vuelo Conjunto con Retorno a Canarias (${y_price:,} MXN)",
+                "title": f"{main_airline} ({fn_str}) · Asiento Conjunto con Mario (${price:,} MXN)",
                 "airline": airline_code,
                 "airlineName": main_airline,
-                "price": y_price,
+                "price": price,
                 "occupancy": mario_flight["occupancy"],
                 "seatsLeft": mario_flight["seatsLeft"],
                 "aircraft": aircraft,
-                "description": f"Ida conjunta con Mario ({dep_id} ➔ {arr_id}) y retorno multidestino hacia Canarias ({return_dest}).",
+                "description": f"Vuelo transatlántico conjunto con Mario ({dep_id} ➔ {arr_id}) en misma cabina y horario.",
                 "outbound": mario_flight["outbound"],
-                "return": {
-                    "route": ret_route,
-                    "schedule": "20:00 → 19:35 (+1)",
-                    "flightNumber": ret_fn,
-                    "date": y_ret_date
-                },
-                "class": "Tarifa Multidestino",
+                "class": mario_flight["class"],
                 "bag": True,
                 "carry": True,
                 "seat": True,
@@ -412,8 +401,23 @@ def update_catalog(target_routes=None):
 
     serpapi_key = os.getenv("SERPAPI_API_KEY")
     if not serpapi_key:
-        print("❌ No se encontró SERPAPI_API_KEY en variables de entorno ni .env.")
-        return False
+        print("⚠️ AVISO: No se encontró la variable SERPAPI_API_KEY en el entorno de ejecución.")
+        print("ℹ️ Para activar el descubrimiento en vivo de vuelos en GitHub Actions:")
+        print("   1. Ve a tu repositorio en GitHub: Settings > Secrets and variables > Actions")
+        print("   2. Crea un nuevo Secret llamado 'SERPAPI_API_KEY' con tu API Key de SerpApi.")
+        print("ℹ️ Manteniendo catálogo existente y actualizando timestamp de sincronización.")
+
+        now_iso = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        data["lastUpdated"] = now_iso
+        if "apiMetadata" in data:
+            data["apiMetadata"]["lastChecked"] = now_iso
+
+        DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(DATA_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"✅ Catálogo mantenido con timestamp actualizado: {DATA_FILE}")
+        return True
 
     acc_info = fetch_serpapi_account_info(serpapi_key)
     print(f"📊 [CUOTA SERPAPI]: {acc_info.get('searchesRemaining')} de {acc_info.get('searchesLimit')} búsquedas disponibles.")
