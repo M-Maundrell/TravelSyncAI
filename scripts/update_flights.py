@@ -221,6 +221,10 @@ def parse_google_flights_to_catalog(raw_flights, traveler, segment_key, dep_id, 
 
         g_url = f"https://www.google.com/travel/flights?q=Flights%20from%20{dep_id}%20to%20{arr_id}%20on%20{date_str}"
 
+        stops_str = ", ".join(stops) if stops else "escala"
+        flight_desc_type = "directo" if is_direct else f"con escala en {stops_str}"
+        flight_desc = f"Vuelo {flight_desc_type} operado por {main_airline} ({dep_id} a {arr_id}). Descubierto en vivo vía Google Flights API."
+
         mario_flight = {
             "id": fid,
             "traveler": traveler,
@@ -232,7 +236,7 @@ def parse_google_flights_to_catalog(raw_flights, traveler, segment_key, dep_id, 
             "occupancy": 68 + (price % 22),
             "seatsLeft": 3 + (price % 7),
             "aircraft": aircraft,
-            "description": f"Vuelo {'directo' if is_direct else f'con escala en {', '.join(stops)}'} operado por {main_airline} ({dep_id} a {arr_id}). Descubierto en vivo vía Google Flights API.",
+            "description": flight_desc,
             "outbound": {
                 "route": f"{dep_id} ➔ {arr_id}",
                 "schedule": sched,
