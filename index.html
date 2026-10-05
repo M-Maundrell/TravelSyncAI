@@ -2088,6 +2088,8 @@
 
       if (modal) {
         modal.classList.remove('hidden');
+        const errBtn = document.getElementById('discovery-error-actions');
+        if (errBtn) errBtn.classList.add('hidden');
         if (progressBar) progressBar.style.width = '10%';
         if (percentageText) percentageText.innerText = '10%';
         if (statusText) statusText.innerText = 'Conectando con Google Flights Live API...';
@@ -2131,18 +2133,20 @@
         }
       } catch(e) {
         console.error('API backend error', e);
-        if (statusText) statusText.innerText = 'Backend no disponible. Generando vuelos estáticos locales...';
+        if (statusText) statusText.innerText = 'Error crítico: No se pudo conectar al Backend de Azure.';
         for (let i = 0; i < searchRoutes.length; i++) {
-            generateFallbackFlights(searchRoutes[i], searchRoutes[i].dep, searchRoutes[i].arr, searchRoutes[i].date);
             const legDot = document.getElementById(`disc-dot-${i}`);
             const legState = document.getElementById(`disc-state-${i}`);
-            if (legDot) legDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
+            if (legDot) legDot.className = 'w-2 h-2 rounded-full bg-red-500';
             if (legState) {
-                legState.className = 'text-[11px] font-mono text-emerald-400 font-bold';
-                legState.innerText = `✓ Vuelos de respaldo`;
+                legState.className = 'text-[11px] font-mono text-red-500 font-bold';
+                legState.innerText = `✗ Error de conexión`;
             }
         }
+        document.getElementById('discovery-error-actions').classList.remove('hidden');
+        return; 
       }
+
 
       if (progressBar) progressBar.style.width = '100%';
       if (percentageText) percentageText.innerText = '100%';
