@@ -1,0 +1,19 @@
+{
+  "hosting": {
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/update-flights",
+        "function": "discover_flights"
+      }
+    ]
+  },
+  "functions": {
+    "source": "functions"
+  }
+}
