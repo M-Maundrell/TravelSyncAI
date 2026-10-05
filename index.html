@@ -3466,6 +3466,7 @@
       state[tKey][legId] = flightId;
       
       renderStep3();
+      render();
     }
 
     // ─── SELECTORES DE PAÍS & CIUDAD EN CASCADA ───
@@ -4712,349 +4713,316 @@
       const n1 = tripConfig.p1.name || 'Titular';
       const n2 = tripConfig.p2.name || 'Acompañante';
 
-      const p1Orig = tripConfig.p1.origin ? (tripConfig.p1.origin.split('—')[0]?.trim() || 'MEX') : 'MEX';
-      const p2Orig = tripConfig.p2.origin ? (tripConfig.p2.origin.split('—')[0]?.trim() || 'SPC') : 'SPC';
+      const p1Orig = tripConfig.p1.origin ? (tripConfig.p1.origin.split('—')[0]?.trim() || 'ORIGEN') : 'ORIGEN';
+      const p2Orig = tripConfig.p2.origin ? (tripConfig.p2.origin.split('—')[0]?.trim() || 'ORIGEN') : 'ORIGEN';
 
-      const wps = tripConfig.p1.waypoints && tripConfig.p1.waypoints.length > 0
-        ? tripConfig.p1.waypoints
-        : [
-            { name: "Madrid (MAD)", arrivalDate: "2026-10-17", departureDate: "2026-10-21", jointFlight: false },
-            { name: "Barcelona (BCN)", arrivalDate: "2026-10-21", departureDate: "2026-10-24", jointFlight: true }
-          ];
+      const wps = tripConfig.p1.waypoints || [];
+      const isSinglePassenger = tripConfig.passengerCount === 1;
 
-      const totalSteps = wps.length + 2; // [0: Orígenes] + [1..K: Estancias] + [K+1: Retorno]
+      if (wps.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-xs text-slate-400 bg-slate-900/60 rounded-2xl border border-slate-800">
+            Agrega paradas o destinos en el Paso 2 para generar el diagrama dinámico de ruta.
+          </div>
+        `;
+        return;
+      }
+
+      const hasRoundtrip = wps.some(w => w.isRoundtrip);
+      const totalSteps = wps.length + (hasRoundtrip ? 2 : 1);
       const svgWidth = Math.max(820, totalSteps * 165);
-      const svgHeight = 230;
+      const svgHeight = isSinglePassenger ? 170 : 230;
 
       const getX = (idx) => Math.round(75 + idx * ((svgWidth - 150) / (totalSteps - 1)));
-      const yMario = 60;
+      const yP1 = isSinglePassenger ? 85 : 60;
       const yCenter = 115;
-      const yYesica = 170;
-
-      // Extraer vuelos seleccionados para las etiquetas
-      const mSal = getCatalogBrick(state.mario.salida);
-      const ySal = getCatalogBrick(state.yesica.salida);
-      const mTrans = isMarioAlt() ? getCatalogBrick(state.mario.bog_esp) : getCatalogBrick(state.mario.trans);
-      const yTrans = getCatalogBrick(state.yesica.trans);
-      const retTrans = getCatalogBrick(state.yesica.retorno_trans);
-      const retCan = getCatalogBrick(state.yesica.retorno_canarias);
-      const jointFlight = mTrans;
-
-      const isSinglePassenger = tripConfig.passengerCount === 1;
-      const mJointFn = isMarioAlt() ? (mTrans?.return?.flightNumber || 'IB0153') : (mTrans?.outbound?.flightNumber || 'IB6403');
-      const yJointFn = yTrans?.outbound?.flightNumber || mJointFn;
-      const isSynced = mJointFn === yJointFn;
+      const yP2 = 170;
 
       let tracksSvg = '';
       let pillsSvg = '';
       let stationsSvg = '';
 
-      // ─── 1. ESTACIONES INICIALES (ORÍGENES) ───
+      // 1. NODO ORIGEN
       const xStart = getX(0);
       const isP1OrigSelected = selectedPvNodeId === 'p1_orig';
       const isP2OrigSelected = selectedPvNodeId === 'p2_orig';
 
       stationsSvg += `
-        <!-- Origen Mario -->
-        <g transform="translate(${xStart}, ${yMario})" onclick="selectPathNode('p1_orig')" class="cursor-pointer" filter="url(#pvShadow)">
+        <g transform="translate(${xStart}, ${yP1})" onclick="selectPathNode('p1_orig')" class="cursor-pointer" filter="url(#pvShadow)">
           ${isP1OrigSelected ? '<circle r="22" fill="none" stroke="#60a5fa" stroke-width="3" stroke-dasharray="4,2" />' : ''}
           <circle r="15" fill="${isP1OrigSelected ? '#2563eb' : '#1e293b'}" stroke="#3b82f6" stroke-width="3" />
           <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🛫</text>
           <text x="0" y="-22" fill="#93c5fd" font-size="11" font-weight="800" text-anchor="middle">${n1}: ${p1Orig}</text>
-          <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${tripConfig.p1.startDate || '16 Oct'}</text>
+          <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${tripConfig.p1.startDate || 'Salida'}</text>
         </g>
-        ${isSinglePassenger ? "" : `
-        <!-- Origen Yesica -->
-        <g transform="translate(${xStart}, ${yYesica})" onclick="selectPathNode('p2_orig')" class="cursor-pointer" filter="url(#pvShadow)">
+        ${isSinglePassenger ? '' : `
+        <g transform="translate(${xStart}, ${yP2})" onclick="selectPathNode('p2_orig')" class="cursor-pointer" filter="url(#pvShadow)">
           ${isP2OrigSelected ? '<circle r="22" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="4,2" />' : ''}
           <circle r="15" fill="${isP2OrigSelected ? '#db2777' : '#1e293b'}" stroke="#ec4899" stroke-width="3" />
           <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🛫</text>
           <text x="0" y="-22" fill="#f472b6" font-size="11" font-weight="800" text-anchor="middle">${n2}: ${p2Orig}</text>
-          <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${tripConfig.p2.startDate || '16 Oct'}</text>
-        </g>`}
+          <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${tripConfig.p2.startDate || 'Salida'}</text>
+        </g>
+        `}
       `;
 
-      let prevIsJoint = false;
       let prevX = xStart;
 
-      // ─── 2. ESTANCIAS DINÁMICAS (PASO 2) ───
+      // 2. NODOS DE ESTANCIAS
       wps.forEach((wp, i) => {
         const stepIdx = i + 1;
         const curX = getX(stepIdx);
         const midX = Math.round((prevX + curX) / 2);
-
-        let cleanName = wp.name || `Estancia ${stepIdx}`;
-        if (cleanName.includes('—')) cleanName = cleanName.split('—')[1].trim();
-
-        const nodeKey = i === 0 ? 'wp_0' : (i === wps.length - 1 ? 'joint' : `wp_${i}`);
+        const nodeKey = `wp_${i}`;
         const isWpSelected = selectedPvNodeId === nodeKey;
 
-        if (i === 0) {
+        const legFlightP1 = getCatalogBrick(state.p1?.[`leg_p1_${i}`]);
+        const flightLabel = legFlightP1?.airlineName || legFlightP1?.title?.split('(')[0]?.trim() || `Tramo ${i + 1}`;
+
+        if (isSinglePassenger) {
           tracksSvg += `
-            <path d="M ${prevX} ${yMario} C ${midX} ${yMario}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvBlueToGreen)" stroke-width="4" stroke-linecap="round" />
-            ${isSinglePassenger ? "" : `<path d="M ${prevX} ${yYesica} C ${midX} ${yYesica}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvPinkToGreen)" stroke-width="4" stroke-linecap="round" />`}
+            <line x1="${prevX}" y1="${yP1}" x2="${curX}" y2="${yP1}" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" />
           `;
           pillsSvg += `
-            <g transform="translate(${Math.round(prevX + (curX - prevX) * 0.35)}, ${yMario - 5})" onclick="selectPathNode('p1_orig')" class="cursor-pointer" filter="url(#pvShadow)">
-              <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" />
-              <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">✈️ Salida ${p1Orig}</text>
+            <g transform="translate(${midX}, ${yP1 - 14})" onclick="selectPathNode('${nodeKey}')" class="cursor-pointer" filter="url(#pvShadow)">
+              <rect x="-45" y="-10" width="90" height="20" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" />
+              <text x="0" y="3.5" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">✈️ ${flightLabel}</text>
             </g>
-            ${isSinglePassenger ? "" : `<g transform="translate(${Math.round(prevX + (curX - prevX) * 0.35)}, ${yYesica + 5})" onclick="selectPathNode('p2_orig')" class="cursor-pointer" filter="url(#pvShadow)">
-              <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#831843" stroke="#f472b6" stroke-width="1.5" />
-              <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">✈️ Salida ${p2Orig}</text>
-            </g>`}
-            <g transform="translate(${Math.round(prevX + (curX - prevX) * 0.72)}, ${yCenter})" onclick="selectPathNode('wp_0')" class="cursor-pointer" filter="url(#pvShadow)">
-              <rect x="-42" y="-11" width="84" height="22" rx="11" fill="#1e293b" stroke="#34d399" stroke-width="1.5" />
-              <text x="0" y="3.5" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle">✨ Encuentro</text>
+          `;
+          stationsSvg += `
+            <g transform="translate(${curX}, ${yP1})" onclick="selectPathNode('${nodeKey}')" class="cursor-pointer" filter="url(#pvShadow)">
+              ${isWpSelected ? '<circle r="23" fill="none" stroke="#34d399" stroke-width="3.5" stroke-dasharray="5,2" />' : ''}
+              <circle r="16" fill="${isWpSelected ? '#047857' : '#065f46'}" stroke="#34d399" stroke-width="3.5" />
+              <text x="0" y="4" fill="#ffffff" font-size="11" font-weight="900" text-anchor="middle">📍</text>
+              <text x="0" y="-23" fill="#6ee7b7" font-size="11" font-weight="900" text-anchor="middle">${wp.name || wp.cityCode}</text>
+              <text x="0" y="28" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="middle">${wp.arrivalDate || ''}</text>
             </g>
           `;
         } else {
-          tracksSvg += `
-            <line x1="${prevX}" y1="${yCenter}" x2="${curX}" y2="${yCenter}" stroke="${isSynced ? '#10b981' : '#f59e0b'}" stroke-width="6" stroke-linecap="round" ${isSynced ? '' : 'stroke-dasharray="6,4"'} />
-          `;
+          if (i === 0) {
+            tracksSvg += `
+              <path d="M ${prevX} ${yP1} C ${midX} ${yP1}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvBlueToGreen)" stroke-width="4" stroke-linecap="round" />
+              <path d="M ${prevX} ${yP2} C ${midX} ${yP2}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvPinkToGreen)" stroke-width="4" stroke-linecap="round" />
+            `;
+          } else {
+            tracksSvg += `
+              <line x1="${prevX}" y1="${yCenter}" x2="${curX}" y2="${yCenter}" stroke="#10b981" stroke-width="5" stroke-linecap="round" />
+            `;
+          }
           pillsSvg += `
-            <g transform="translate(${midX}, ${yCenter})" onclick="selectPathNode('joint')" class="cursor-pointer" filter="url(#pvShadow)">
-              <rect x="-55" y="-13" width="110" height="26" rx="13" fill="${isSynced ? '#064e3b' : '#78350f'}" stroke="${isSynced ? '#34d399' : '#fbbf24'}" stroke-width="2" />
-              <text x="0" y="3.5" fill="#ffffff" font-size="9.5" font-weight="900" text-anchor="middle">✈️ ${mJointFn} ${isSynced ? '(Juntos)' : '(Separados)'}</text>
+            <g transform="translate(${midX}, ${yCenter - 14})" onclick="selectPathNode('${nodeKey}')" class="cursor-pointer" filter="url(#pvShadow)">
+              <rect x="-50" y="-11" width="100" height="22" rx="11" fill="#064e3b" stroke="#34d399" stroke-width="1.5" />
+              <text x="0" y="3.5" fill="#ffffff" font-size="9" font-weight="900" text-anchor="middle">✈️ ${flightLabel}</text>
+            </g>
+          `;
+          stationsSvg += `
+            <g transform="translate(${curX}, ${yCenter})" onclick="selectPathNode('${nodeKey}')" class="cursor-pointer" filter="url(#pvShadow)">
+              ${isWpSelected ? '<circle r="23" fill="none" stroke="#34d399" stroke-width="3.5" stroke-dasharray="5,2" />' : ''}
+              <circle r="16" fill="${isWpSelected ? '#047857' : '#065f46'}" stroke="#34d399" stroke-width="3.5" />
+              <text x="0" y="4" fill="#ffffff" font-size="11" font-weight="900" text-anchor="middle">📍</text>
+              <text x="0" y="-23" fill="#6ee7b7" font-size="11" font-weight="900" text-anchor="middle">${wp.name || wp.cityCode}</text>
+              <text x="0" y="28" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="middle">${wp.arrivalDate || ''}</text>
             </g>
           `;
         }
 
-        stationsSvg += `
-          <g transform="translate(${curX}, ${yCenter})" onclick="selectPathNode('${nodeKey}')" class="cursor-pointer" filter="url(#pvShadow)">
-            ${isWpSelected ? '<circle r="23" fill="none" stroke="#34d399" stroke-width="3.5" stroke-dasharray="5,2" />' : ''}
-            <circle r="16" fill="${isWpSelected ? '#047857' : '#065f46'}" stroke="#34d399" stroke-width="3.5" />
-            <text x="0" y="4" fill="#ffffff" font-size="11" font-weight="900" text-anchor="middle">📍</text>
-            <text x="0" y="-23" fill="#6ee7b7" font-size="11" font-weight="900" text-anchor="middle">${cleanName}</text>
-            <text x="0" y="28" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="middle">${wp.arrivalDate ? wp.arrivalDate.substring(5) : ''} al ${wp.departureDate ? wp.departureDate.substring(5) : ''}</text>
-          </g>
-        `;
-
-        prevIsJoint = true;
         prevX = curX;
       });
 
-      // ─── 3. RETORNO / DESTINOS FINALES ───
-      const xEnd = getX(totalSteps - 1);
-      const midRetX = Math.round((prevX + xEnd) / 2);
-      const isRetSelected = selectedPvNodeId === 'retorno';
+      // 3. RETORNO (SI APLICA)
+      if (hasRoundtrip) {
+        const xEnd = getX(totalSteps - 1);
+        const midRetX = Math.round((prevX + xEnd) / 2);
+        const isRetSelected = selectedPvNodeId === 'retorno';
+        const lastWp = wps[wps.length - 1];
 
-      if (prevIsJoint) {
-        tracksSvg += `
-          <path d="M ${prevX} ${yCenter} C ${midRetX} ${yCenter}, ${midRetX} ${yMario}, ${xEnd} ${yMario}" fill="none" stroke="url(#pvGreenToBlue)" stroke-width="4" stroke-linecap="round" />
-          ${isSinglePassenger ? "" : `<path d="M ${prevX} ${yCenter} C ${midRetX} ${yCenter}, ${midRetX} ${yYesica}, ${xEnd} ${yYesica}" fill="none" stroke="url(#pvGreenToPink)" stroke-width="4" stroke-linecap="round" />`}
-        `;
-      } else {
-        tracksSvg += `
-          <line x1="${prevX}" y1="${yMario}" x2="${xEnd}" y2="${yMario}" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" />
-          ${isSinglePassenger ? "" : `<line x1="${prevX}" y1="${yYesica}" x2="${xEnd}" y2="${yYesica}" stroke="#ec4899" stroke-width="4" stroke-linecap="round" />`}
-        `;
+        if (isSinglePassenger) {
+          tracksSvg += `
+            <line x1="${prevX}" y1="${yP1}" x2="${xEnd}" y2="${yP1}" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" />
+          `;
+          pillsSvg += `
+            <g transform="translate(${midRetX}, ${yP1 + 15})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
+              <rect x="-40" y="-10" width="80" height="20" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" />
+              <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">🛬 Retorno</text>
+            </g>
+          `;
+          stationsSvg += `
+            <g transform="translate(${xEnd}, ${yP1})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
+              ${isRetSelected ? '<circle r="22" fill="none" stroke="#60a5fa" stroke-width="3" stroke-dasharray="4,2" />' : ''}
+              <circle r="15" fill="${isRetSelected ? '#2563eb' : '#1e293b'}" stroke="#3b82f6" stroke-width="3" />
+              <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🏠</text>
+              <text x="0" y="-22" fill="#93c5fd" font-size="11" font-weight="800" text-anchor="middle">${n1}: ${p1Orig}</text>
+              <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${lastWp?.departureDate || 'Llegada'}</text>
+            </g>
+          `;
+        } else {
+          tracksSvg += `
+            <path d="M ${prevX} ${yCenter} C ${midRetX} ${yCenter}, ${midRetX} ${yP1}, ${xEnd} ${yP1}" fill="none" stroke="url(#pvGreenToBlue)" stroke-width="4" stroke-linecap="round" />
+            <path d="M ${prevX} ${yCenter} C ${midRetX} ${yCenter}, ${midRetX} ${yP2}, ${xEnd} ${yP2}" fill="none" stroke="url(#pvGreenToPink)" stroke-width="4" stroke-linecap="round" />
+          `;
+          pillsSvg += `
+            <g transform="translate(${midRetX}, ${yP1 + 15})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
+              <rect x="-35" y="-10" width="70" height="20" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" />
+              <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">🛬 Retorno</text>
+            </g>
+            <g transform="translate(${midRetX}, ${yP2 - 15})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
+              <rect x="-35" y="-10" width="70" height="20" rx="10" fill="#831843" stroke="#f472b6" stroke-width="1.5" />
+              <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">🛬 Retorno</text>
+            </g>
+          `;
+          stationsSvg += `
+            <g transform="translate(${xEnd}, ${yP1})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
+              ${isRetSelected ? '<circle r="22" fill="none" stroke="#60a5fa" stroke-width="3" stroke-dasharray="4,2" />' : ''}
+              <circle r="15" fill="${isRetSelected ? '#2563eb' : '#1e293b'}" stroke="#3b82f6" stroke-width="3" />
+              <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🏠</text>
+              <text x="0" y="-22" fill="#93c5fd" font-size="11" font-weight="800" text-anchor="middle">${n1}: ${p1Orig}</text>
+              <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${lastWp?.departureDate || 'Llegada'}</text>
+            </g>
+            <g transform="translate(${xEnd}, ${yP2})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
+              ${isRetSelected ? '<circle r="22" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="4,2" />' : ''}
+              <circle r="15" fill="${isRetSelected ? '#db2777' : '#1e293b'}" stroke="#ec4899" stroke-width="3" />
+              <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🏠</text>
+              <text x="0" y="-22" fill="#f472b6" font-size="11" font-weight="800" text-anchor="middle">${n2}: ${p2Orig}</text>
+              <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${lastWp?.departureDate || 'Llegada'}</text>
+            </g>
+          `;
+        }
       }
 
-      pillsSvg += `
-        <g transform="translate(${midRetX}, ${yMario + 15})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
-          <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" />
-          <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">🛬 Retorno</text>
-        </g>
-        ${isSinglePassenger ? "" : `<g transform="translate(${midRetX}, ${yYesica - 15})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
-          <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#831843" stroke="#f472b6" stroke-width="1.5" />
-          <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">🛬 Retorno</text>
-        </g>`}
-      `;
-
-      stationsSvg += `
-        <g transform="translate(${xEnd}, ${yMario})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
-          ${isRetSelected ? '<circle r="22" fill="none" stroke="#60a5fa" stroke-width="3" stroke-dasharray="4,2" />' : ''}
-          <circle r="15" fill="${isRetSelected ? '#2563eb' : '#1e293b'}" stroke="#3b82f6" stroke-width="3" />
-          <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🛬</text>
-          <text x="0" y="-22" fill="#93c5fd" font-size="11" font-weight="800" text-anchor="middle">${n1}: ${p1Orig}</text>
-          <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">Llegada</text>
-        </g>
-        ${isSinglePassenger ? "" : `<g transform="translate(${xEnd}, ${yYesica})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
-          ${isRetSelected ? '<circle r="22" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="4,2" />' : ''}
-          <circle r="15" fill="${isRetSelected ? '#db2777' : '#1e293b'}" stroke="#ec4899" stroke-width="3" />
-          <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🛬</text>
-          <text x="0" y="-22" fill="#f472b6" font-size="11" font-weight="800" text-anchor="middle">${n2}: ${p2Orig}</text>
-          <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">Llegada</text>
-        </g>`}
-      `;
-
-      // ─── 4. INSPECTOR DINÁMICO DE DETALLES DEL NODO SELECCIONADO ───
+      // 4. INSPECTOR DINÁMICO SEGÚN NODO SELECCIONADO
       let inspectorHtml = '';
+
       if (selectedPvNodeId === 'p1_orig') {
+        const f0 = getCatalogBrick(state.p1?.['leg_p1_0']);
         inspectorHtml = `
           <div class="bg-slate-900/95 border-2 border-blue-500/60 rounded-2xl p-4 md:p-5 text-xs space-y-3 shadow-xl">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-800 gap-2">
               <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></span>
-                <h4 class="text-sm font-extrabold text-blue-300">Nodo Seleccionado: Salida Pasajero 1 · ${n1} (${p1Orig})</h4>
+                <h4 class="text-sm font-extrabold text-blue-300">Origen: Salida de ${n1} (${p1Orig})</h4>
               </div>
-              <span class="text-[11px] font-mono font-bold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-lg border border-slate-700">16 Oct 2026 · Vuelo Individual</span>
+              <span class="text-[11px] font-mono font-bold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-lg border border-slate-700">📅 ${tripConfig.p1.startDate || 'Fecha por definir'}</span>
             </div>
             <div class="grid grid-cols-1 ${isSinglePassenger ? '' : 'md:grid-cols-2'} gap-3">
               <div class="bg-slate-950 p-3.5 rounded-xl border border-blue-900/60 space-y-2">
                 <div class="text-[10px] font-black text-blue-400 uppercase tracking-wider flex justify-between">
                   <span>👤 ${n1} · Vuelo Salida</span>
-                  <span class="font-mono">${mSal?.outbound?.flightNumber || ''}</span>
+                  <span class="font-mono text-white">${f0?.airlineName || ''}</span>
                 </div>
-                <div class="text-sm font-black text-white">${mSal?.title || 'Vuelo de Salida'}</div>
+                <div class="text-sm font-black text-white">${f0?.title || 'Vuelo pendiente de seleccionar'}</div>
                 <div class="text-slate-300 flex justify-between">
-                  <span>🛫 <strong>${mSal?.outbound?.route || (p1Orig + ' ➔ Destino')}</strong></span>
-                  <span class="font-mono font-bold text-blue-300">${mSal?.outbound?.schedule || ''}</span>
+                  <span>🛫 <strong>${f0?.outbound?.route || (p1Orig + ' ➔ ' + (wps[0]?.cityCode || 'Destino'))}</strong></span>
+                  <span class="font-mono font-bold text-blue-300">${f0?.outbound?.schedule || ''}</span>
                 </div>
                 <div class="text-slate-400 text-[11px] flex justify-between pt-1 border-t border-slate-800">
-                  <span>✈️ ${mSal?.aircraft || 'Comercial'}</span>
-                  <span class="font-bold text-white font-mono text-sm">${mSal ? formatMXN(mSal.price) : ''}</span>
+                  <span>✈️ ${f0?.aircraft || 'Comercial'}</span>
+                  <span class="font-bold text-white font-mono text-sm">${f0 ? formatMXN(f0.price) : '$0 MXN'}</span>
                 </div>
               </div>
               ${isSinglePassenger ? '' : `
               <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2 text-slate-400">
-                <div class="text-[10px] font-black text-slate-400 uppercase tracking-wider">👤 Pasajero 2 (${n2})</div>
-                <div class="text-xs text-slate-300">Salida desde ${p2Orig}.</div>
-                <div class="text-[11px] text-pink-400 font-semibold">${ySal?.title || 'Vuelo no asignado'} ${ySal ? '· ' + formatMXN(ySal.price) : ''}</div>
+                <div class="text-[10px] font-black text-slate-400 uppercase tracking-wider">👤 ${n2} (${p2Orig})</div>
+                <div class="text-xs text-slate-300">Salida desde ${p2Orig} programada para el ${tripConfig.p2.startDate || 'fecha inicial'}.</div>
               </div>
               `}
             </div>
           </div>
         `;
-      } else if (selectedPvNodeId === 'p2_orig') {
+      } else if (selectedPvNodeId === 'retorno') {
+        const lastIdx = wps.length - 1;
+        const lastWp = wps[lastIdx];
+        const retFlightP1 = getCatalogBrick(state.p1?.[`leg_p1_${lastIdx}_ret`]);
+        const retFlightP2 = isSinglePassenger ? null : getCatalogBrick(state.p2?.[`leg_p2_${lastIdx}_ret`]);
         inspectorHtml = `
-          <div class="bg-slate-900/95 border-2 border-pink-500/60 rounded-2xl p-4 md:p-5 text-xs space-y-3 shadow-xl">
+          <div class="bg-slate-900/95 border-2 border-indigo-500/60 rounded-2xl p-4 md:p-5 text-xs space-y-3 shadow-xl">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-800 gap-2">
               <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-pink-500 animate-pulse"></span>
-                <h4 class="text-sm font-extrabold text-pink-300">Nodo Seleccionado: Salida Pasajero 2 · ${n2} (${p2Orig})</h4>
+                <span class="w-3 h-3 rounded-full bg-indigo-500"></span>
+                <h4 class="text-sm font-extrabold text-indigo-300">Retorno a Residencia</h4>
               </div>
-              <span class="text-[11px] font-mono font-bold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-lg border border-slate-700">16 Oct 2026 · Vuelo Individual</span>
+              <span class="text-[11px] font-mono font-bold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-lg border border-slate-700">📅 ${lastWp?.departureDate || 'Fecha por definir'}</span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-pink-900/60 space-y-2">
-                <div class="text-[10px] font-black text-pink-400 uppercase tracking-wider flex justify-between">
-                  <span>👤 ${n2} · Vuelo Asignado (Tramo 2)</span>
-                  <span class="font-mono">${ySal?.outbound?.flightNumber || 'I21535'}</span>
+            <div class="grid grid-cols-1 ${isSinglePassenger ? '' : 'md:grid-cols-2'} gap-3">
+              <div class="bg-slate-950 p-3.5 rounded-xl border border-blue-900/60 space-y-2">
+                <div class="text-[10px] font-black text-blue-400 uppercase tracking-wider flex justify-between">
+                  <span>👤 ${n1} · Retorno hacia ${p1Orig}</span>
+                  <span class="font-mono text-white">${retFlightP1?.airlineName || ''}</span>
                 </div>
-                <div class="text-sm font-black text-white">${ySal?.title || 'Iberia Express I21535'}</div>
+                <div class="text-sm font-black text-white">${retFlightP1?.title || 'Vuelo de regreso pendiente de seleccionar'}</div>
                 <div class="text-slate-300 flex justify-between">
-                  <span>🛫 <strong>${ySal?.outbound?.route || 'SPC ➔ MAD'}</strong></span>
-                  <span class="font-mono font-bold text-pink-300">${ySal?.outbound?.schedule || '18:15 → 22:05'}</span>
+                  <span>🛬 <strong>${retFlightP1?.outbound?.route || ((lastWp?.cityCode || 'Destino') + ' ➔ ' + p1Orig)}</strong></span>
+                  <span class="font-mono font-bold text-blue-300">${retFlightP1?.outbound?.schedule || ''}</span>
                 </div>
                 <div class="text-slate-400 text-[11px] flex justify-between pt-1 border-t border-slate-800">
-                  <span>✈️ ${ySal?.aircraft || 'Airbus A320neo'} · ${ySal?.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
-                  <span class="font-bold text-white font-mono text-sm">${formatMXN(ySal?.price || 1158)}</span>
+                  <span>Tarifa:</span>
+                  <span class="font-bold text-white font-mono text-sm">${retFlightP1 ? formatMXN(retFlightP1.price) : '$0 MXN'}</span>
                 </div>
               </div>
-              <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-2 text-slate-400">
-                <div class="text-[10px] font-black text-slate-400 uppercase tracking-wider">👤 Pasajero 1 (${n1}) en esta fecha</div>
-                <div class="text-xs text-slate-300">Despega de CDMX en vuelo nocturno directo hacia Madrid.</div>
-                <div class="text-[11px] text-blue-400 font-semibold">Vuelo IB0152 (${mSal?.outbound?.schedule || '20:05 → 14:00+1'}) · ${formatMXN(mSal?.price || 19800)}</div>
+              ${isSinglePassenger ? '' : `
+              <div class="bg-slate-950 p-3.5 rounded-xl border border-pink-900/60 space-y-2">
+                <div class="text-[10px] font-black text-pink-400 uppercase tracking-wider flex justify-between">
+                  <span>👤 ${n2} · Retorno hacia ${p2Orig}</span>
+                  <span class="font-mono text-white">${retFlightP2?.airlineName || ''}</span>
+                </div>
+                <div class="text-sm font-black text-white">${retFlightP2?.title || 'Vuelo de regreso pendiente de seleccionar'}</div>
+                <div class="text-slate-300 flex justify-between">
+                  <span>🛬 <strong>${retFlightP2?.outbound?.route || ((lastWp?.cityCode || 'Destino') + ' ➔ ' + p2Orig)}</strong></span>
+                  <span class="font-mono font-bold text-pink-300">${retFlightP2?.outbound?.schedule || ''}</span>
+                </div>
+                <div class="text-slate-400 text-[11px] flex justify-between pt-1 border-t border-slate-800">
+                  <span>Tarifa:</span>
+                  <span class="font-bold text-white font-mono text-sm">${retFlightP2 ? formatMXN(retFlightP2.price) : '$0 MXN'}</span>
+                </div>
               </div>
+              `}
             </div>
           </div>
         `;
-      } else if (selectedPvNodeId === 'wp_0') {
-        const wp0 = wps[0] || { name: 'Madrid (MAD)', arrivalDate: '2026-10-17', departureDate: '2026-10-27' };
+      } else {
+        const wpIdx = parseInt(selectedPvNodeId.replace('wp_', ''), 10) || 0;
+        const curWp = wps[wpIdx] || wps[0];
+        const fP1 = getCatalogBrick(state.p1?.[`leg_p1_${wpIdx}`]);
+        const fP2 = isSinglePassenger ? null : getCatalogBrick(state.p2?.[`leg_p2_${wpIdx}`]);
+
         inspectorHtml = `
           <div class="bg-slate-900/95 border-2 border-emerald-500/60 rounded-2xl p-4 md:p-5 text-xs space-y-3 shadow-xl">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-800 gap-2">
               <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
-                <h4 class="text-sm font-extrabold text-emerald-300">Nodo Seleccionado: Estancia 1 · Madrid (MAD) · Punto de Encuentro</h4>
+                <h4 class="text-sm font-extrabold text-emerald-300">Estancia ${wpIdx + 1}: ${curWp.name || curWp.cityCode}</h4>
               </div>
-              <span class="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-lg border border-emerald-700">17 al 27 Oct 2026 · 10 Noches Juntos</span>
+              <span class="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-lg border border-emerald-700">📅 ${curWp.arrivalDate || 'Fecha llegada'} ${curWp.departureDate ? 'al ' + curWp.departureDate : ''}</span>
             </div>
             <div class="grid grid-cols-1 ${isSinglePassenger ? '' : 'md:grid-cols-2'} gap-3">
               <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                <div class="text-[10px] font-black text-emerald-400 uppercase tracking-wider flex justify-between">
-                  <span>📍 Estancia 1: ${wp0.name}</span>
-                  <span class="text-emerald-300 font-bold">${isSinglePassenger ? 'Confirmada' : '100% Sincronizado'}</span>
+                <div class="text-[10px] font-black text-blue-400 uppercase tracking-wider flex justify-between">
+                  <span>👤 ${n1} · Vuelo de Llegada</span>
+                  <span class="font-mono text-white">${fP1?.airlineName || ''}</span>
                 </div>
-                <div class="text-xs text-slate-300 leading-relaxed">
-                  ${isSinglePassenger ? `${n1} realiza su estancia en ${wp0.name}.` : `${n1} y ${n2} coinciden en ${wp0.name}.`}
-                </div>
-                <div class="text-[11px] text-slate-400 pt-1 border-t border-slate-800 flex justify-between">
-                  <span>Fechas:</span>
-                  <span class="font-bold text-white">${wp0.arrivalDate || ''} ${wp0.departureDate ? 'al ' + wp0.departureDate : ''}</span>
-                </div>
-              </div>
-              ${isSinglePassenger ? '' : `
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                <div class="text-[10px] font-black text-indigo-400 uppercase tracking-wider">Vuelos de Llegada:</div>
-                <div class="text-[11px] text-slate-300 flex justify-between">
-                  <span>👤 ${n1}: ${mSal?.outbound?.flightNumber || 'Vuelo P1'}</span>
-                  <span class="text-blue-400 font-mono font-bold">${mSal ? formatMXN(mSal.price) : ''}</span>
-                </div>
-                <div class="text-[11px] text-slate-300 flex justify-between">
-                  <span>👤 ${n2}: ${ySal?.outbound?.flightNumber || 'Vuelo P2'}</span>
-                  <span class="text-pink-400 font-mono font-bold">${ySal ? formatMXN(ySal.price) : ''}</span>
-                </div>
-              </div>
-              `}
-            </div>
-          </div>
-        `;
-      } else if (selectedPvNodeId === 'joint') {
-        const jointPriceMario = jointFlight?.price || 14500;
-        const jointPriceYesica = yTrans?.price || jointPriceMario;
-        inspectorHtml = `
-          <div class="bg-slate-900/95 border-2 border-emerald-400 rounded-2xl p-4 md:p-5 text-xs space-y-3 shadow-xl">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-800 gap-2">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
-                <h4 class="text-sm font-extrabold text-emerald-300">Nodo Seleccionado: Tramo Conjunto Transatlántico & Estancia 2</h4>
-              </div>
-              <span class="text-[11px] font-mono font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded-lg border border-emerald-700">27 Oct al 20 Nov 2026</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-emerald-800/80 space-y-2">
-                <div class="text-[10px] font-black text-emerald-400 uppercase tracking-wider flex justify-between">
-                  <span>👥 Vuelo Conjunto Compartido</span>
-                  <span class="text-xs font-mono font-bold text-emerald-300 bg-emerald-900/40 px-2 py-0.5 rounded border border-emerald-600/50">${mJointFn}</span>
-                </div>
-                <div class="text-sm font-black text-white">${jointFlight?.title || 'Iberia IB6403 Directo'}</div>
+                <div class="text-sm font-black text-white">${fP1?.title || 'Vuelo pendiente de selección'}</div>
                 <div class="text-slate-300 flex justify-between">
-                  <span>🛫 <strong>${jointFlight?.outbound?.route || 'MAD/BCN ➔ MEX'}</strong></span>
-                  <span class="font-mono font-bold text-emerald-300">${jointFlight?.outbound?.schedule || '13:15 → 18:30'}</span>
+                  <span>🛫 <strong>${fP1?.outbound?.route || ('➔ ' + curWp.cityCode)}</strong></span>
+                  <span class="font-mono font-bold text-blue-300">${fP1?.outbound?.schedule || ''}</span>
                 </div>
                 <div class="text-slate-400 text-[11px] flex justify-between pt-1 border-t border-slate-800">
-                  <span>✈️ ${jointFlight?.aircraft || 'Airbus A350-900'} · Asientos Juntos</span>
-                  <span class="font-bold text-white font-mono">${formatMXN(jointPriceMario)} / boleto</span>
+                  <span>Tarifa:</span>
+                  <span class="font-bold text-white font-mono text-sm">${fP1 ? formatMXN(fP1.price) : '$0 MXN'}</span>
                 </div>
-              </div>
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                <div class="text-[10px] font-black text-rose-400 uppercase tracking-wider">📍 Estancia 2: Ciudad de México (MEX)</div>
-                <div class="text-xs text-slate-300 leading-relaxed">
-                  24 Noches de estancia en México (27 Oct – 20 Nov). ${n1} en su ciudad base y ${n2} en estancia de trabajo remoto y turismo.
-                </div>
-                <div class="text-[11px] text-emerald-400 font-bold pt-1 border-t border-slate-800 flex justify-between">
-                  <span>Costo Combinado Tramo 3 (${n1} & ${n2}):</span>
-                  <span class="font-mono text-white font-extrabold text-sm">${formatMXN(jointPriceMario + jointPriceYesica)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      } else if (selectedPvNodeId === 'retorno') {
-        inspectorHtml = `
-          <div class="bg-slate-900/95 border-2 border-pink-500/60 rounded-2xl p-4 md:p-5 text-xs space-y-3 shadow-xl">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-2 border-b border-slate-800 gap-2">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-pink-500"></span>
-                <h4 class="text-sm font-extrabold text-pink-300">Nodo Seleccionado: Retornos a Residencias & Cierre de Expedición</h4>
-              </div>
-              <span class="text-[11px] font-mono font-bold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-lg border border-slate-700">20 y 21 Nov 2026</span>
-            </div>
-            <div class="grid grid-cols-1 ${isSinglePassenger ? '' : 'md:grid-cols-2'} gap-3">
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
-                <div class="text-[10px] font-black text-blue-400 uppercase tracking-wider">👤 Pasajero 1: ${n1} (${p1Orig})</div>
-                <div class="text-xs text-slate-300">${n1} concluye el viaje retornando a su residencia en ${p1Orig}.</div>
-                <div class="text-[11px] text-emerald-400 font-bold pt-2 border-t border-slate-800">✓ Retorno concluido</div>
               </div>
               ${isSinglePassenger ? '' : `
-              <div class="bg-slate-950 p-3.5 rounded-xl border border-pink-900/60 space-y-2">
-                <div class="text-[10px] font-black text-pink-400 uppercase tracking-wider">👤 Pasajero 2: ${n2} (${p2Orig})</div>
-                <div class="text-xs text-slate-300">${n2} concluye el viaje retornando a su residencia en ${p2Orig}.</div>
-                <div class="text-[11px] text-pink-400 font-semibold pt-1 border-t border-slate-800">
-                  Retorno hacia ${p2Orig}
+              <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+                <div class="text-[10px] font-black text-pink-400 uppercase tracking-wider flex justify-between">
+                  <span>👤 ${n2} · Vuelo de Llegada</span>
+                  <span class="font-mono text-white">${fP2?.airlineName || ''}</span>
+                </div>
+                <div class="text-sm font-black text-white">${fP2?.title || 'Vuelo pendiente de selección'}</div>
+                <div class="text-slate-300 flex justify-between">
+                  <span>🛫 <strong>${fP2?.outbound?.route || ('➔ ' + curWp.cityCode)}</strong></span>
+                  <span class="font-mono font-bold text-pink-300">${fP2?.outbound?.schedule || ''}</span>
+                </div>
+                <div class="text-slate-400 text-[11px] flex justify-between pt-1 border-t border-slate-800">
+                  <span>Tarifa:</span>
+                  <span class="font-bold text-white font-mono text-sm">${fP2 ? formatMXN(fP2.price) : '$0 MXN'}</span>
                 </div>
               </div>
               `}
@@ -5067,47 +5035,45 @@
         <div class="space-y-4">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs pb-3 border-b border-slate-800 gap-2">
             <span class="text-indigo-300 font-bold flex items-center gap-1.5">
-              <span>🧭</span> Itinerario Dinámico: <strong>${wps.length} Estancias Configuradas (${wps.map(w => w.name?.split('(')[0]?.trim() || w.name).join(' ➔ ')})</strong>
-            </span>
-            <span class="px-3 py-1 rounded-full text-[11px] font-black self-start sm:self-auto ${isSynced ? 'bg-emerald-900/80 text-emerald-300 border border-emerald-600' : 'bg-amber-900/80 text-amber-300 border border-amber-600'}">
-              ${isSynced ? '✨ Sincronizado' : '⚠️ Revisar'}
+              <span>🧭</span> Itinerario Dinámico: <strong>${wps.length} Estancia(s) (${wps.map(w => w.name?.split('(')[0]?.trim() || w.cityCode).join(' ➔ ')})</strong>
             </span>
           </div>
-          <div class="overflow-x-auto py-1">
-            <div class="min-w-[760px]">
-              <svg viewBox="0 0 ${svgWidth} ${svgHeight}" class="w-full h-auto select-none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="pvBlueToGreen" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#3b82f6" />
-                    <stop offset="100%" stop-color="#10b981" />
-                  </linearGradient>
-                  <linearGradient id="pvPinkToGreen" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#ec4899" />
-                    <stop offset="100%" stop-color="#10b981" />
-                  </linearGradient>
-                  <linearGradient id="pvGreenToBlue" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#10b981" />
-                    <stop offset="100%" stop-color="#3b82f6" />
-                  </linearGradient>
-                  <linearGradient id="pvGreenToPink" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#10b981" />
-                    <stop offset="100%" stop-color="#ec4899" />
-                  </linearGradient>
-                  <filter id="pvShadow" x="-10%" y="-10%" width="120%" height="120%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.5" />
-                  </filter>
-                </defs>
-                ${tracksSvg}
-                ${pillsSvg}
-                ${stationsSvg}
-              </svg>
-            </div>
+
+          <!-- DIAGRAMA SVG -->
+          <div class="overflow-x-auto py-2">
+            <svg viewBox="0 0 ${svgWidth} ${svgHeight}" class="w-full min-w-[750px] max-h-[240px]">
+              <defs>
+                <filter id="pvShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.4" />
+                </filter>
+                <linearGradient id="pvBlueToGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#3b82f6" />
+                  <stop offset="100%" stop-color="#10b981" />
+                </linearGradient>
+                <linearGradient id="pvPinkToGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ec4899" />
+                  <stop offset="100%" stop-color="#10b981" />
+                </linearGradient>
+                <linearGradient id="pvGreenToBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#10b981" />
+                  <stop offset="100%" stop-color="#3b82f6" />
+                </linearGradient>
+                <linearGradient id="pvGreenToPink" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#10b981" />
+                  <stop offset="100%" stop-color="#ec4899" />
+                </linearGradient>
+              </defs>
+
+              ${tracksSvg}
+              ${stationsSvg}
+              ${pillsSvg}
+            </svg>
           </div>
-          <div class="text-[11px] text-slate-400 flex items-center justify-between pt-1">
-            <span>💡 <em>Haz clic en cualquier nodo o vuelo del diagrama para inspeccionar los pasajeros</em></span>
-            <span class="text-indigo-400 font-bold font-mono">Nodo activo: ${selectedPvNodeId}</span>
+
+          <!-- DETALLES DEL NODO SELECCIONADO -->
+          <div class="pt-2">
+            ${inspectorHtml}
           </div>
-          ${inspectorHtml}
         </div>
       `;
     }
@@ -5120,9 +5086,10 @@
     }
 
     function getSegments(traveler) {
-      const wps = tripConfig[traveler].waypoints || [];
+      const wps = tripConfig[traveler]?.waypoints || [];
       const segments = [];
-      let currentOrigin = tripConfig[traveler].origin?.split('—')[0]?.trim() || '';
+      let currentOrigin = tripConfig[traveler]?.origin?.split('—')[0]?.trim() || '';
+      const userOrig = tripConfig[traveler]?.origin?.split('—')[0]?.trim() || '';
       
       wps.forEach((w, i) => {
           const segId = `leg_${traveler}_${i}`;
@@ -5131,14 +5098,17 @@
               segment: segId,
               type: 'select',
               id: segId,
-              title: `Tramo ${i+1}: ${currentOrigin} ➔ ${w.cityCode}`,
+              step: `${i + 1}`,
+              label: `Tramo ${i + 1}: ${currentOrigin} ➔ ${w.cityCode || 'Destino'}`,
+              title: `Tramo ${i + 1}: ${currentOrigin} ➔ ${w.cityCode || 'Destino'}`,
               depCode: currentOrigin,
-              arrCode: w.cityCode,
-              date: w.arrivalDate,
+              arrCode: w.cityCode || '',
+              date: w.arrivalDate || '',
               traveler: traveler,
-              isJoint: w.jointFlight || false
+              isJoint: w.jointFlight || false,
+              isReturn: false
           });
-          currentOrigin = w.cityCode;
+          currentOrigin = w.cityCode || currentOrigin;
           
           if (w.isRoundtrip) {
               const retId = `leg_${traveler}_${i}_ret`;
@@ -5147,12 +5117,15 @@
                   segment: retId,
                   type: 'select',
                   id: retId,
-                  title: `Retorno ${i+1}: ${w.cityCode} ➔ ${tripConfig[traveler].origin?.split('—')[0]?.trim()}`,
-                  depCode: w.cityCode,
-                  arrCode: tripConfig[traveler].origin?.split('—')[0]?.trim(),
-                  date: w.departureDate,
+                  step: `R${i + 1}`,
+                  label: `Retorno ${i + 1}: ${w.cityCode || 'Destino'} ➔ ${userOrig}`,
+                  title: `Retorno ${i + 1}: ${w.cityCode || 'Destino'} ➔ ${userOrig}`,
+                  depCode: w.cityCode || '',
+                  arrCode: userOrig,
+                  date: w.departureDate || '',
                   traveler: traveler,
-                  isJoint: false
+                  isJoint: false,
+                  isReturn: true
               });
           }
       });
@@ -5191,55 +5164,59 @@
     }
 
     function buildSelectCard(traveler, seg) {
-      const currentFlightId = state[traveler][seg.key];
+      const currentFlightId = state[traveler] ? state[traveler][seg.key] : null;
       const flight = getCatalogBrick(currentFlightId);
-      const isMario = (traveler === 'mario' || traveler === 'p1');
-      const badgeBg = isMario ? 'bg-blue-50 text-blue-700 border border-blue-200/80' : 'bg-pink-50 text-pink-700 border border-pink-200/80';
-      const hasReturn = flight && flight.return;
+      const isP1 = (traveler === 'p1' || traveler === 'mario');
+      const badgeBg = isP1 ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-pink-100 text-pink-800 border border-pink-200';
+      const typeLabel = seg.isReturn ? '🔄 Tramo de Regreso' : '➡️ Tramo de Ida';
+      const scheduleText = (flight && flight.outbound?.schedule && flight.outbound.schedule !== '00:00 → 00:00')
+        ? flight.outbound.schedule
+        : (flight?.schedule || '');
 
       return `
         <div class="bg-white border border-slate-200/90 rounded-2xl p-4 space-y-3 shadow-2xs hover:shadow-sm transition">
-          <div class="flex justify-between items-start">
-            <div class="flex items-center gap-2">
-              <span class="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-bold ${badgeBg}">${seg.step}</span>
-              <div>
-                <span class="text-xs font-bold text-slate-800">${seg.label}</span>
-                <div class="text-[10px] text-slate-400 font-medium">${hasReturn ? '🔄 Tarifa Global Multidestino (Cubre Ida + Retorno)' : '➡️ Tarifa Solo Ida (One-Way)'}</div>
+          <div class="flex justify-between items-start gap-2">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black ${badgeBg} shrink-0">${seg.step || '1'}</span>
+              <div class="min-w-0">
+                <div class="text-xs font-black text-slate-800 truncate">${seg.label || seg.title}</div>
+                <div class="text-[10px] text-slate-400 font-semibold">${typeLabel} ${seg.date ? '· 📅 ' + seg.date : ''}</div>
               </div>
             </div>
-            <div class="text-right">
-              <span class="text-xs font-bold text-slate-900 font-mono">${flight ? formatMXN(flight.price) : '$0'}</span>
-              <div class="text-[10px] text-slate-400 font-semibold">${flight ? formatEUR(flight.price) : '€0'}</div>
+            <div class="text-right shrink-0">
+              <span class="text-sm font-black text-slate-900 font-mono">${flight ? formatMXN(flight.price) : '$0 MXN'}</span>
+              <div class="text-[10px] text-slate-400 font-semibold">${flight ? formatEUR(flight.price) : '€0 EUR'}</div>
             </div>
           </div>
 
           <!-- BLOQUE DE VUELO SELECCIONADO -->
           <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
             <div class="min-w-0">
-              <div class="text-xs font-bold text-slate-900 truncate">${flight ? flight.title : 'Seleccionar Vuelo'}</div>
+              <div class="text-xs font-bold text-slate-900 truncate">${flight ? flight.title : 'Vuelo Pendiente de Selección'}</div>
               <div class="text-[11px] text-slate-500 font-medium mt-0.5">
-                ${flight ? `<span class="font-semibold text-slate-700">${flight.outbound?.route}</span> · <span class="font-mono text-slate-600">${flight.outbound?.schedule}</span>` : 'Haz clic en cambiar para ver opciones'}
+                ${flight ? `<span class="font-semibold text-slate-700">${flight.outbound?.route || (seg.depCode + ' ➔ ' + seg.arrCode)}</span> ${scheduleText ? '· <span class="font-mono text-slate-600">' + scheduleText + '</span>' : ''}` : 'Selecciona tu vuelo en el Paso 3'}
               </div>
             </div>
-            <button onclick="openFlightPickerModal('${traveler}', '${seg.segment}')" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-indigo-700 text-xs font-bold rounded-xl border border-slate-200 shadow-2xs transition shrink-0">
-              Cambiar ➔
+            <button onclick="goToStep(3)" class="px-3 py-1.5 bg-white hover:bg-slate-100 text-indigo-700 text-xs font-bold rounded-xl border border-slate-200 shadow-2xs transition shrink-0">
+              ${flight ? 'Cambiar ➔' : 'Elegir ➔'}
             </button>
           </div>
 
           ${flight ? `
-            <div class="flex justify-between items-center text-[11px] pt-0.5 text-slate-500 font-medium border-t border-slate-100">
+            <div class="flex justify-between items-center text-[11px] pt-0.5 text-slate-500 font-medium border-t border-slate-100 flex-wrap gap-2">
               <div class="flex items-center gap-2.5">
                 <span>${flight.bag ? '✓ Maleta 23kg' : '✕ Sin maleta'}</span>
                 <span>${flight.carry ? '✓ Carry-On' : ''}</span>
                 <span>${flight.seat ? '✓ Asiento' : ''}</span>
               </div>
               <div class="flex items-center gap-2">
-                <a href="${flight.googleFlightsUrl}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-semibold">
+                <a href="${flight.googleFlightsUrl || '#'}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-semibold">
                   Google Flights ↗
                 </a>
+                ${flight.bookingUrl ? `
                 <a href="${flight.bookingUrl}" target="_blank" class="text-emerald-700 hover:text-emerald-800 font-bold bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200/80">
                   Comprar ↗
-                </a>
+                </a>` : ''}
               </div>
             </div>
           ` : ''}
@@ -5305,34 +5282,46 @@
     function renderTimeline() {
       const tl = document.getElementById('timeline-container');
       if (!tl) return;
-      tl.innerHTML = '';
       const travelers = tripConfig.passengerCount > 1 ? ['p1', 'p2'] : ['p1'];
       let events = [];
       
       for (const t of travelers) {
           const segs = getSegments(t);
           segs.forEach(s => {
-              const fId = state[t][s.id];
+              const fId = state[t] ? (state[t][s.id] || state[t][s.key]) : null;
               const f = fId ? getCatalogBrick(fId) : null;
               events.push({
-                  date: s.date,
+                  date: s.date || 'Sin fecha',
                   type: 'flight',
                   title: s.title,
-                  desc: f ? `${f.airline} - €${f.price}` : 'No seleccionado',
-                  traveler: t
+                  desc: f ? `${f.title || f.airline} · ${formatMXN(f.price)}` : 'Vuelo pendiente de seleccionar en Paso 3',
+                  traveler: t,
+                  travelerName: t === 'p1' ? (tripConfig.p1.name || 'Titular') : (tripConfig.p2.name || 'Acompañante'),
+                  badgeBg: t === 'p1' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'
               });
           });
       }
       
-      events.sort((a,b) => a.date.localeCompare(b.date));
+      events.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
       
-      let html = '<div class="space-y-4">';
+      if (events.length === 0) {
+        tl.innerHTML = '<div class="text-xs text-slate-400 text-center py-8">Configura tus paradas y fechas en el Paso 2 para visualizar la cronología.</div>';
+        return;
+      }
+
+      let html = '<div class="space-y-3">';
       events.forEach(e => {
-          html += `<div class="p-3 border rounded-xl bg-slate-50">
-              <div class="text-xs font-bold text-slate-500">${e.date} - ${e.traveler}</div>
-              <div class="font-bold">${e.title}</div>
-              <div class="text-sm">${e.desc}</div>
-          </div>`;
+          html += `
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div class="flex items-center gap-3">
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${e.badgeBg}">${e.travelerName}</span>
+                <div>
+                  <div class="text-xs font-bold text-slate-800">${e.title}</div>
+                  <div class="text-[11px] text-slate-500 font-medium">${e.desc}</div>
+                </div>
+              </div>
+              <span class="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg self-start sm:self-auto">📅 ${e.date}</span>
+            </div>`;
       });
       html += '</div>';
       tl.innerHTML = html;
