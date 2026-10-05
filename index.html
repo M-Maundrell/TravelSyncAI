@@ -816,7 +816,7 @@
         <button onclick="goToStep(1)" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
           ⬅ Volver a Pasajeros
         </button>
-        <button onclick="startOptimizationAndSearch()" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
+        <button onclick="startOptimizationAndSearch()" class="px-6 py-3 bg-indigo-600 hover:from-indigo-500 hover:to-indigo-600 text-white font-black text-sm rounded-2xl shadow-lg transition flex items-center gap-2">
           <span>⚡ Descubrir Vuelos en Vivo & Ir al Menú (Paso 3)</span>
           <span>➔</span>
         </button>
@@ -2242,95 +2242,48 @@
     }
 
     function renderStep3() {
-      const p1Container = document.getElementById('step3-panel-mario');
-      const p2Container = document.getElementById('step3-panel-yesica');
-      if (!p1Container) return;
+      const container = document.getElementById('step3-legs-wizard-container');
+      if (!container) return;
+      container.innerHTML = '';
       
       const travelers = tripConfig.passengerCount > 1 ? ['p1', 'p2'] : ['p1'];
+      let totalHtml = '';
       
-      for (const t of ['p1', 'p2']) {
-          const container = t === 'p1' ? p1Container : p2Container;
-          if (!travelers.includes(t)) {
-              container.innerHTML = '';
-              continue;
-          }
-          
+      for (const t of travelers) {
           const wps = tripConfig[t].waypoints || [];
           let currentOrigin = tripConfig[t].origin?.split('—')[0]?.trim() || '';
           let html = '';
           
-          wps.forEach((w, i) => {
-              const segId = `leg_${t}_${i}`;
-              const legState = state[t][segId];
-              const destCode = w.cityCode || '';
-              
-              const options = Object.values(flightsCatalog).filter(f => f.segment === segId && f.traveler === t);
-              
-              html += `
-              <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm mb-4">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center cursor-pointer" onclick="toggleStep3LegCollapse('${segId}')">
-                  <div>
-                    <h4 class="font-black text-slate-800 text-sm">Tramo ${i+1}: ${currentOrigin} ➔ ${destCode}</h4>
-                    <p class="text-xs text-slate-500 font-medium">${w.arrivalDate || ''}</p>
-                  </div>
-                  <span class="text-slate-400 font-bold">${step3CollapsedLegs[segId] ? '▼' : '▲'}</span>
-                </div>
-                <div class="${step3CollapsedLegs[segId] ? 'hidden' : 'p-4 space-y-3'}">
-              `;
-              
-              if (options.length === 0) {
-                  html += `<p class="text-xs text-slate-500">No hay vuelos disponibles para este tramo.</p>`;
-              } else {
-                  options.forEach(opt => {
-                      const isSelected = legState === opt.id;
-                      const borderClass = isSelected ? 'border-2 border-indigo-500 bg-indigo-50/30' : 'border border-slate-200 hover:border-indigo-300 bg-white';
-                      const badge = isSelected ? `<span class="absolute -top-2.5 -right-2.5 bg-indigo-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md shadow-indigo-200">SELECCIONADO</span>` : '';
-                      
-                      html += `
-                      <div class="relative flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all ${borderClass}" onclick="selectStep3Flight('${t}', '${segId}', '${opt.id}')">
-                        ${badge}
-                        <div>
-                          <div class="font-bold text-slate-800 text-sm">${opt.title}</div>
-                          <div class="text-xs text-slate-500 mt-1">${opt.description || `${opt.airline} flight`}</div>
-                        </div>
-                        <div class="text-right">
-                          <div class="font-black text-indigo-700 text-lg">${formatMXN(opt.price)}</div>
-                        </div>
-                      </div>
-                      `;
-                  });
-              }
-              html += `</div></div>`;
-              currentOrigin = destCode;
-              
-              if (w.isRoundtrip) {
-                  const retId = `leg_${t}_${i}_ret`;
-                  const retState = state[t][retId];
-                  const origCode = tripConfig[t].origin?.split('—')[0]?.trim() || '';
-                  const retOptions = Object.values(flightsCatalog).filter(f => f.segment === retId && f.traveler === t);
+          if (wps.length === 0) {
+              html = `<p class="text-sm text-slate-500 p-4 text-center">No hay tramos configurados para ${t === 'p1' ? 'el Titular' : 'el Acompañante'}.</p>`;
+          } else {
+              wps.forEach((w, i) => {
+                  const segId = `leg_${t}_${i}`;
+                  const legState = state[t][segId];
+                  const destCode = w.cityCode || '';
+                  const options = Object.values(flightsCatalog).filter(f => f.segment === segId && f.traveler === t);
                   
                   html += `
                   <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm mb-4">
-                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center cursor-pointer" onclick="toggleStep3LegCollapse('${retId}')">
+                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center cursor-pointer" onclick="toggleStep3LegCollapse('${segId}')">
                       <div>
-                        <h4 class="font-black text-slate-800 text-sm">Retorno Tramo ${i+1}: ${destCode} ➔ ${origCode}</h4>
-                        <p class="text-xs text-slate-500 font-medium">${w.departureDate || ''}</p>
+                        <h4 class="font-black text-slate-800 text-sm">Tramo ${i+1}: ${currentOrigin} ➔ ${destCode}</h4>
+                        <p class="text-xs text-slate-500 font-medium">${w.arrivalDate || ''}</p>
                       </div>
-                      <span class="text-slate-400 font-bold">${step3CollapsedLegs[retId] ? '▼' : '▲'}</span>
+                      <span class="text-slate-400 font-bold">${step3CollapsedLegs[segId] ? '▼' : '▲'}</span>
                     </div>
-                    <div class="${step3CollapsedLegs[retId] ? 'hidden' : 'p-4 space-y-3'}">
+                    <div class="${step3CollapsedLegs[segId] ? 'hidden' : 'p-4 space-y-3'}">
                   `;
                   
-                  if (retOptions.length === 0) {
-                      html += `<p class="text-xs text-slate-500">No hay vuelos de regreso disponibles.</p>`;
+                  if (options.length === 0) {
+                      html += `<p class="text-xs text-slate-500">No hay vuelos disponibles para este tramo.</p>`;
                   } else {
-                      retOptions.forEach(opt => {
-                          const isSelected = retState === opt.id;
+                      options.forEach(opt => {
+                          const isSelected = legState === opt.id;
                           const borderClass = isSelected ? 'border-2 border-indigo-500 bg-indigo-50/30' : 'border border-slate-200 hover:border-indigo-300 bg-white';
                           const badge = isSelected ? `<span class="absolute -top-2.5 -right-2.5 bg-indigo-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md shadow-indigo-200">SELECCIONADO</span>` : '';
-                          
                           html += `
-                          <div class="relative flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all ${borderClass}" onclick="selectStep3Flight('${t}', '${retId}', '${opt.id}')">
+                          <div class="relative flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all ${borderClass}" onclick="selectStep3Flight('${t}', '${segId}', '${opt.id}')">
                             ${badge}
                             <div>
                               <div class="font-bold text-slate-800 text-sm">${opt.title}</div>
@@ -2339,35 +2292,96 @@
                             <div class="text-right">
                               <div class="font-black text-indigo-700 text-lg">${formatMXN(opt.price)}</div>
                             </div>
-                          </div>
-                          `;
+                          </div>`;
                       });
                   }
                   html += `</div></div>`;
+                  currentOrigin = destCode;
+                  
+                  if (w.isRoundtrip) {
+                      const retId = `leg_${t}_${i}_ret`;
+                      const retState = state[t][retId];
+                      const origCode = tripConfig[t].origin?.split('—')[0]?.trim() || '';
+                      const retOptions = Object.values(flightsCatalog).filter(f => f.segment === retId && f.traveler === t);
+                      
+                      html += `
+                      <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm mb-4">
+                        <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center cursor-pointer" onclick="toggleStep3LegCollapse('${retId}')">
+                          <div>
+                            <h4 class="font-black text-slate-800 text-sm">Retorno Tramo ${i+1}: ${destCode} ➔ ${origCode}</h4>
+                            <p class="text-xs text-slate-500 font-medium">${w.departureDate || ''}</p>
+                          </div>
+                          <span class="text-slate-400 font-bold">${step3CollapsedLegs[retId] ? '▼' : '▲'}</span>
+                        </div>
+                        <div class="${step3CollapsedLegs[retId] ? 'hidden' : 'p-4 space-y-3'}">
+                      `;
+                      
+                      if (retOptions.length === 0) {
+                          html += `<p class="text-xs text-slate-500">No hay vuelos de regreso disponibles.</p>`;
+                      } else {
+                          retOptions.forEach(opt => {
+                              const isSelected = retState === opt.id;
+                              const borderClass = isSelected ? 'border-2 border-indigo-500 bg-indigo-50/30' : 'border border-slate-200 hover:border-indigo-300 bg-white';
+                              const badge = isSelected ? `<span class="absolute -top-2.5 -right-2.5 bg-indigo-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md shadow-indigo-200">SELECCIONADO</span>` : '';
+                              html += `
+                              <div class="relative flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all ${borderClass}" onclick="selectStep3Flight('${t}', '${retId}', '${opt.id}')">
+                                ${badge}
+                                <div>
+                                  <div class="font-bold text-slate-800 text-sm">${opt.title}</div>
+                                  <div class="text-xs text-slate-500 mt-1">${opt.description || `${opt.airline} flight`}</div>
+                                </div>
+                                <div class="text-right">
+                                  <div class="font-black text-indigo-700 text-lg">${formatMXN(opt.price)}</div>
+                                </div>
+                              </div>`;
+                          });
+                      }
+                      html += `</div></div>`;
+                  }
+              });
+          }
+          
+          totalHtml += `
+          <div class="p-4 sm:p-6 rounded-2xl mb-6 shadow-sm border border-slate-200" style="background-color: ${t === 'p1' ? '#f8fafc' : '#fdf2f8'};">
+            <h3 class="text-sm font-black mb-4 flex items-center gap-2 ${t === 'p1' ? 'text-blue-800' : 'text-pink-800'}">
+              <span class="w-6 h-6 rounded-lg ${t === 'p1' ? 'bg-blue-100 text-blue-700' : 'bg-pink-100 text-pink-700'} flex items-center justify-center text-xs">✈️</span>
+              ${t === 'p1' ? 'Vuelos del Titular' : 'Vuelos del Acompañante'}
+            </h3>
+            ${html}
+          </div>
+          `;
+      }
+      
+      container.innerHTML = totalHtml;
+      
+      // Update totals
+      let totalCount = 0;
+      let totalCost = 0;
+      
+      for (const t of travelers) {
+          const wps = tripConfig[t].waypoints || [];
+          wps.forEach((w, i) => {
+              const segId = `leg_${t}_${i}`;
+              if (state[t][segId]) {
+                  totalCount++;
+                  const f = flightsCatalog[state[t][segId]];
+                  if (f) totalCost += f.price;
+              }
+              if (w.isRoundtrip) {
+                  const retId = `leg_${t}_${i}_ret`;
+                  if (state[t][retId]) {
+                      totalCount++;
+                      const f = flightsCatalog[state[t][retId]];
+                      if (f) totalCost += f.price;
+                  }
               }
           });
-          
-          container.innerHTML = html || `<p class="text-sm text-slate-500 p-4 text-center">No hay tramos configurados para este pasajero.</p>`;
       }
       
-      // Update Cost Footer
-      let totalCost = 0;
-      for (const t of travelers) {
-          const st = state[t];
-          for (const key in st) {
-              if (st[key] && flightsCatalog[st[key]]) {
-                  totalCost += flightsCatalog[st[key]].price;
-              }
-          }
-      }
-      const tc = document.getElementById('step3-total-cost');
-      if (tc) tc.innerText = formatMXN(totalCost);
-      
-      // Update Tab Names
-      const tab1 = document.getElementById('step3-tab-p1');
-      const tab2 = document.getElementById('step3-tab-p2');
-      if (tab1) tab1.innerHTML = `Vuelos de ${tripConfig.p1.name || 'Titular'}`;
-      if (tab2) tab2.innerHTML = `Vuelos de ${tripConfig.p2.name || 'Acompañante'}`;
+      const countEl = document.getElementById('step3-total-count');
+      const costEl = document.getElementById('step3-total-cost');
+      if (countEl) countEl.innerText = totalCount;
+      if (costEl) costEl.innerText = formatMXN(totalCost);
     }
 
     function selectStep3Flight(traveler, legId, flightId) {
