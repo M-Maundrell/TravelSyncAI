@@ -2406,9 +2406,12 @@
       ['p1', 'p2'].forEach(pKey => {
         const cSelect = document.getElementById(`${pKey}-country-select`);
         if (!cSelect) return;
-        cSelect.innerHTML = Object.entries(geoCatalog).map(([code, country]) => 
-          `<option value="${code}" ${tripConfig[pKey].country === code ? 'selected' : ''}>${country.name}</option>`
+        const curCountry = tripConfig[pKey]?.country || '';
+        const placeholder = '<option value="" disabled' + (!curCountry ? ' selected' : '') + '>Selecciona país...</option>';
+        cSelect.innerHTML = placeholder + Object.entries(geoCatalog).map(([code, country]) => 
+          `<option value="${code}" ${curCountry === code ? 'selected' : ''}>${country.name}</option>`
         ).join('');
+        cSelect.value = curCountry;
         updateAirportOptions(pKey);
       });
     }
@@ -2463,7 +2466,15 @@
       tripConfig[pKey].country = countryCode;
       const airports = geoCatalog[countryCode]?.airports || [];
       aSelect.innerHTML = renderAirportSelectOptions(airports, tripConfig[pKey].origin);
-      if (aSelect.value) tripConfig[pKey].origin = aSelect.value;
+      if (airports.length > 0) {
+        if (!tripConfig[pKey].origin || !airports.some(a => a.name === tripConfig[pKey].origin)) {
+          tripConfig[pKey].origin = airports[0].name;
+        }
+        aSelect.value = tripConfig[pKey].origin;
+      } else {
+        tripConfig[pKey].origin = '';
+        aSelect.value = '';
+      }
     }
 
     function collectTripConfigFromDom() {
@@ -2932,6 +2943,82 @@
       };
     }
 
+    function cleanDuplicatePlans() {
+      const seenNames = new Map();
+      const cleaned = {};
+      Object.keys(travelSessions).forEach(key => {
+        const p = travelSessions[key];
+        const trimmedName = (p.name || '').trim().toLowerCase();
+        if (!seenNames.has(trimmedName)) {
+          seenNames.set(trimmedName, key);
+          cleaned[key] = p;
+        } else {
+          const existingKey = seenNames.get(trimmedName);
+          const existingDate = new Date(cleaned[existingKey].updatedAt || cleaned[existingKey].createdAt || 0);
+          const currentDate = new Date(p.updatedAt || p.createdAt || 0);
+          if (currentDate >= existingDate) {
+            delete cleaned[existingKey];
+            cleaned[key] = p;
+            seenNames.set(trimmedName, key);
+          }
+        }
+      });
+      travelSessions = cleaned;
+    }
+
+    async function initSessionsManager() {
+      try {
+        const res = await fetch('./data/sessions.json?v=' + Date.now());
+        if (res.ok) {
+          const remoteData = await res.json();
+          if (remoteData.plans && Object.keys(remoteData.plans).length > 0) {
+            travelSessions = remoteData.plans;
+            cleanDuplicatePlans();
+          }
+        }
+      } catch (e) {
+        console.log('Using local/cached sessions fallback', e);
+      }
+
+      if (!travelSessions || Object.keys(travelSessions).length === 0) {
+        try {
+          const saved = localStorage.getItem(LOCAL_SESSIONS_KEY);
+          if (saved) {
+            travelSessions = JSON.parse(saved);
+            cleanDuplicatePlans();
+          }
+        } catch (e) {}
+      }
+
+      const savedSessionId = localStorage.getItem(ACTIVE_SESSION_KEY);
+      const hasUrlPlan = window.location.hash && window.location.hash.startsWith('#plan=');
+
+      if (hasUrlPlan) {
+        checkUrlHashSession();
+      } else if (savedSessionId && travelSessions[savedSessionId]) {
+        activeSessionId = savedSessionId;
+        const s = travelSessions[savedSessionId];
+        if (s.tripConfig) tripConfig = JSON.parse(JSON.stringify(s.tripConfig));
+        if (s.state) state = JSON.parse(JSON.stringify(s.state));
+      } else {
+        activeSessionId = 'new_blank';
+        tripConfig = getBlankTripConfig();
+        state = getBlankState();
+      }
+
+      renderSessionsDropdown();
+      syncDomFromTripConfig();
+    }
+
+    function saveSessionsToStorage() {
+      try {
+        cleanDuplicatePlans();
+        localStorage.setItem(LOCAL_SESSIONS_KEY, JSON.stringify(travelSessions));
+      } catch (e) {
+        console.error('Error saving sessions to localStorage', e);
+      }
+    }
+
     function renderSessionsDropdown() {
       const dropdown = document.getElementById('sessions-dropdown');
       if (!dropdown) return;
@@ -3008,24 +3095,7 @@
       changePassengerCount(count);
 
       // 2. Poblar select de país y aeropuertos para P1 y P2
-      ['p1', 'p2'].forEach(pKey => {
-        const cSelect = document.getElementById(`${pKey}-country-select`);
-        const pCountry = tripConfig[pKey]?.country || (pKey === 'p1' ? 'MX' : 'ES');
-        if (cSelect) {
-          cSelect.innerHTML = Object.entries(geoCatalog).map(([code, country]) => 
-            `<option value="${code}" ${pCountry === code ? 'selected' : ''}>${country.name}</option>`
-          ).join('');
-          cSelect.value = pCountry;
-          
-          const aSelect = document.getElementById(`${pKey}-cfg-origin`);
-          if (aSelect) {
-            const countryCode = cSelect.value;
-            const airports = geoCatalog[countryCode]?.airports || [];
-            aSelect.innerHTML = renderAirportSelectOptions(airports, tripConfig[pKey]?.origin);
-            if (tripConfig[pKey]?.origin) aSelect.value = tripConfig[pKey].origin;
-          }
-        }
-      });
+      initPassengerCountrySelectors();
 
       // 3. Pasajero 1
       if (document.getElementById('p1-cfg-name')) document.getElementById('p1-cfg-name').value = tripConfig.p1?.name || '';
