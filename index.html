@@ -1435,33 +1435,27 @@
 
     // ─── MODELO DE ESTADO DEL VIAJE ───
     let tripConfig = {
-      passengerCount: 2,
-      strictJointFlight: true,
+      passengerCount: 1,
+      strictJointFlight: false,
       p1: {
-        name: "Mario",
-        country: "MX",
-        origin: "MEX — Ciudad de México (Benito Juárez / AIFA)",
-        startDate: "2026-10-16",
-        nationality: "MX",
-        visas: { usa: true },
+        name: "",
+        country: "",
+        origin: "",
+        startDate: "",
+        nationality: "",
+        visas: {},
         prefs: { bag: true, carry: true, seat: true },
-        waypoints: [
-          { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "2026-10-17", departureDate: "2026-10-27", departureOrigins: "MAD, BCN", jointFlight: false },
-          { country: "MX", cityCode: "MEX", name: "Ciudad de México (MEX)", arrivalDate: "2026-10-27", departureDate: "2026-11-20", departureOrigins: "MEX", jointFlight: true }
-        ]
+        waypoints: []
       },
       p2: {
-        name: "Yesica",
-        country: "ES",
-        origin: "SPC — La Palma, Islas Canarias",
-        startDate: "2026-10-16",
-        nationality: "ES",
-        visas: { residencia: true },
+        name: "",
+        country: "",
+        origin: "",
+        startDate: "",
+        nationality: "",
+        visas: {},
         prefs: { bag: true, carry: true, seat: true },
-        waypoints: [
-          { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "2026-10-16", departureDate: "2026-10-27", departureOrigins: "MAD, BCN", jointFlight: false },
-          { country: "MX", cityCode: "MEX", name: "Ciudad de México (MEX)", arrivalDate: "2026-10-27", departureDate: "2026-11-20", departureOrigins: "MEX", jointFlight: true }
-        ]
+        waypoints: []
       }
     };
 
@@ -3392,8 +3386,38 @@
     }
 
     function resetToBlank() {
-      tripConfig.p1.name = "Viajero 1";
-      tripConfig.p2.name = "Viajero 2";
+      tripConfig = {
+        passengerCount: 1,
+        strictJointFlight: false,
+        p1: { name: "", country: "", origin: "", startDate: "", nationality: "", visas: {}, prefs: { bag: true, carry: true, seat: true }, waypoints: [] },
+        p2: { name: "", country: "", origin: "", startDate: "", nationality: "", visas: {}, prefs: { bag: true, carry: true, seat: true }, waypoints: [] }
+      };
+      
+      // Also reset step 1 inputs visually
+      document.getElementById('cfg-passenger-count').value = "1";
+      document.querySelectorAll('input').forEach(i => {
+          if (i.type === 'text' || i.type === 'date') i.value = '';
+          if (i.type === 'checkbox') i.checked = false;
+      });
+      document.querySelectorAll('select').forEach(s => {
+          if(s.id !== 'cfg-passenger-count') s.selectedIndex = 0;
+      });
+      
+      // Defaults for prefs
+      ['bag', 'carry', 'seat'].forEach(pref => {
+         const cb1 = document.getElementById(`pref-p1-${pref}`);
+         if (cb1) cb1.checked = true;
+         const cb2 = document.getElementById(`pref-p2-${pref}`);
+         if (cb2) cb2.checked = true;
+      });
+      
+      state = getBlankState();
+      changePassengerCount(1);
+      
+      // Render clean waypoints
+      renderWaypointsList('p1');
+      renderWaypointsList('p2');
+      
       goToStep(1);
       showToast('🔄 Formulario restablecido para nuevo viaje', 'info');
     }
