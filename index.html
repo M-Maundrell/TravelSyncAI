@@ -765,7 +765,7 @@
       </div>
 
       <!-- REGLA DE VUELO CONJUNTO OBLIGATORIO DESTACADA -->
-      <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5 space-y-3">
+      <div id="joint-flight-rule-box" class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5 space-y-3">
         <div class="flex items-center gap-2">
           <span class="text-base">🔗</span>
           <h4 class="text-sm font-black text-emerald-900">Regla Maestra de Sincronización de Vuelo Conjunto</h4>
@@ -975,7 +975,7 @@
         </div>
 
         <!-- COLUMNA PASAJERO 2 -->
-        <div class="bg-white border border-slate-200/80 rounded-3xl p-5 md:p-6 shadow-sm flex flex-col justify-between">
+        <div id="p2-summary-col" class="bg-white border border-slate-200/80 rounded-3xl p-5 md:p-6 shadow-sm flex flex-col justify-between">
           <div>
             <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
               <div class="flex items-center gap-2.5 flex-wrap">
@@ -2545,6 +2545,8 @@
         });
       }
 
+      const isSinglePassenger = tripConfig.passengerCount === 1;
+
       legs.push({
         id: 'leg_joint',
         traveler: 'mario',
@@ -2556,11 +2558,11 @@
         primaryOriginCode: primaryOriginCode,
         altOriginCode: altOriginCode,
         isPrimary: isJointPrimary,
-        title: `Tramo 3: Tramo Conjunto Compartido (${originCode} ➔ ${destCityName})`,
-        desc: `Vuelo en conjunto obligatorio: ${n1} y ${n2} viajarán en el mismo vuelo y horario saliendo desde ${originCode}. (${isJointRoundtrip ? '🔄 Tramo Redondo' : '➡️ Tramo Sencillo'}).`,
-        passengerBadge: `👥 ${n1} & ${n2} (Mismo Vuelo)`,
-        badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold',
-        isJoint: true
+        title: isSinglePassenger ? `Tramo 2: Vuelo Principal (${originCode} ➔ ${destCityName})` : `Tramo 3: Tramo Conjunto Compartido (${originCode} ➔ ${destCityName})`,
+        desc: isSinglePassenger ? `Vuelo principal de ${n1} hacia ${destCityName}. (${isJointRoundtrip ? '🔄 Tramo Redondo' : '➡️ Tramo Sencillo'}).` : `Vuelo en conjunto obligatorio: ${n1} y ${n2} viajarán en el mismo vuelo y horario saliendo desde ${originCode}. (${isJointRoundtrip ? '🔄 Tramo Redondo' : '➡️ Tramo Sencillo'}).`,
+        passengerBadge: isSinglePassenger ? `👤 ${n1} (${originCode})` : `👥 ${n1} & ${n2} (Mismo Vuelo)`,
+        badgeClass: isSinglePassenger ? 'bg-blue-50 text-blue-700 border-blue-200/80 font-bold' : 'bg-emerald-50 text-emerald-700 border-emerald-300 font-bold',
+        isJoint: !isSinglePassenger
       });
 
       // Tramos de regreso para el pasajero 2 (Yesica) si su origen difiere del destino conjunto:
@@ -2595,7 +2597,7 @@
         });
       }
 
-      let totalCost = calculateTravelerCost('mario') + calculateTravelerCost('yesica');
+      let totalCost = calculateTravelerCost('mario') + (isSinglePassenger ? 0 : calculateTravelerCost('yesica'));
       const totalDisplay = document.getElementById('step3-total-cost-display');
       if (totalDisplay) totalDisplay.innerText = formatMXN(totalCost);
 
@@ -3353,8 +3355,23 @@
 
     function changePassengerCount(count) {
       tripConfig.passengerCount = parseInt(count, 10);
+      const isMultiple = tripConfig.passengerCount > 1;
+      
       const p2Card = document.getElementById('p2-card-wrapper');
-      if (p2Card) p2Card.classList.toggle('hidden', tripConfig.passengerCount < 2);
+      if (p2Card) p2Card.classList.toggle('hidden', !isMultiple);
+      
+      const wpTabP2 = document.getElementById('wp-tab-btn-p2');
+      if (wpTabP2) wpTabP2.classList.toggle('hidden', !isMultiple);
+      
+      const wpPanelP2 = document.getElementById('wp-panel-p2');
+      if (wpPanelP2 && !isMultiple) wpPanelP2.classList.add('hidden');
+      
+      const ruleBox = document.getElementById('joint-flight-rule-box');
+      if (ruleBox) ruleBox.classList.toggle('hidden', !isMultiple);
+      
+      if (!isMultiple) {
+        switchWpTab('p1');
+      }
     }
 
     // ─── GESTOR DE SESIONES Y PLANES DE VIAJE EN GITHUB (data/sessions.json) ───
@@ -4130,6 +4147,7 @@
       const retCan = getCatalogBrick(state.yesica.retorno_canarias);
       const jointFlight = mTrans;
 
+      const isSinglePassenger = tripConfig.passengerCount === 1;
       const mJointFn = isMarioAlt() ? (mTrans?.return?.flightNumber || 'IB0153') : (mTrans?.outbound?.flightNumber || 'IB6403');
       const yJointFn = yTrans?.outbound?.flightNumber || mJointFn;
       const isSynced = mJointFn === yJointFn;
@@ -4152,6 +4170,7 @@
           <text x="0" y="-22" fill="#93c5fd" font-size="11" font-weight="800" text-anchor="middle">${n1}: ${p1Orig}</text>
           <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${tripConfig.p1.startDate || '16 Oct'}</text>
         </g>
+        ${isSinglePassenger ? "" : `
         <!-- Origen Yesica -->
         <g transform="translate(${xStart}, ${yYesica})" onclick="selectPathNode('p2_orig')" class="cursor-pointer" filter="url(#pvShadow)">
           ${isP2OrigSelected ? '<circle r="22" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="4,2" />' : ''}
@@ -4159,7 +4178,7 @@
           <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🛫</text>
           <text x="0" y="-22" fill="#f472b6" font-size="11" font-weight="800" text-anchor="middle">${n2}: ${p2Orig}</text>
           <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">${tripConfig.p2.startDate || '16 Oct'}</text>
-        </g>
+        </g>`}
       `;
 
       let prevIsJoint = false;
@@ -4180,17 +4199,17 @@
         if (i === 0) {
           tracksSvg += `
             <path d="M ${prevX} ${yMario} C ${midX} ${yMario}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvBlueToGreen)" stroke-width="4" stroke-linecap="round" />
-            <path d="M ${prevX} ${yYesica} C ${midX} ${yYesica}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvPinkToGreen)" stroke-width="4" stroke-linecap="round" />
+            ${isSinglePassenger ? "" : `<path d="M ${prevX} ${yYesica} C ${midX} ${yYesica}, ${midX} ${yCenter}, ${curX} ${yCenter}" fill="none" stroke="url(#pvPinkToGreen)" stroke-width="4" stroke-linecap="round" />`}
           `;
           pillsSvg += `
             <g transform="translate(${Math.round(prevX + (curX - prevX) * 0.35)}, ${yMario - 5})" onclick="selectPathNode('p1_orig')" class="cursor-pointer" filter="url(#pvShadow)">
               <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" />
               <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">✈️ Salida ${p1Orig}</text>
             </g>
-            <g transform="translate(${Math.round(prevX + (curX - prevX) * 0.35)}, ${yYesica + 5})" onclick="selectPathNode('p2_orig')" class="cursor-pointer" filter="url(#pvShadow)">
+            ${isSinglePassenger ? "" : `<g transform="translate(${Math.round(prevX + (curX - prevX) * 0.35)}, ${yYesica + 5})" onclick="selectPathNode('p2_orig')" class="cursor-pointer" filter="url(#pvShadow)">
               <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#831843" stroke="#f472b6" stroke-width="1.5" />
               <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">✈️ Salida ${p2Orig}</text>
-            </g>
+            </g>`}
             <g transform="translate(${Math.round(prevX + (curX - prevX) * 0.72)}, ${yCenter})" onclick="selectPathNode('wp_0')" class="cursor-pointer" filter="url(#pvShadow)">
               <rect x="-42" y="-11" width="84" height="22" rx="11" fill="#1e293b" stroke="#34d399" stroke-width="1.5" />
               <text x="0" y="3.5" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle">✨ Encuentro</text>
@@ -4230,12 +4249,12 @@
       if (prevIsJoint) {
         tracksSvg += `
           <path d="M ${prevX} ${yCenter} C ${midRetX} ${yCenter}, ${midRetX} ${yMario}, ${xEnd} ${yMario}" fill="none" stroke="url(#pvGreenToBlue)" stroke-width="4" stroke-linecap="round" />
-          <path d="M ${prevX} ${yCenter} C ${midRetX} ${yCenter}, ${midRetX} ${yYesica}, ${xEnd} ${yYesica}" fill="none" stroke="url(#pvGreenToPink)" stroke-width="4" stroke-linecap="round" />
+          ${isSinglePassenger ? "" : `<path d="M ${prevX} ${yCenter} C ${midRetX} ${yCenter}, ${midRetX} ${yYesica}, ${xEnd} ${yYesica}" fill="none" stroke="url(#pvGreenToPink)" stroke-width="4" stroke-linecap="round" />`}
         `;
       } else {
         tracksSvg += `
           <line x1="${prevX}" y1="${yMario}" x2="${xEnd}" y2="${yMario}" stroke="#3b82f6" stroke-width="4" stroke-linecap="round" />
-          <line x1="${prevX}" y1="${yYesica}" x2="${xEnd}" y2="${yYesica}" stroke="#ec4899" stroke-width="4" stroke-linecap="round" />
+          ${isSinglePassenger ? "" : `<line x1="${prevX}" y1="${yYesica}" x2="${xEnd}" y2="${yYesica}" stroke="#ec4899" stroke-width="4" stroke-linecap="round" />`}
         `;
       }
 
@@ -4244,10 +4263,10 @@
           <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#1e3a8a" stroke="#60a5fa" stroke-width="1.5" />
           <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">🛬 Retorno</text>
         </g>
-        <g transform="translate(${midRetX}, ${yYesica - 15})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
+        ${isSinglePassenger ? "" : `<g transform="translate(${midRetX}, ${yYesica - 15})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
           <rect x="-35" y="-11" width="70" height="20" rx="10" fill="#831843" stroke="#f472b6" stroke-width="1.5" />
           <text x="0" y="3" fill="#ffffff" font-size="9" font-weight="800" text-anchor="middle">🛬 Retorno</text>
-        </g>
+        </g>`}
       `;
 
       stationsSvg += `
@@ -4258,13 +4277,13 @@
           <text x="0" y="-22" fill="#93c5fd" font-size="11" font-weight="800" text-anchor="middle">${n1}: ${p1Orig}</text>
           <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">Llegada</text>
         </g>
-        <g transform="translate(${xEnd}, ${yYesica})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
+        ${isSinglePassenger ? "" : `<g transform="translate(${xEnd}, ${yYesica})" onclick="selectPathNode('retorno')" class="cursor-pointer" filter="url(#pvShadow)">
           ${isRetSelected ? '<circle r="22" fill="none" stroke="#f472b6" stroke-width="3" stroke-dasharray="4,2" />' : ''}
           <circle r="15" fill="${isRetSelected ? '#db2777' : '#1e293b'}" stroke="#ec4899" stroke-width="3" />
           <text x="0" y="4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">🛬</text>
           <text x="0" y="-22" fill="#f472b6" font-size="11" font-weight="800" text-anchor="middle">${n2}: ${p2Orig}</text>
           <text x="0" y="27" fill="#64748b" font-size="9" font-weight="700" text-anchor="middle">Llegada</text>
-        </g>
+        </g>`}
       `;
 
       // ─── 4. INSPECTOR DINÁMICO DE DETALLES DEL NODO SELECCIONADO ───
@@ -4779,6 +4798,7 @@
     function renderTimeline() {
       const container = document.getElementById('calendar-timeline');
       if (!container) return;
+      const isSinglePassenger = tripConfig.passengerCount === 1;
 
       const wps = tripConfig.p1.waypoints || [];
       const n1 = tripConfig.p1.name || 'Mario';
@@ -4813,7 +4833,7 @@
       // Resumen ejecutivo de la cabecera
       const summaryBadgeContainer = document.getElementById('timeline-summary-badge');
       if (summaryBadgeContainer) {
-        const totalCost = calculateTravelerCost('mario') + calculateTravelerCost('yesica');
+        const totalCost = calculateTravelerCost('mario') + (isSinglePassenger ? 0 : calculateTravelerCost('yesica'));
         summaryBadgeContainer.innerHTML = `
           <span class="px-3 py-1 bg-slate-100 text-slate-800 font-bold text-xs rounded-xl border border-slate-300 shadow-2xs">
             📅 ${totalDays} Días Totales (16 Oct – 21 Nov 2026)
@@ -4909,6 +4929,7 @@
                 </div>
               </div>
 
+              ${isSinglePassenger ? "" : `
               <!-- Tarjeta Pasajera 2: Yesica -->
               <div class="bg-white border-2 border-pink-200/90 rounded-2xl p-4 md:p-5 shadow-2xs space-y-3">
                 <div class="flex items-center justify-between pb-2 border-b border-pink-100">
@@ -4953,7 +4974,7 @@
                 <div class="bg-pink-50/70 text-pink-900 text-xs p-2.5 rounded-xl border border-pink-100 leading-relaxed font-medium">
                   Vuelo península-islas. Arribo a Madrid el viernes 16 de octubre a las 22:05 h para esperar a Mario.
                 </div>
-              </div>
+              </div>`}
             </div>
           `
         },
@@ -5137,6 +5158,7 @@
             </div>
           `
         },
+        ...(isSinglePassenger ? [] : [
         // 5. Retorno Transatlántico de Yesica
         {
           id: 'step_return_trans',
@@ -5255,6 +5277,7 @@
             </div>
           `
         }
+        ])
       ];
 
       let visibleEvents = events;
@@ -5329,6 +5352,14 @@
       const panel = document.getElementById('alerts-panel');
       if (!panel) return;
 
+      const isSinglePassenger = tripConfig.passengerCount === 1;
+      if (isSinglePassenger) {
+        panel.innerHTML = "";
+        panel.classList.add("hidden");
+        return;
+      }
+      panel.classList.remove("hidden");
+
       const mTrans = isMarioAlt() ? getCatalogBrick(state.mario.bog_esp) : getCatalogBrick(state.mario.trans);
       const yTrans = getCatalogBrick(state.yesica.trans);
       const mJointFn = isMarioAlt() ? (mTrans?.return?.flightNumber || 'IB0153') : (mTrans?.outbound?.flightNumber || 'AV19');
@@ -5367,20 +5398,32 @@
     }
 
     function render() {
+      const isSinglePassenger = tripConfig.passengerCount === 1;
+
       document.getElementById('p1-name-display').innerText = tripConfig.p1.name;
       document.getElementById('p1-origin-display').innerText = `Salida: ${tripConfig.p1.origin} · Pasaporte ${tripConfig.p1.nationality}`;
-      document.getElementById('p2-name-display').innerText = tripConfig.p2.name;
-      document.getElementById('p2-origin-display').innerText = `Salida: ${tripConfig.p2.origin} · Residencia ${tripConfig.p2.nationality}`;
+      
+      const p2Col = document.getElementById('p2-summary-col');
+      if (p2Col) {
+        p2Col.classList.toggle('hidden', isSinglePassenger);
+      }
+
+      if (!isSinglePassenger) {
+        document.getElementById('p2-name-display').innerText = tripConfig.p2.name;
+        document.getElementById('p2-origin-display').innerText = `Salida: ${tripConfig.p2.origin} · Residencia ${tripConfig.p2.nationality}`;
+        renderTravelerColumn('yesica', 'col-yesica');
+      }
 
       renderTravelerColumn('mario', 'col-mario');
-      renderTravelerColumn('yesica', 'col-yesica');
 
       const mCost = calculateTravelerCost('mario');
-      const yCost = calculateTravelerCost('yesica');
+      const yCost = isSinglePassenger ? 0 : calculateTravelerCost('yesica');
       const totalCost = mCost + yCost;
 
       document.getElementById('mario-cost').innerHTML = `<div class="text-base font-black text-blue-700">${formatMXN(mCost)}</div><div class="text-xs text-blue-500 font-bold">${formatEUR(mCost)}</div>`;
-      document.getElementById('yesica-cost').innerHTML = `<div class="text-base font-black text-pink-700">${formatMXN(yCost)}</div><div class="text-xs text-pink-500 font-bold">${formatEUR(yCost)}</div>`;
+      if (!isSinglePassenger) {
+        document.getElementById('yesica-cost').innerHTML = `<div class="text-base font-black text-pink-700">${formatMXN(yCost)}</div><div class="text-xs text-pink-500 font-bold">${formatEUR(yCost)}</div>`;
+      }
 
       document.getElementById('cost-display').innerText = formatMXN(totalCost);
       document.getElementById('cost-display-eur').innerText = formatEUR(totalCost);
