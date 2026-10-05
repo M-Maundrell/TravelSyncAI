@@ -2535,9 +2535,9 @@
 
       let html = '';
       wps.forEach((wp, idx) => {
-        const countryKey = wp.country || 'ES';
-        const country = geoCatalog[countryKey] || geoCatalog['ES'];
-        const countryOptions = Object.entries(geoCatalog).map(([k, c]) => 
+        const countryKey = wp.country || '';
+        const country = geoCatalog[countryKey] || { airports: {} };
+        const countryOptions = '<option value="" disabled selected>Selecciona país...</option>' + Object.entries(geoCatalog).map(([k, c]) => 
           `<option value="${k}" ${countryKey === k ? 'selected' : ''}>${c.name}</option>`
         ).join('');
         const cityOptions = renderAirportSelectOptions(country.airports, wp.cityCode);
@@ -2829,13 +2829,14 @@
 
     function addWaypoint(pKey) {
       tripConfig[pKey].waypoints.push({
-        country: "ES",
-        cityCode: "MAD",
-        name: "Madrid (MAD)",
-        arrivalDate: "2026-10-25",
-        departureDate: "2026-11-27",
-        departureOrigins: "MAD, BCN",
-        jointFlight: true
+        country: "",
+        cityCode: "",
+        name: "",
+        arrivalDate: "",
+        departureDate: "",
+        departureOrigins: "",
+        jointFlight: false,
+        isRoundtrip: false
       });
       renderWaypointsList(pKey);
     }
@@ -2883,136 +2884,25 @@
         strictJointFlight: false,
         p1: {
           name: "",
-          country: "MX",
-          origin: "MEX — Ciudad de México (AICM Benito Juárez)",
+          country: "",
+          origin: "",
           startDate: "",
-          nationality: "MX",
-          visas: { usa: false },
+          nationality: "",
+          visas: {},
           prefs: { bag: true, carry: true, seat: true },
-          waypoints: [
-            { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "", departureDate: "", isRoundtrip: false, jointFlight: false }
-          ]
+          waypoints: []
         },
         p2: {
           name: "",
-          country: "ES",
-          origin: "MAD — Madrid Barajas Adolfo Suárez",
+          country: "",
+          origin: "",
           startDate: "",
-          nationality: "ES",
-          visas: { residencia: false },
+          nationality: "",
+          visas: {},
           prefs: { bag: true, carry: true, seat: true },
-          waypoints: [
-            { country: "ES", cityCode: "MAD", name: "Madrid (MAD)", arrivalDate: "", departureDate: "", isRoundtrip: false, jointFlight: false }
-          ]
+          waypoints: []
         }
       };
-    }
-
-    function generateFallbackFlights(route, orig, dest, date) {
-      if (!orig || !dest) return;
-      const airlines = ['iberia', 'avianca', 'aeromexico', 'air-europa'];
-      
-      airlines.forEach((al, idx) => {
-          const fid = `mock_${route.segment}_${al}_${idx}`;
-          const alName = al.charAt(0).toUpperCase() + al.slice(1);
-          flightsCatalog[fid] = {
-              id: fid,
-              traveler: route.traveler || 'p1',
-              segment: route.segment || route.id,
-              title: `${alName} Mock (${orig} ➔ ${dest})`,
-              airline: al,
-              airlineName: alName,
-              price: 12500 + (Math.random() * 5000),
-              depTime: '10:00',
-              arrTime: '14:00',
-              description: `Vuelo estático generado localmente para pruebas sin conexión al backend.`
-          };
-      });
-    }
-
-    function getBlankState() {
-      return { p1: {}, p2: {}, mario: {}, yesica: {} };
-    }
-
-    function cleanDuplicatePlans() {
-      const seenNames = new Map();
-      const cleaned = {};
-      Object.keys(travelSessions).forEach(key => {
-        const p = travelSessions[key];
-        const trimmedName = (p.name || '').trim().toLowerCase();
-        if (!seenNames.has(trimmedName)) {
-          seenNames.set(trimmedName, key);
-          cleaned[key] = p;
-        } else {
-          const existingKey = seenNames.get(trimmedName);
-          const existingDate = new Date(cleaned[existingKey].updatedAt || cleaned[existingKey].createdAt || 0);
-          const currentDate = new Date(p.updatedAt || p.createdAt || 0);
-          if (currentDate >= existingDate) {
-            delete cleaned[existingKey];
-            cleaned[key] = p;
-            seenNames.set(trimmedName, key);
-          }
-        }
-      });
-      travelSessions = cleaned;
-    }
-
-    async function initSessionsManager() {
-      // 1. Cargar planes disponibles desde GitHub (data/sessions.json)
-      try {
-        const res = await fetch('./data/sessions.json?v=' + Date.now());
-        if (res.ok) {
-          const remoteData = await res.json();
-          if (remoteData.plans && Object.keys(remoteData.plans).length > 0) {
-            travelSessions = remoteData.plans;
-            cleanDuplicatePlans();
-            console.log('✓ Planes cargados y deduplicados desde GitHub (data/sessions.json)');
-          }
-        }
-      } catch (e) {
-        console.log('Using local/cached sessions fallback', e);
-      }
-
-      // 2. Fallback de localStorage si no hay planes remotos
-      if (!travelSessions || Object.keys(travelSessions).length === 0) {
-        try {
-          const saved = localStorage.getItem(LOCAL_SESSIONS_KEY);
-          if (saved) {
-            travelSessions = JSON.parse(saved);
-            cleanDuplicatePlans();
-          }
-        } catch (e) {}
-      }
-
-      // 3. Determinar si cargamos un plan existente o iniciamos en BLANCO
-      const savedSessionId = localStorage.getItem(ACTIVE_SESSION_KEY);
-      const hasUrlPlan = window.location.hash && window.location.hash.startsWith('#plan=');
-
-      if (hasUrlPlan) {
-        checkUrlHashSession();
-      } else if (savedSessionId && travelSessions[savedSessionId]) {
-        activeSessionId = savedSessionId;
-        const s = travelSessions[savedSessionId];
-        if (s.tripConfig) tripConfig = JSON.parse(JSON.stringify(s.tripConfig));
-        if (s.state) state = JSON.parse(JSON.stringify(s.state));
-      } else {
-        // FORMULARIO EN BLANCO PARA VIAJE NUEVO
-        activeSessionId = 'new_blank';
-        tripConfig = getBlankTripConfig();
-        state = getBlankState();
-      }
-
-      renderSessionsDropdown();
-      syncDomFromTripConfig();
-    }
-
-    function saveSessionsToStorage() {
-      try {
-        cleanDuplicatePlans();
-        localStorage.setItem(LOCAL_SESSIONS_KEY, JSON.stringify(travelSessions));
-      } catch (e) {
-        console.error('Error saving sessions to localStorage', e);
-      }
     }
 
     function renderSessionsDropdown() {
