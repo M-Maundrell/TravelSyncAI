@@ -804,21 +804,9 @@
 
         <!-- OPCIONES DE BÚSQUEDA / SELECCIÓN DE AEROLÍNEAS -->
         <div class="space-y-3">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <label class="flex items-center gap-2.5 cursor-pointer text-xs font-bold text-slate-800 hover:text-indigo-700 transition">
-              <input type="checkbox" id="cfg-search-all-airlines" checked onchange="toggleAllAirlinesSelection(this.checked)" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
-              <span>Buscar en todas las aerolíneas disponibles (Recomendado: 1 sola llamada API analiza todo el mercado)</span>
-            </label>
-            <span id="selected-airlines-count" class="text-[11px] font-extrabold text-indigo-700 bg-white px-2.5 py-1 rounded-lg border border-indigo-200 shadow-2xs">Todas seleccionadas</span>
-          </div>
-
-          <!-- CHIPS DE AEROLÍNEAS (HASTA 4 SELECCIONABLES SI NO SE ELIGEN TODAS) -->
-          <div id="airline-chips-container" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-            <!-- RENDERIZADO DINÁMICAMENTE POR JS -->
-          </div>
           <div class="text-[11px] text-slate-600 bg-white p-3 rounded-xl border border-indigo-100/80 flex items-center gap-2">
-            <span class="text-base">💡</span>
-            <span><strong>Eficiencia de API:</strong> Google Flights procesa todas las aerolíneas para cada tramo en una única llamada, por lo que buscar en todas no genera costo adicional de cuota.</span>
+            <span class="text-base">🌍</span>
+            <span><strong>Búsqueda Global Activa:</strong> El motor consultará la red global de Google Flights para encontrar la mejor combinación de aerolíneas para cualquier destino (Nacional o Internacional).</span>
           </div>
         </div>
       </div>
@@ -2182,7 +2170,7 @@
     function switchStep3Tab(traveler) {
       document.getElementById('step3-panel-mario').classList.toggle('hidden', traveler !== 'mario');
       document.getElementById('step3-panel-yesica').classList.toggle('hidden', traveler !== 'yesica');
-      document.getElementById('step3-tab-p1').className = traveler === 'mario'
+      document.getElementById('step3-tab-p1').className = (traveler === 'mario' || traveler === 'p1')
         ? 'px-5 py-2.5 border-b-2 border-indigo-600 text-indigo-600 font-extrabold text-xs flex items-center gap-2'
         : 'px-5 py-2.5 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-extrabold text-xs flex items-center gap-2';
       document.getElementById('step3-tab-p2').className = traveler === 'yesica'
@@ -2832,7 +2820,7 @@
     }
 
     function getBlankState() {
-      return { p1: {}, p2: {} };
+      return { p1: {}, p2: {}, mario: {}, yesica: {} };
     }
 
     function cleanDuplicatePlans() {
@@ -3353,7 +3341,7 @@
     // ─── MODAL EXTENDIDO DE SELECCIÓN DE VUELOS (OTA STYLE) ───
     function openFlightPickerModal(traveler, segmentKey) {
       activeModalContext = { traveler, segmentKey, selectedAirline: 'all' };
-      const travelerName = traveler === 'mario' ? tripConfig.p1.name : tripConfig.p2.name;
+      const travelerName = (traveler === 'mario' || traveler === 'p1') ? tripConfig.p1.name : tripConfig.p2.name;
       document.getElementById('modal-picker-title').innerText = `Seleccionar Vuelo para ${travelerName}`;
       document.getElementById('modal-picker-subtitle').innerText = `Tramo: ${segmentKey.replace('-', ' ').toUpperCase()} · Comparador en vivo con disponibilidad y ocupación`;
       
@@ -3409,7 +3397,7 @@
       ];
 
       // Verificación de sincronización con el otro pasajero
-      const otherTraveler = traveler === 'mario' ? 'yesica' : 'mario';
+      const otherTraveler = (traveler === 'mario' || traveler === 'p1') ? 'yesica' : 'mario';
       const otherFlightId = state[otherTraveler]?.trans;
       const otherFlight = getCatalogBrick(otherFlightId);
 
@@ -3497,7 +3485,7 @@
       else if (segmentKey === 'retorno-transatlantico') stateKey = 'retorno_trans';
       else if (segmentKey === 'retorno-canarias') stateKey = 'retorno_canarias';
       state[traveler][stateKey] = flightId;
-      if (traveler === 'mario' && (segmentKey === 'espana-colombia' || segmentKey === 'espana-mexico')) {
+      if ((traveler === 'mario' || traveler === 'p1') && (segmentKey === 'espana-colombia' || segmentKey === 'espana-mexico')) {
         const selected = getCatalogBrick(flightId);
         if (selected?.segment === 'espana-mexico') {
           state.yesica.trans = 'yes_trans_mex_iberia';
@@ -3947,8 +3935,11 @@
       wps.forEach((w, i) => {
           const segId = `leg_${traveler}_${i}`;
           segments.push({
+              key: segId,
+              segment: segId,
+              type: 'select',
               id: segId,
-              title: `Tramo ${traveler}: ${currentOrigin} ➔ ${w.cityCode}`,
+              title: `Tramo ${i+1}: ${currentOrigin} ➔ ${w.cityCode}`,
               depCode: currentOrigin,
               arrCode: w.cityCode,
               date: w.arrivalDate,
@@ -3958,10 +3949,13 @@
           currentOrigin = w.cityCode;
           
           if (w.isRoundtrip) {
-              const retId = `ret_${traveler}_${i}`;
+              const retId = `leg_${traveler}_${i}_ret`;
               segments.push({
+                  key: retId,
+                  segment: retId,
+                  type: 'select',
                   id: retId,
-                  title: `Retorno ${traveler}: ${w.cityCode} ➔ ${tripConfig[traveler].origin?.split('—')[0]?.trim()}`,
+                  title: `Retorno ${i+1}: ${w.cityCode} ➔ ${tripConfig[traveler].origin?.split('—')[0]?.trim()}`,
                   depCode: w.cityCode,
                   arrCode: tripConfig[traveler].origin?.split('—')[0]?.trim(),
                   date: w.departureDate,
@@ -4007,7 +4001,7 @@
     function buildSelectCard(traveler, seg) {
       const currentFlightId = state[traveler][seg.key];
       const flight = getCatalogBrick(currentFlightId);
-      const isMario = traveler === 'mario';
+      const isMario = (traveler === 'mario' || traveler === 'p1');
       const badgeBg = isMario ? 'bg-blue-50 text-blue-700 border border-blue-200/80' : 'bg-pink-50 text-pink-700 border border-pink-200/80';
       const hasReturn = flight && flight.return;
 
@@ -4215,13 +4209,13 @@
       if (!isSinglePassenger) {
         document.getElementById('p2-name-display').innerText = tripConfig.p2.name;
         document.getElementById('p2-origin-display').innerText = `Salida: ${tripConfig.p2.origin} · Residencia ${tripConfig.p2.nationality}`;
-        renderTravelerColumn('yesica', 'col-yesica');
+        renderTravelerColumn('p2', 'col-yesica');
       }
 
-      renderTravelerColumn('mario', 'col-mario');
+      renderTravelerColumn('p1', 'col-mario');
 
-      const mCost = calculateTravelerCost('mario');
-      const yCost = isSinglePassenger ? 0 : calculateTravelerCost('yesica');
+      const mCost = calculateTravelerCost('p1');
+      const yCost = isSinglePassenger ? 0 : calculateTravelerCost('p2');
       const totalCost = mCost + yCost;
 
       document.getElementById('mario-cost').innerHTML = `<div class="text-base font-black text-blue-700">${formatMXN(mCost)}</div><div class="text-xs text-blue-500 font-bold">${formatEUR(mCost)}</div>`;
