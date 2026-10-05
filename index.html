@@ -593,7 +593,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
-              <input type="text" id="p1-cfg-name" value="" placeholder="Ej. Mario" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+              <input type="text" id="p1-cfg-name" value="" placeholder="Ej. Nombre Titular" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
@@ -621,7 +621,7 @@
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nacionalidad / Pasaporte</label>
               <select id="p1-cfg-nat" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                <option value="MX" selected>🇲🇽 México (Exento Schengen / Visa USA)</option>
+                <option value="" disabled selected>Selecciona país...</option><option value="MX">🇲🇽 México (Exento Schengen / Visa USA)</option>🇲🇽 México (Exento Schengen / Visa USA)</option>
                 <option value="ES">🇪🇸 España / Unión Europea</option>
                 <option value="CO">🇨🇴 Colombia</option>
                 <option value="VE">🇻🇪 Venezuela</option>
@@ -661,7 +661,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nombre</label>
-              <input type="text" id="p2-cfg-name" value="" placeholder="Ej. Yesica" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
+              <input type="text" id="p2-cfg-name" value="" placeholder="Ej. Nombre Acompañante" oninput="syncPassengerNamesLive()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">📅 Salida Inicial</label>
@@ -689,7 +689,7 @@
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Nacionalidad / Residencia</label>
               <select id="p2-cfg-nat" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-                <option value="ES" selected>🇪🇸 España / Residencia UE</option>
+                <option value="" disabled selected>Selecciona país...</option><option value="ES">🇪🇸 España / Unión Europea</option>🇪🇸 España / Residencia UE</option>
                 <option value="MX">🇲🇽 México</option>
                 <option value="CO">🇨🇴 Colombia</option>
               </select>
@@ -2362,8 +2362,8 @@
       // Update Tab Names
       const tab1 = document.getElementById('step3-tab-p1');
       const tab2 = document.getElementById('step3-tab-p2');
-      if (tab1) tab1.innerHTML = `Vuelos de ${tripConfig.p1.name || 'Pasajero 1'}`;
-      if (tab2) tab2.innerHTML = `Vuelos de ${tripConfig.p2.name || 'Pasajero 2'}`;
+      if (tab1) tab1.innerHTML = `Vuelos de ${tripConfig.p1.name || 'Titular'}`;
+      if (tab2) tab2.innerHTML = `Vuelos de ${tripConfig.p2.name || 'Acompañante'}`;
     }
 
     function selectStep3Flight(traveler, legId, flightId) {
@@ -2410,8 +2410,8 @@
       if (p1Input && p1Input.value.trim()) tripConfig.p1.name = p1Input.value.trim();
       if (p2Input && p2Input.value.trim()) tripConfig.p2.name = p2Input.value.trim();
 
-      const n1 = tripConfig.p1.name || 'Pasajero 1';
-      const n2 = tripConfig.p2.name || 'Pasajero 2';
+      const n1 = tripConfig.p1.name || 'Titular';
+      const n2 = tripConfig.p2.name || 'Acompañante';
 
       // Actualizar tabs y botones de Paso 2
       const tab1 = document.getElementById('tab-name-p1');
@@ -2525,8 +2525,8 @@
       if (!container) return;
       syncPassengerNamesLive();
       const wps = tripConfig[pKey].waypoints || [];
-      const passengerName = pKey === 'p1' ? (tripConfig.p1.name || 'Pasajero 1') : (tripConfig.p2.name || 'Pasajero 2');
-      const otherName = pKey === 'p1' ? (tripConfig.p2.name || 'Pasajero 2') : (tripConfig.p1.name || 'Titular');
+      const passengerName = pKey === 'p1' ? (tripConfig.p1.name || 'Titular') : (tripConfig.p2.name || 'Acompañante');
+      const otherName = pKey === 'p1' ? (tripConfig.p2.name || 'Acompañante') : (tripConfig.p1.name || 'Titular');
       const passengerOrigin = tripConfig[pKey]?.origin || ('');
 
       let html = '';
@@ -2902,6 +2902,28 @@
           ]
         }
       };
+    }
+
+    function generateFallbackFlights(route, orig, dest, date) {
+      if (!orig || !dest) return;
+      const airlines = ['iberia', 'avianca', 'aeromexico', 'air-europa'];
+      
+      airlines.forEach((al, idx) => {
+          const fid = `mock_${route.segment}_${al}_${idx}`;
+          const alName = al.charAt(0).toUpperCase() + al.slice(1);
+          flightsCatalog[fid] = {
+              id: fid,
+              traveler: route.traveler || 'p1',
+              segment: route.segment || route.id,
+              title: `${alName} Mock (${orig} ➔ ${dest})`,
+              airline: al,
+              airlineName: alName,
+              price: 12500 + (Math.random() * 5000),
+              depTime: '10:00',
+              arrTime: '14:00',
+              description: `Vuelo estático generado localmente para pruebas sin conexión al backend.`
+          };
+      });
     }
 
     function getBlankState() {
@@ -3631,8 +3653,8 @@
       const container = document.getElementById('path-visualization-container');
       if (!container) return;
 
-      const n1 = tripConfig.p1.name || 'Pasajero 1';
-      const n2 = tripConfig.p2.name || 'Pasajero 2';
+      const n1 = tripConfig.p1.name || 'Titular';
+      const n2 = tripConfig.p2.name || 'Acompañante';
 
       const p1Orig = tripConfig.p1.origin ? (tripConfig.p1.origin.split('—')[0]?.trim() || 'MEX') : 'MEX';
       const p2Orig = tripConfig.p2.origin ? (tripConfig.p2.origin.split('—')[0]?.trim() || 'SPC') : 'SPC';
