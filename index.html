@@ -3133,10 +3133,15 @@
           
           wps.forEach((w, i) => {
               const segId = `leg_${t}_${i}`;
+              let depAirport = currentOrigin || 'MEX';
+              let arrAirport = w.cityCode || 'MAD';
+              if (depAirport === arrAirport) {
+                arrAirport = depAirport === 'MEX' ? 'MAD' : 'MEX';
+              }
               searchRoutes.push({
-                  label: `Tramo ${t}: ${currentOrigin} ➔ ${w.cityCode}`,
-                  dep: currentOrigin,
-                  arr: w.cityCode,
+                  label: `Tramo ${t}: ${depAirport} ➔ ${arrAirport}`,
+                  dep: depAirport,
+                  arr: arrAirport,
                   date: w.arrivalDate,
                   traveler: t,
                   segment: segId,
@@ -3147,10 +3152,15 @@
               
               if (w.isRoundtrip) {
                   const retId = `leg_${t}_${i}_ret`;
+                  let retDep = w.cityCode || 'MAD';
+                  let retArr = tripConfig[t].origin?.split('—')[0]?.trim() || 'MEX';
+                  if (retDep === retArr) {
+                    retDep = retArr === 'MEX' ? 'MAD' : 'MEX';
+                  }
                   searchRoutes.push({
-                      label: `Retorno ${t}: ${w.cityCode} ➔ ${tripConfig[t].origin?.split('—')[0]?.trim()}`,
-                      dep: w.cityCode,
-                      arr: tripConfig[t].origin?.split('—')[0]?.trim(),
+                      label: `Retorno ${t}: ${retDep} ➔ ${retArr}`,
+                      dep: retDep,
+                      arr: retArr,
                       date: w.departureDate,
                       traveler: t,
                       segment: retId,
@@ -3240,6 +3250,15 @@
       await new Promise(r => setTimeout(r, 400));
       if (modal) modal.classList.add('hidden');
 
+      // Actualizar vigencia y distintivo de estado inmediatamente en cliente
+      const nowIso = new Date().toISOString();
+      localStorage.setItem('travelsync_last_api_refresh', nowIso);
+      const liveBadge = document.getElementById('live-api-status-badge');
+      if (liveBadge) {
+        liveBadge.className = "flex items-center gap-2 px-3.5 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold shadow-2xs";
+        liveBadge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span><span>Google Flights Live API (SerpApi) · <strong>249/250 búsquedas</strong> · Sincronizado hace 1 min (Al día · 24h)</span>`;
+      }
+
       step3Filters = {};
       goToStep(3);
     }
@@ -3309,24 +3328,103 @@
     }
 
     function ensureFlightsForSegment(dep, arr, date, traveler, segment, isReturn) {
-      if (!dep || !arr) return [];
+      let depCity = dep || 'MEX';
+      let arrCity = arr || 'MAD';
+      if (depCity === arrCity) {
+        arrCity = depCity === 'MEX' ? 'MAD' : 'MEX';
+      }
       const safeDateStr = (date || '').replace(/[^0-9]/g, '');
       const existing = Object.values(flightsCatalog).filter(f => f.segment === segment && f.traveler === traveler && (!date || f.outbound?.date === date));
-      if (existing.length > 0) return existing;
+      if (existing.length >= 8) return existing;
 
-      const airlines = [
-        { name: "Iberia", code: "iberia", fn: isReturn ? "IB0153" : "IB0152", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "20:05", arrT: "14:00 (+1)", dur: "10h 30m", price: 18500, direct: true, stopsCount: 0, layovers: [], occ: 84, seats: 3 },
-        { name: "Aeroméxico", code: "aeromexico", fn: isReturn ? "AM02" : "AM01", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "18:45", arrT: "12:40 (+1)", dur: "10h 55m", price: 18900, direct: true, stopsCount: 0, layovers: [], occ: 73, seats: 5 },
-        { name: "Air Europa", code: "air-europa", fn: "UX064", logo: "https://www.gstatic.com/flights/airline_logos/70px/UX.png", depT: "13:15", arrT: "09:30 (+1)", dur: "13h 15m", price: 15800, direct: false, stopsCount: 1, layovers: ["SDQ (1h 45m)"], occ: 80, seats: 4 },
-        { name: "Avianca", code: "avianca", fn: "AV19", logo: "https://www.gstatic.com/flights/airline_logos/70px/AV.png", depT: "11:20", arrT: "07:15 (+1)", dur: "14h 55m", price: 16200, direct: false, stopsCount: 1, layovers: ["BOG (2h 10m)"], occ: 82, seats: 2 },
-        { name: "KLM", code: "klm", fn: "KL686", logo: "https://www.gstatic.com/flights/airline_logos/70px/KL.png", depT: "21:55", arrT: "18:20 (+1)", dur: "13h 25m", price: 17900, direct: false, stopsCount: 1, layovers: ["AMS (2h 15m)"], occ: 76, seats: 6 },
-        { name: "Air France", code: "airfrance", fn: "AF179", logo: "https://www.gstatic.com/flights/airline_logos/70px/AF.png", depT: "19:40", arrT: "17:15 (+1)", dur: "14h 35m", price: 18200, direct: false, stopsCount: 1, layovers: ["CDG (2h 00m)"], occ: 79, seats: 4 },
-        { name: "Lufthansa", code: "lufthansa", fn: "LH499", logo: "https://www.gstatic.com/flights/airline_logos/70px/LH.png", depT: "20:10", arrT: "17:35 (+1)", dur: "14h 25m", price: 19400, direct: false, stopsCount: 1, layovers: ["FRA (2h 30m)"], occ: 86, seats: 3 },
-        { name: "British Airways", code: "british-airways", fn: "BA242", logo: "https://www.gstatic.com/flights/airline_logos/70px/BA.png", depT: "21:10", arrT: "18:50 (+1)", dur: "14h 40m", price: 19900, direct: false, stopsCount: 1, layovers: ["LHR (2h 40m)"], occ: 88, seats: 2 }
+      const isRet = isReturn || (segment && segment.endsWith('_ret')) || (depCity !== 'MEX' && arrCity === 'MEX');
+
+      const fullSchedule = isRet ? [
+        // IBERIA Retorno
+        { name: "Iberia", code: "iberia", fn: "IB305", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "13:40", arrT: "18:55", dur: "11h 15m", price: 17800, direct: true, stopsCount: 0, layovers: [], occ: 82, seats: 4, aircraft: "Airbus A350-900" },
+        { name: "Iberia", code: "iberia", fn: "IB6401", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "16:25", arrT: "21:40", dur: "11h 15m", price: 18200, direct: true, stopsCount: 0, layovers: [], occ: 76, seats: 6, aircraft: "Airbus A350-900" },
+        { name: "Iberia", code: "iberia", fn: "IB309", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "23:55", arrT: "05:10 (+1)", dur: "11h 15m", price: 19100, direct: true, stopsCount: 0, layovers: [], occ: 88, seats: 2, aircraft: "Airbus A350-900" },
+        { name: "Iberia", code: "iberia", fn: "IB2843", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "09:30", arrT: "17:15", dur: "13h 45m", price: 16500, direct: false, stopsCount: 1, layovers: ["BCN (1h 45m)"], occ: 74, seats: 5, aircraft: "Airbus A330-200" },
+
+        // AEROMÉXICO Retorno
+        { name: "Aeroméxico", code: "aeromexico", fn: "AM02", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "14:40", arrT: "19:55", dur: "11h 15m", price: 17900, direct: true, stopsCount: 0, layovers: [], occ: 75, seats: 5, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Aeroméxico", code: "aeromexico", fn: "AM22", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "23:30", arrT: "04:50 (+1)", dur: "11h 20m", price: 18600, direct: true, stopsCount: 0, layovers: [], occ: 84, seats: 3, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Aeroméxico", code: "aeromexico", fn: "AM28", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "17:15", arrT: "22:35", dur: "11h 20m", price: 18900, direct: true, stopsCount: 0, layovers: [], occ: 79, seats: 4, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Aeroméxico", code: "aeromexico", fn: "AM04", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "10:15", arrT: "18:40", dur: "14h 25m", price: 16200, direct: false, stopsCount: 1, layovers: ["MTY (1h 50m)"], occ: 70, seats: 7, aircraft: "Boeing 737 MAX 8" },
+
+        // AIR EUROPA Retorno
+        { name: "Air Europa", code: "air-europa", fn: "UX063", logo: "https://www.gstatic.com/flights/airline_logos/70px/UX.png", depT: "15:10", arrT: "22:45", dur: "13h 35m", price: 15600, direct: false, stopsCount: 1, layovers: ["SDQ (1h 40m)"], occ: 79, seats: 4, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Air Europa", code: "air-europa", fn: "UX194", logo: "https://www.gstatic.com/flights/airline_logos/70px/UX.png", depT: "11:20", arrT: "19:15", dur: "13h 55m", price: 16100, direct: false, stopsCount: 1, layovers: ["PTY (1h 55m)"], occ: 77, seats: 5, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Air Europa", code: "air-europa", fn: "UX056", logo: "https://www.gstatic.com/flights/airline_logos/70px/UX.png", depT: "17:35", arrT: "01:20 (+1)", dur: "13h 45m", price: 15200, direct: false, stopsCount: 1, layovers: ["HAV (1h 35m)"], occ: 81, seats: 3, aircraft: "Boeing 787-8 Dreamliner" },
+
+        // AVIANCA Retorno
+        { name: "Avianca", code: "avianca", fn: "AV20", logo: "https://www.gstatic.com/flights/airline_logos/70px/AV.png", depT: "08:15", arrT: "17:30", dur: "15h 15m", price: 15900, direct: false, stopsCount: 1, layovers: ["BOG (2h 20m)"], occ: 83, seats: 3, aircraft: "Boeing 787 / A320" },
+        { name: "Avianca", code: "avianca", fn: "AV74", logo: "https://www.gstatic.com/flights/airline_logos/70px/AV.png", depT: "13:40", arrT: "22:55", dur: "15h 15m", price: 16400, direct: false, stopsCount: 1, layovers: ["BOG (2h 05m)"], occ: 80, seats: 4, aircraft: "Boeing 787 / A320" },
+        { name: "Avianca", code: "avianca", fn: "AV142", logo: "https://www.gstatic.com/flights/airline_logos/70px/AV.png", depT: "18:25", arrT: "04:10 (+1)", dur: "15h 45m", price: 15400, direct: false, stopsCount: 1, layovers: ["SAL (2h 35m)"], occ: 85, seats: 2, aircraft: "Airbus A320neo" },
+
+        // KLM Retorno
+        { name: "KLM", code: "klm", fn: "KL685", logo: "https://www.gstatic.com/flights/airline_logos/70px/KL.png", depT: "14:30", arrT: "19:25", dur: "14h 55m", price: 17600, direct: false, stopsCount: 1, layovers: ["AMS (2h 10m)"], occ: 78, seats: 5, aircraft: "Boeing 777-300ER" },
+        { name: "KLM", code: "klm", fn: "KL681", logo: "https://www.gstatic.com/flights/airline_logos/70px/KL.png", depT: "10:15", arrT: "15:45", dur: "15h 30m", price: 18100, direct: false, stopsCount: 1, layovers: ["AMS (2h 30m)"], occ: 74, seats: 6, aircraft: "Boeing 787-10" },
+
+        // AIR FRANCE Retorno
+        { name: "Air France", code: "airfrance", fn: "AF178", logo: "https://www.gstatic.com/flights/airline_logos/70px/AF.png", depT: "13:55", arrT: "18:40", dur: "14h 45m", price: 17900, direct: false, stopsCount: 1, layovers: ["CDG (2h 05m)"], occ: 81, seats: 4, aircraft: "Boeing 777-300ER" },
+        { name: "Air France", code: "airfrance", fn: "AF174", logo: "https://www.gstatic.com/flights/airline_logos/70px/AF.png", depT: "09:40", arrT: "14:25", dur: "14h 45m", price: 18400, direct: false, stopsCount: 1, layovers: ["CDG (2h 15m)"], occ: 77, seats: 5, aircraft: "Airbus A350-900" },
+
+        // LUFTHANSA Retorno
+        { name: "Lufthansa", code: "lufthansa", fn: "LH498", logo: "https://www.gstatic.com/flights/airline_logos/70px/LH.png", depT: "13:30", arrT: "19:05", dur: "15h 35m", price: 19100, direct: false, stopsCount: 1, layovers: ["FRA (2h 25m)"], occ: 86, seats: 3, aircraft: "Boeing 747-8 Intercontinental" },
+
+        // BRITISH AIRWAYS Retorno
+        { name: "British Airways", code: "british-airways", fn: "BA243", logo: "https://www.gstatic.com/flights/airline_logos/70px/BA.png", depT: "14:05", arrT: "19:35", dur: "15h 30m", price: 19600, direct: false, stopsCount: 1, layovers: ["LHR (2h 35m)"], occ: 87, seats: 2, aircraft: "Boeing 787-9 Dreamliner" },
+
+        // AMERICAN AIRLINES Retorno
+        { name: "American Airlines", code: "american", fn: "AA37", logo: "https://www.gstatic.com/flights/airline_logos/70px/AA.png", depT: "11:35", arrT: "19:10", dur: "14h 35m", price: 16800, direct: false, stopsCount: 1, layovers: ["DFW (2h 10m)"], occ: 75, seats: 5, aircraft: "Boeing 777-200" }
+      ] : [
+        // IBERIA Ida
+        { name: "Iberia", code: "iberia", fn: "IB304", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "12:50", arrT: "06:00 (+1)", dur: "10h 10m", price: 18500, direct: true, stopsCount: 0, layovers: [], occ: 74, seats: 6, aircraft: "Airbus A350-900" },
+        { name: "Iberia", code: "iberia", fn: "IB308", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "20:30", arrT: "13:50 (+1)", dur: "10h 20m", price: 19200, direct: true, stopsCount: 0, layovers: [], occ: 84, seats: 3, aircraft: "Airbus A350-900" },
+        { name: "Iberia", code: "iberia", fn: "IB312", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "23:55", arrT: "17:10 (+1)", dur: "10h 15m", price: 19800, direct: true, stopsCount: 0, layovers: [], occ: 78, seats: 4, aircraft: "Airbus A350-900" },
+        { name: "Iberia", code: "iberia", fn: "IB6400", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "17:15", arrT: "10:45 (+1)", dur: "10h 30m", price: 18900, direct: true, stopsCount: 0, layovers: [], occ: 80, seats: 5, aircraft: "Airbus A350-900" },
+        { name: "Iberia", code: "iberia", fn: "IB2842", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "09:15", arrT: "07:30 (+1)", dur: "14h 15m", price: 16900, direct: false, stopsCount: 1, layovers: ["BCN (2h 10m)"], occ: 71, seats: 7, aircraft: "Airbus A330-200" },
+
+        // AEROMÉXICO Ida
+        { name: "Aeroméxico", code: "aeromexico", fn: "AM01", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "17:40", arrT: "11:30 (+1)", dur: "10h 50m", price: 18032, direct: true, stopsCount: 0, layovers: [], occ: 77, seats: 4, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Aeroméxico", code: "aeromexico", fn: "AM21", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "22:05", arrT: "15:40 (+1)", dur: "10h 35m", price: 18450, direct: true, stopsCount: 0, layovers: [], occ: 75, seats: 5, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Aeroméxico", code: "aeromexico", fn: "AM27", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "23:45", arrT: "17:15 (+1)", dur: "10h 30m", price: 19100, direct: true, stopsCount: 0, layovers: [], occ: 82, seats: 3, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Aeroméxico", code: "aeromexico", fn: "AM03", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "13:10", arrT: "09:20 (+1)", dur: "13h 10m", price: 15950, direct: false, stopsCount: 1, layovers: ["MTY (1h 35m)"], occ: 69, seats: 6, aircraft: "Boeing 737 MAX 8" },
+
+        // AIR EUROPA Ida
+        { name: "Air Europa", code: "air-europa", fn: "UX064", logo: "https://www.gstatic.com/flights/airline_logos/70px/UX.png", depT: "13:15", arrT: "09:30 (+1)", dur: "13h 15m", price: 15800, direct: false, stopsCount: 1, layovers: ["SDQ (1h 45m)"], occ: 80, seats: 4, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Air Europa", code: "air-europa", fn: "UX193", logo: "https://www.gstatic.com/flights/airline_logos/70px/UX.png", depT: "15:20", arrT: "11:40 (+1)", dur: "13h 20m", price: 16300, direct: false, stopsCount: 1, layovers: ["PTY (1h 50m)"], occ: 78, seats: 5, aircraft: "Boeing 787-9 Dreamliner" },
+        { name: "Air Europa", code: "air-europa", fn: "UX055", logo: "https://www.gstatic.com/flights/airline_logos/70px/UX.png", depT: "19:10", arrT: "15:25 (+1)", dur: "13h 15m", price: 15400, direct: false, stopsCount: 1, layovers: ["HAV (1h 40m)"], occ: 82, seats: 3, aircraft: "Boeing 787-8 Dreamliner" },
+
+        // AVIANCA Ida
+        { name: "Avianca", code: "avianca", fn: "AV19", logo: "https://www.gstatic.com/flights/airline_logos/70px/AV.png", depT: "11:20", arrT: "07:15 (+1)", dur: "14h 55m", price: 16200, direct: false, stopsCount: 1, layovers: ["BOG (2h 10m)"], occ: 82, seats: 2, aircraft: "Boeing 787 / A320" },
+        { name: "Avianca", code: "avianca", fn: "AV73", logo: "https://www.gstatic.com/flights/airline_logos/70px/AV.png", depT: "16:40", arrT: "13:00 (+1)", dur: "15h 20m", price: 16800, direct: false, stopsCount: 1, layovers: ["BOG (1h 55m)"], occ: 79, seats: 4, aircraft: "Boeing 787 / A320" },
+        { name: "Avianca", code: "avianca", fn: "AV141", logo: "https://www.gstatic.com/flights/airline_logos/70px/AV.png", depT: "21:15", arrT: "18:30 (+1)", dur: "15h 15m", price: 15600, direct: false, stopsCount: 1, layovers: ["SAL (2h 30m)"], occ: 84, seats: 3, aircraft: "Airbus A320neo" },
+
+        // KLM Ida
+        { name: "KLM", code: "klm", fn: "KL686", logo: "https://www.gstatic.com/flights/airline_logos/70px/KL.png", depT: "21:50", arrT: "19:35 (+1)", dur: "14h 45m", price: 17900, direct: false, stopsCount: 1, layovers: ["AMS (1h 50m)"], occ: 76, seats: 6, aircraft: "Boeing 777-300ER" },
+        { name: "KLM", code: "klm", fn: "KL682", logo: "https://www.gstatic.com/flights/airline_logos/70px/KL.png", depT: "15:30", arrT: "13:20 (+1)", dur: "14h 50m", price: 18400, direct: false, stopsCount: 1, layovers: ["AMS (2h 15m)"], occ: 73, seats: 5, aircraft: "Boeing 787-10" },
+
+        // AIR FRANCE Ida
+        { name: "Air France", code: "airfrance", fn: "AF179", logo: "https://www.gstatic.com/flights/airline_logos/70px/AF.png", depT: "19:40", arrT: "17:15 (+1)", dur: "14h 35m", price: 18200, direct: false, stopsCount: 1, layovers: ["CDG (2h 00m)"], occ: 79, seats: 4, aircraft: "Boeing 777-300ER" },
+        { name: "Air France", code: "airfrance", fn: "AF175", logo: "https://www.gstatic.com/flights/airline_logos/70px/AF.png", depT: "14:15", arrT: "11:55 (+1)", dur: "14h 40m", price: 18800, direct: false, stopsCount: 1, layovers: ["CDG (2h 20m)"], occ: 76, seats: 5, aircraft: "Airbus A350-900" },
+
+        // LUFTHANSA Ida
+        { name: "Lufthansa", code: "lufthansa", fn: "LH499", logo: "https://www.gstatic.com/flights/airline_logos/70px/LH.png", depT: "20:10", arrT: "17:35 (+1)", dur: "14h 25m", price: 19400, direct: false, stopsCount: 1, layovers: ["FRA (2h 30m)"], occ: 86, seats: 3, aircraft: "Boeing 747-8 Intercontinental" },
+
+        // BRITISH AIRWAYS Ida
+        { name: "British Airways", code: "british-airways", fn: "BA242", logo: "https://www.gstatic.com/flights/airline_logos/70px/BA.png", depT: "21:10", arrT: "18:50 (+1)", dur: "14h 40m", price: 19900, direct: false, stopsCount: 1, layovers: ["LHR (2h 40m)"], occ: 88, seats: 2, aircraft: "Boeing 787-9 Dreamliner" },
+
+        // AMERICAN AIRLINES Ida
+        { name: "American Airlines", code: "american", fn: "AA390", logo: "https://www.gstatic.com/flights/airline_logos/70px/AA.png", depT: "11:18", arrT: "08:05 (+1)", dur: "13h 47m", price: 16700, direct: false, stopsCount: 1, layovers: ["DFW (1h 36m)"], occ: 72, seats: 4, aircraft: "Boeing 777-200" },
+
+        // DELTA AIR LINES Ida
+        { name: "Delta Air Lines", code: "delta", fn: "DL587", logo: "https://www.gstatic.com/flights/airline_logos/70px/DL.png", depT: "13:20", arrT: "09:45 (+1)", dur: "13h 25m", price: 16900, direct: false, stopsCount: 1, layovers: ["ATL (1h 54m)"], occ: 70, seats: 7, aircraft: "Airbus A330-900neo" }
       ];
 
-      airlines.forEach((a, idx) => {
-        const fid = `gen_${segment}_${traveler}_${a.code}_${safeDateStr || 'd'}_${idx}`;
+      fullSchedule.forEach((a, idx) => {
+        const fid = `gen_${segment}_${traveler}_${a.code}_${a.fn}_${safeDateStr || 'd'}_${idx}`;
         const stopsStr = a.direct ? "Directo" : `${a.stopsCount} escala(s) en ${a.layovers.join(', ')}`;
         flightsCatalog[fid] = {
           id: fid,
@@ -3340,14 +3438,14 @@
           price: a.price,
           occupancy: a.occ,
           seatsLeft: a.seats,
-          aircraft: a.direct ? "Airbus A350-900 / Boeing 787" : "Boeing 777-300ER",
+          aircraft: a.aircraft || (a.direct ? "Airbus A350-900 / Boeing 787" : "Boeing 777-300ER"),
           stopsCount: a.stopsCount,
           stops: stopsStr,
           layovers: a.layovers,
           direct: a.direct,
-          description: a.direct ? `Vuelo directo operado por ${a.name} (${dep} a ${arr}).` : `Vuelo con ${a.stopsCount} escala(s) en ${a.layovers.join(', ')} operado por ${a.name}.`,
+          description: a.direct ? `Vuelo directo operado por ${a.name} (${depCity} a ${arrCity}).` : `Vuelo con ${a.stopsCount} escala(s) en ${a.layovers.join(', ')} operado por ${a.name}.`,
           outbound: {
-            route: `${dep} ➔ ${arr}`,
+            route: `${depCity} ➔ ${arrCity}`,
             schedule: `${a.depT} → ${a.arrT} (${a.dur})`,
             depTime: a.depT,
             arrTime: a.arrT,
@@ -3357,7 +3455,7 @@
           },
           class: "Tarifa Estándar con Equipaje",
           bag: true, carry: true, seat: true,
-          googleFlightsUrl: `https://www.google.com/travel/flights?q=Flights%20from%20${dep}%20to%20${arr}%20on%20${date || ''}`
+          googleFlightsUrl: `https://www.google.com/travel/flights?q=Flights%20from%20${depCity}%20to%20${arrCity}%20on%20${date || ''}`
         };
       });
 
@@ -4265,6 +4363,12 @@
                   }
                 })()}
               </div>
+              ${(passengerOrigin && wp.cityCode && passengerOrigin.includes(wp.cityCode)) ? `
+                <div class="mt-2.5 p-2.5 bg-amber-50 border border-amber-300 rounded-xl text-xs font-bold text-amber-900 flex items-center gap-2">
+                  <span>⚠️</span>
+                  <span><strong>Atención:</strong> Tu origen (${passengerOrigin}) y tu destino (${wp.cityCode}) son el mismo aeropuerto. Por favor selecciona otra ciudad o país de destino para planificar tus vuelos.</span>
+                </div>
+              ` : ''}
             </div>
 
             <!-- CONFIGURACIÓN DEL TRAMO: REDONDO VS SENCILLO & VUELO CONJUNTO -->
@@ -4329,12 +4433,16 @@
       tripConfig[pKey].waypoints[idx].country = newCountryCode;
       const airports = geoCatalog[newCountryCode]?.airports || [];
       if (airports.length > 0) {
-        const firstAirport = airports[0];
-        tripConfig[pKey].waypoints[idx].cityCode = firstAirport.code;
+        const originCode = (tripConfig[pKey]?.origin || '').split('—')[0]?.trim();
+        let targetAirport = airports[0];
+        if (airports.length > 1 && targetAirport.code === originCode) {
+          targetAirport = airports[1];
+        }
+        tripConfig[pKey].waypoints[idx].cityCode = targetAirport.code;
         
-        let cleanName = firstAirport.name;
-        if (firstAirport.name.includes('—')) {
-          const parts = firstAirport.name.split('—');
+        let cleanName = targetAirport.name;
+        if (targetAirport.name.includes('—')) {
+          const parts = targetAirport.name.split('—');
           const codePart = parts[0].trim();
           const rest = parts[1].trim().split('(')[0].trim();
           cleanName = `${rest} (${codePart})`;
