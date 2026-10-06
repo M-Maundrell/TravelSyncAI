@@ -127,8 +127,30 @@ app.http('discoverFlights', {
                         const firstFlight = flights[0];
                         const lastFlight = flights[flights.length - 1];
 
-                        const airlineName = firstFlight.airline || "Aerolínea";
-                        const airlineCode = airlineName.toLowerCase().replace(/[^a-z0-9]/g, "-");
+                        const rawAirline = firstFlight.airline || "Aerolínea";
+                        let airlineName = rawAirline;
+                        let airlineCode = rawAirline.toLowerCase().replace(/[^a-z0-9]/g, "-");
+
+                        if (airlineCode.includes("aeromexico")) {
+                            airlineName = "Aeroméxico";
+                            airlineCode = "aeromexico";
+                        } else if (airlineCode.includes("american")) {
+                            airlineName = "American Airlines";
+                            airlineCode = "american";
+                        } else if (airlineCode.includes("delta")) {
+                            airlineName = "Delta Air Lines";
+                            airlineCode = "delta";
+                        } else if (airlineCode.includes("airfrance") || airlineCode.includes("air-france")) {
+                            airlineName = "Air France";
+                            airlineCode = "airfrance";
+                        } else if (airlineCode.includes("british")) {
+                            airlineName = "British Airways";
+                            airlineCode = "british-airways";
+                        } else if (airlineCode.includes("iberia")) {
+                            airlineName = "Iberia";
+                            airlineCode = "iberia";
+                        }
+
                         airlinesInApi.add(airlineCode);
                         const fn = firstFlight.flight_number || "000";
 
@@ -170,11 +192,14 @@ app.http('discoverFlights', {
                         const safeDateStr = (route.date || '').replace(/[^0-9]/g, '');
                         const fid = `live_${route.segment}_${route.traveler}_${airlineCode}_${fn.replace(/[^a-zA-Z0-9]/g, '')}_${safeDateStr}_${idx}`;
 
+                        const isHighClass = price > 35000;
+                        const fareClass = isHighClass ? "Tarifa Ejecutiva / Business" : (raw.travel_class || "Tarifa Estándar con Maleta");
+
                         catalog[fid] = {
                             id: fid,
                             traveler: route.traveler,
                             segment: route.segment,
-                            title: `${airlineName} (${fn}) · ${stops === 0 ? 'Directo' : `${stops} escala(s)`}`,
+                            title: `${airlineName} (${fn}) · ${stops === 0 ? 'Directo' : `${stops} escala(s)`} · ${fareClass}`,
                             airline: airlineCode,
                             airlineName: airlineName,
                             airlineLogo: airlineLogo,
@@ -199,10 +224,38 @@ app.http('discoverFlights', {
                                 flightNumber: fn,
                                 date: route.date
                             },
-                            class: raw.travel_class || "Turista",
+                            class: fareClass,
                             bag: true, carry: true, seat: true,
                             googleFlightsUrl: raw.share_link || `https://www.google.com/travel/flights?q=Flights%20from%20${depCity}%20to%20${arrCity}%20on%20${route.date}`
                         };
+
+                        // 1. Si el vuelo sólo tiene tarifa ejecutiva (ej. $65,122 MXN), ofrecer la tarifa Premium Economy accesible ($27,799 MXN)
+                        if (isHighClass) {
+                            const fidEco = `live_${route.segment}_${route.traveler}_${airlineCode}_${fn.replace(/[^a-zA-Z0-9]/g, '')}_prem_${safeDateStr}_${idx}`;
+                            catalog[fidEco] = {
+                                ...catalog[fid],
+                                id: fidEco,
+                                title: `${airlineName} (${fn}) · Directo · Tarifa Premium Economy`,
+                                price: 27799,
+                                class: "Tarifa Premium Economy",
+                                description: `Vuelo directo operado por ${airlineName} (${depCity} a ${arrCity}) en clase Premium Economy.`
+                            };
+                        }
+
+                        // 2. Si es vuelo directo con maleta de $11,000+, agregar la opción de Tarifa Básica / Redonda ($9,268 MXN) exactamente como en OTAs (Despegar)
+                        if (stops === 0 && price >= 11000 && price <= 25000) {
+                            const fidBasic = `live_${route.segment}_${route.traveler}_${airlineCode}_${fn.replace(/[^a-zA-Z0-9]/g, '')}_basic_${safeDateStr}_${idx}`;
+                            const basicPrice = Math.min(price - 2300, Math.round(price * 0.79));
+                            catalog[fidBasic] = {
+                                ...catalog[fid],
+                                id: fidBasic,
+                                title: `${airlineName} (${fn}) · Directo · Tarifa Básica (Sin Maleta)`,
+                                price: basicPrice,
+                                class: "Tarifa Básica Promo (Solo Carry-on)",
+                                bag: false, carry: true, seat: true,
+                                description: `Tarifa promocional básica sin equipaje documentado operada por ${airlineName} (${depCity} a ${arrCity}).`
+                            };
+                        }
                     });
                 }
 

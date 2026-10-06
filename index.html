@@ -3380,11 +3380,13 @@
         { name: "American Airlines", code: "american", fn: "AA37", logo: "https://www.gstatic.com/flights/airline_logos/70px/AA.png", depT: "11:35", arrT: "19:10", dur: "14h 35m", price: 16800, direct: false, stopsCount: 1, layovers: ["DFW (2h 10m)"], occ: 75, seats: 5, aircraft: "Boeing 777-200" }
       ] : [
         // IBERIA Ida
-        { name: "Iberia", code: "iberia", fn: "IB304", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "12:50", arrT: "06:00 (+1)", dur: "10h 10m", price: 18500, direct: true, stopsCount: 0, layovers: [], occ: 74, seats: 6, aircraft: "Airbus A350-900" },
-        { name: "Iberia", code: "iberia", fn: "IB308", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "20:30", arrT: "13:50 (+1)", dur: "10h 20m", price: 19200, direct: true, stopsCount: 0, layovers: [], occ: 84, seats: 3, aircraft: "Airbus A350-900" },
-        { name: "Iberia", code: "iberia", fn: "IB312", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "23:55", arrT: "17:10 (+1)", dur: "10h 15m", price: 19800, direct: true, stopsCount: 0, layovers: [], occ: 78, seats: 4, aircraft: "Airbus A350-900" },
-        { name: "Iberia", code: "iberia", fn: "IB6400", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "17:15", arrT: "10:45 (+1)", dur: "10h 30m", price: 18900, direct: true, stopsCount: 0, layovers: [], occ: 80, seats: 5, aircraft: "Airbus A350-900" },
-        { name: "Iberia", code: "iberia", fn: "IB2842", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "09:15", arrT: "07:30 (+1)", dur: "14h 15m", price: 16900, direct: false, stopsCount: 1, layovers: ["BCN (2h 10m)"], occ: 71, seats: 7, aircraft: "Airbus A330-200" },
+        { name: "Iberia", code: "iberia", fn: "IB304", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "12:50", arrT: "06:00 (+1)", dur: "10h 10m", price: 9268, direct: true, stopsCount: 0, layovers: [], occ: 74, seats: 6, aircraft: "Airbus A350-900", class: "Tarifa Básica Promo", bag: false },
+        { name: "Iberia", code: "iberia", fn: "IB304", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "12:50", arrT: "06:00 (+1)", dur: "10h 10m", price: 11044, direct: true, stopsCount: 0, layovers: [], occ: 74, seats: 6, aircraft: "Airbus A350-900", class: "Tarifa Estándar con Maleta", bag: true },
+        { name: "Iberia", code: "iberia", fn: "IB308", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "20:30", arrT: "13:50 (+1)", dur: "10h 20m", price: 9268, direct: true, stopsCount: 0, layovers: [], occ: 84, seats: 3, aircraft: "Airbus A350-900", class: "Tarifa Básica Promo", bag: false },
+        { name: "Iberia", code: "iberia", fn: "IB308", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "20:30", arrT: "13:50 (+1)", dur: "10h 20m", price: 11044, direct: true, stopsCount: 0, layovers: [], occ: 84, seats: 3, aircraft: "Airbus A350-900", class: "Tarifa Estándar con Maleta", bag: true },
+        { name: "Iberia", code: "iberia", fn: "IB312", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "23:55", arrT: "17:10 (+1)", dur: "10h 15m", price: 27799, direct: true, stopsCount: 0, layovers: [], occ: 78, seats: 4, aircraft: "Airbus A350-900", class: "Tarifa Premium Economy", bag: true },
+        { name: "Iberia", code: "iberia", fn: "IB6400", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "17:15", arrT: "10:45 (+1)", dur: "10h 30m", price: 9800, direct: true, stopsCount: 0, layovers: [], occ: 80, seats: 5, aircraft: "Airbus A350-900", class: "Tarifa Estándar con Maleta", bag: true },
+        { name: "Iberia", code: "iberia", fn: "IB2842", logo: "https://www.gstatic.com/flights/airline_logos/70px/IB.png", depT: "09:15", arrT: "07:30 (+1)", dur: "14h 15m", price: 8848, direct: false, stopsCount: 1, layovers: ["BCN (2h 10m)"], occ: 71, seats: 7, aircraft: "Airbus A330-200", class: "Tarifa Económica", bag: true },
 
         // AEROMÉXICO Ida
         { name: "Aeroméxico", code: "aeromexico", fn: "AM01", logo: "https://www.gstatic.com/flights/airline_logos/70px/AM.png", depT: "17:40", arrT: "11:30 (+1)", dur: "10h 50m", price: 18032, direct: true, stopsCount: 0, layovers: [], occ: 77, seats: 4, aircraft: "Boeing 787-9 Dreamliner" },
@@ -3500,10 +3502,28 @@
                   if (!step3Filters[segId]) step3Filters[segId] = { airline: 'all', stops: 'all', sort: 'price' };
                   const filter = step3Filters[segId];
 
+                  function getCanonicalAirlineName(rawName) {
+                    if (!rawName) return 'Otra';
+                    const l = rawName.toLowerCase();
+                    if (l.includes('aeromexico') || l.includes('aeroméxico')) return 'Aeroméxico';
+                    if (l.includes('american')) return 'American Airlines';
+                    if (l.includes('delta')) return 'Delta Air Lines';
+                    if (l.includes('airfrance') || l.includes('air france')) return 'Air France';
+                    if (l.includes('british')) return 'British Airways';
+                    if (l.includes('iberia')) return 'Iberia';
+                    if (l.includes('europa')) return 'Air Europa';
+                    if (l.includes('avianca')) return 'Avianca';
+                    if (l.includes('klm')) return 'KLM';
+                    if (l.includes('lufthansa')) return 'Lufthansa';
+                    if (l.includes('viva')) return 'Viva';
+                    if (l.includes('volaris')) return 'Volaris';
+                    return rawName;
+                  }
+
                   // Extraer aerolíneas únicas para el toolbar de filtros
                   const airlineCounts = {};
                   rawOptions.forEach(opt => {
-                    const aName = opt.airlineName || opt.airline || 'Otra';
+                    const aName = getCanonicalAirlineName(opt.airlineName || opt.airline);
                     airlineCounts[aName] = (airlineCounts[aName] || 0) + 1;
                   });
 
@@ -3513,8 +3533,8 @@
                   // Aplicar filtros de aerolínea y paradas
                   let filteredOptions = rawOptions.filter(opt => {
                     if (filter.airline !== 'all') {
-                      const aName = opt.airlineName || opt.airline;
-                      if (aName !== filter.airline && opt.airline !== filter.airline) return false;
+                      const aName = getCanonicalAirlineName(opt.airlineName || opt.airline);
+                      if (aName !== filter.airline) return false;
                     }
                     if (filter.stops === 'direct' && (!opt.direct && opt.stopsCount !== 0)) return false;
                     if (filter.stops === 'stops' && (opt.direct || opt.stopsCount === 0)) return false;
@@ -3688,13 +3708,14 @@
                             <!-- Pie de tarjeta: Amenidades y Enlace -->
                             <div class="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-2 border-t border-slate-100 mt-1">
                               <div class="flex items-center gap-2 flex-wrap">
-                                <span>🧳 Maleta 23kg</span>
+                                <span class="${opt.bag ? 'text-emerald-700' : 'text-slate-400'}">${opt.bag ? '🧳 Maleta 23kg' : '❌ Sin maleta doc.'}</span>
                                 <span>•</span>
                                 <span>🎒 Carry-on</span>
                                 <span>•</span>
                                 <span>💺 Asiento</span>
+                                <span class="ml-1 text-[9px] px-2 py-0.5 rounded-md font-extrabold ${opt.class?.includes('Básica') ? 'bg-amber-100 text-amber-800' : (opt.class?.includes('Premium') || opt.class?.includes('Business') ? 'bg-purple-100 text-purple-800' : 'bg-emerald-100 text-emerald-800')}">${opt.class || 'Tarifa Estándar'}</span>
                               </div>
-                              <a href="${opt.googleFlightsUrl || '#'}" target="_blank" onclick="event.stopPropagation();" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                              <a href="${opt.googleFlightsUrl || '#'}" target="_blank" onclick="event.stopPropagation();" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-extrabold">
                                 Google Flights ↗
                               </a>
                             </div>
