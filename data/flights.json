@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-10-06T02:40:00Z",
+  "lastUpdated": "2026-10-06T03:40:52.802Z",
   "apiMetadata": {
     "provider": "Google Flights Live API (SerpApi)",
     "httpStatus": "200 OK",
     "quotaRemaining": "249",
     "quotaLimit": "250",
-    "lastChecked": "2026-10-06T02:40:00Z",
+    "lastChecked": "2026-10-06T03:40:52.802Z",
     "syncCadence": "1 update/día (Cada 24 horas)"
   },
   "currencyRate": {
