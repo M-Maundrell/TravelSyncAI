@@ -1,7 +1,7 @@
 {
-  "lastUpdated": "2026-09-04T05:19:37.766Z",
+  "lastUpdated": "2026-10-06T02:42:16.105Z",
   "repository": "M-Maundrell/TravelSyncAI",
-  "activePlanId": "plan_mad_mex",
+  "activePlanId": "plan_1791254535564",
   "plans": {
     "plan_maestro": {
       "id": "plan_maestro",
@@ -300,6 +300,71 @@
           "retorno_trans": "live_retorno-transatlantico_yesica_iberia_IB304_0",
           "retorno_canarias": "live_retorno-canarias_yesica_iberia_I21535_0"
         }
+      }
+    },
+    "plan_1791254535564": {
+      "id": "plan_1791254535564",
+      "name": "Madrid Solo",
+      "createdAt": "2026-10-06T02:42:15.564Z",
+      "updatedAt": "2026-10-06T02:42:15.564Z",
+      "tripConfig": {
+        "passengerCount": 1,
+        "strictJointFlight": false,
+        "p1": {
+          "name": "Mario",
+          "country": "MX",
+          "origin": "MEX — Ciudad de México (AICM Benito Juárez)",
+          "startDate": "2026-10-30",
+          "nationality": "MX",
+          "visas": {
+            "usa": true
+          },
+          "prefs": {
+            "bag": true,
+            "carry": true,
+            "seat": true
+          },
+          "waypoints": [
+            {
+              "country": "ES",
+              "cityCode": "MAD",
+              "name": "Madrid Barajas Adolfo Suárez (MAD)",
+              "arrivalDate": "2026-10-31",
+              "departureDate": "2026-11-15",
+              "departureOrigins": "",
+              "jointFlight": false,
+              "isRoundtrip": true
+            }
+          ]
+        },
+        "p2": {
+          "name": "",
+          "country": "",
+          "origin": "",
+          "startDate": "",
+          "nationality": "ES",
+          "visas": {
+            "residencia": false
+          },
+          "prefs": {
+            "bag": true,
+            "carry": true,
+            "seat": true
+          },
+          "waypoints": []
+        }
+      },
+      "state": {
+        "p1": {
+          "leg_p1_0": "live_leg_p1_0_p1_iberia_IB308_20261031_0",
+          "leg_p1_0_ret": "live_leg_p1_0_ret_p1_iberia_IB311_20261115_5"
+        },
+        "p2": {},
+        "mario": {
+          "leg_p1_0": "live_leg_p1_0_p1_iberia_IB308_20261031_0",
+          "leg_p1_0_ret": "live_leg_p1_0_ret_p1_iberia_IB311_20261115_5"
+        },
+        "yesica": {}
       }
     }
   }
